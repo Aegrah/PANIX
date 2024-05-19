@@ -9,18 +9,31 @@
 - [ ] Add ssh key
 - [ ] Shared object hooking
 - [ ] Add process capabilities to a binary
-- [ ] .bashrc etc. (also /etc/bashrc /etc/profile...) (create new or modify existing one)
+- [ ] shell configurations (/etc/bash.bashrc, /etc/bash_logout, ~/.bashrc, ~/.bash_profile, ~/.bash_login,
+~/.profile, ~.bash_logout, ~/.bash_logout, /etc/profile, /etc/profile.d (create new or modify existing one)
 - [ ] web shell --> ask user input? Or php/asp(x) etc.?
 - [ ] Message of the day (create new or modify existing one)
-- [ ] rc.local / rc.* (create new or modify existing one)
-- [ ] udev (create new or modify existing one)
+- [ ] rc.local/rc.common and rc.* (create new or modify existing one)
+- [ ] udev (create new or modify existing one) https://ch4ik0.github.io/en/posts/leveraging-Linux-udev-for-persistence/
 - [ ] APT
-- [ ] LD_PRELOAD
+- [ ] Dynamic Linker Hijacking, add to ld.so.preload (LD_PRELOAD)
 - [ ] Change existing user credentials
 - [ ] init.d (create new or modify existing one)
 - [ ] LKM
 - [ ] /etc/passwd file write
 - [ ] sudo hijacking
-- [ ] ICMP backdoor https://github.com/droberson/icmp-backdoor 
+- [ ] ICMP backdoor https://github.com/droberson/icmp-backdoor
+- [ ] Backdoored version of ls/cat/other system binary
+- [ ] git backdooring https://hadess.io/the-art-of-linux-persistence/
+- [ ] PAM module https://attack.mitre.org/techniques/T1556/003/, https://rosesecurityresearch.com/crafting-malicious-pluggable-authentication-modules-for-persistence-privilege-escalation-and-lateral-movement
+- [ ] XDG autostart
+- [ ] Maybe's:
+  - [ ] symlinks somehow
+  - [ ] chroot environments
+  - [ ] rogue container
+  - [ ] sudoers file modification
+  - [ ] port knocking
+  - [ ] malicious dpkg package?
+  - [ ] Trap signal https://attack.mitre.org/techniques/T1546/005/
 - [ ] Make it executable in memory
 ```
