@@ -35,5 +35,6 @@
   - [ ] port knocking
   - [ ] malicious dpkg package?
   - [ ] Trap signal https://attack.mitre.org/techniques/T1546/005/
+  - [ ] init/kernel level; ls24
 - [ ] Make it executable in memory
 ```
