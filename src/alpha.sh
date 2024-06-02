@@ -418,23 +418,11 @@ configure_shell() {
     # Add your shell configuration code here
 }
 
-# Main script logic
-QUIET=0
+# Main function
+main() {
+    local QUIET=0
 
-if [[ $# -eq 0 ]]; then
-    if [[ $QUIET -ne 1 ]]; then
-        print_banner
-    fi
-    if check_root; then
-        usage_root
-    else
-        usage_user
-    fi
-    exit 0
-fi
-
-for arg in "$@"; do
-    if [[ "$arg" == "-h" || "$arg" == "--help" ]]; then
+    if [[ $# -eq 0 ]]; then
         if [[ $QUIET -ne 1 ]]; then
             print_banner
         fi
@@ -445,60 +433,76 @@ for arg in "$@"; do
         fi
         exit 0
     fi
-done
 
-# Parse command line arguments
-while [[ "$1" != "" ]]; do
-    case $1 in
-        -q | --quiet )
-            QUIET=1
-            ;;
-        -h | --help )
+    for arg in "$@"; do
+        if [[ "$arg" == "-h" || "$arg" == "--help" ]]; then
+            if [[ $QUIET -ne 1 ]]; then
+                print_banner
+            fi
             if check_root; then
                 usage_root
             else
                 usage_user
             fi
-            exit
-            ;;
-        --systemd )
-            shift
-            setup_systemd "$@"
-            exit
-            ;;
-        --cron )
-            shift
-            setup_cron "$@"
-            exit
-            ;;
-        --ssh-key )
-            generate_ssh_key
-            exit
-            ;;
-        --shell-configuration )
-            configure_shell
-            exit
-            ;;
-        * )
-            echo "Invalid option: $1"
-            if check_root; then
-                usage_root
-            else
-                usage_user
-            fi
-            exit 1
-    esac
-    shift
-done
+            exit 0
+        fi
+    done
 
-# Print banner unless in quiet mode
-if [[ $QUIET -ne 1 ]]; then
-    print_banner
-fi
+    # Parse command line arguments
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            -q | --quiet )
+                QUIET=1
+                ;;
+            -h | --help )
+                if check_root; then
+                    usage_root
+                else
+                    usage_user
+                fi
+                exit
+                ;;
+            --systemd )
+                shift
+                setup_systemd "$@"
+                exit
+                ;;
+            --cron )
+                shift
+                setup_cron "$@"
+                exit
+                ;;
+            --ssh-key )
+                generate_ssh_key
+                exit
+                ;;
+            --shell-configuration )
+                configure_shell
+                exit
+                ;;
+            * )
+                echo "Invalid option: $1"
+                if check_root; then
+                    usage_root
+                else
+                    usage_user
+                fi
+                exit 1
+        esac
+        shift
+    done
 
-# Show the usage menu if no specific command is given
-if check_root; then
-    usage_root
-else
-    usage_user
-fi
+    # Print banner unless in quiet mode
+    if [[ $QUIET -ne 1 ]]; then
+        print_banner
+    fi
+
+    # Show the usage menu if no specific command is given
+    if check_root; then
+        usage_root
+    else
+        usage_user
+    fi
+}
+
+main "$@"
