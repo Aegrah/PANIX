@@ -20,7 +20,6 @@ print_banner() {
     echo ""
 }
 
-# Function to check if the user is root
 check_root() {
     if [[ $EUID -ne 0 ]]; then
         return 1
@@ -29,7 +28,6 @@ check_root() {
     fi
 }
 
-# Function to show the usage menu for regular users
 usage_user() {
     echo ""
     echo -e "${RED}[!] Warning: More features are available when running as root.${NC}"
@@ -77,7 +75,6 @@ usage_user() {
     echo "          --key <key>                Specify the public key"
 }
 
-# Function to show the usage menu for root users
 usage_root() {
     echo "Root User Options:"
     echo ""
@@ -160,7 +157,6 @@ usage_root() {
     echo "          --binary <binary>          Specify the binary"
 }
 
-# Function for systemd setup
 setup_systemd() {
     local service_path=""
     local timer_path=""
@@ -374,7 +370,6 @@ setup_systemd() {
     echo "[+] Persistence established."
 }
 
-# Function for cron job setup
 setup_cron() {
     local cron_path=""
     local command=""
@@ -551,7 +546,6 @@ setup_at() {
     echo "[+] At job persistence established."
 }
 
-# Function for shell configuration
 setup_shell_profile() {
     local profile_path=""
     local command=""
@@ -1199,7 +1193,6 @@ setup_suid_backdoor() {
     fi
 }
 
-# Main function
 main() {
     local QUIET=0
 
