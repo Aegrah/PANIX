@@ -17,6 +17,7 @@
 - [x] XDG autostart
 - [x] /etc/passwd file write
 - [x] sudoers file modification
+- [x] Backdoored version of ls/cat/other system binary
 - [ ] sudo hijacking
 - [ ] Shared object hooking
 - [ ] web shell --> ask user input? Or php/asp(x) etc.?
@@ -24,7 +25,6 @@
 - [ ] Dynamic Linker Hijacking, add to ld.so.preload (LD_PRELOAD)
 - [ ] LKM
 - [ ] ICMP backdoor https://github.com/droberson/icmp-backdoor
-- [ ] Backdoored version of ls/cat/other system binary
 - [ ] git backdooring https://hadess.io/the-art-of-linux-persistence/
 - [ ] PAM module https://attack.mitre.org/techniques/T1556/003/, https://rosesecurityresearch.com/crafting-malicious-pluggable-authentication-modules-for-persistence-privilege-escalation-and-lateral-movement
 
