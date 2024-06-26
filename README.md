@@ -12,16 +12,19 @@
 - [x] Message of the day (create new or modify existing one)
 - [x] rc.local/rc.common and rc.* (create new or modify existing one)
 - [x] APT
+- [x] YUM
+- [x] DNF
 - [x] Change existing user credentials
 - [x] init.d (create new or modify existing one)
 - [x] XDG autostart
 - [x] /etc/passwd file write
 - [x] sudoers file modification
 - [x] Backdoored version of ls/cat/other system binary
+- [x] udev (create new or modify existing one) https://ch4ik0.github.io/en/posts/leveraging-Linux-udev-for-persistence/
 - [ ] sudo hijacking
 - [ ] Shared object hooking
 - [ ] web shell --> ask user input? Or php/asp(x) etc.?
-- [ ] udev (create new or modify existing one) https://ch4ik0.github.io/en/posts/leveraging-Linux-udev-for-persistence/
+
 - [ ] Dynamic Linker Hijacking, add to ld.so.preload (LD_PRELOAD)
 - [ ] LKM
 - [ ] ICMP backdoor https://github.com/droberson/icmp-backdoor
