@@ -2718,8 +2718,6 @@ setup_malicious_docker_container() {
 	echo "[+] To escape the container with root privileges, run '/usr/local/bin/escape.sh'."
 }
 
-#!/bin/bash
-
 setup_malicious_package() {
 	local ip=""
 	local port=""
