@@ -11,7 +11,7 @@ ALPHA is compatible with popular Debian and Red hat-based distributions, includi
 
 ![](https://i.imgur.com/waxVImv.png)
 
-## Features
+# Features
 ALPHA provides a versatile suite of tools for simulating and researching Linux persistence mechanisms. The table below displays the main features.
 
 | Feature                          | Description                                                                             | Root | User |
@@ -44,7 +44,7 @@ ALPHA provides a versatile suite of tools for simulating and researching Linux p
 
 ![](https://i.imgur.com/waxVImv.png)
 
-### Support
+# Support
 ALPHA offers comprehensive support/compatibility for each of the features across various Linux distributions and environments.
 
 | Distribution | Support | Tested                                         |
@@ -63,7 +63,7 @@ Any PR or issue adding a new feature or idea is welcome!
 
 ![](https://i.imgur.com/waxVImv.png)
 
-### Setup
+# Setup
 Getting this up-and-running is as simple as downloading the script and execute it.
 ```
 curl ... | bash
@@ -121,7 +121,7 @@ Root User Options:
 
 ![](https://i.imgur.com/waxVImv.png)
 
-### Examples
+# Examples
 The script should be largely self-explanatory, however, this section will show a few examples of how to work with ALPHA.
 
 Every persistence mechanism has a separate help menu:
@@ -212,11 +212,11 @@ connect to [192.168.211.131] from (UNKNOWN) [192.168.211.130] 43400
 root@ubuntu2204:~#
 ```
 ![](https://i.imgur.com/waxVImv.png)
-### Publications and Resources
+# Publications and Resources
 Publications in which ALPHA is leveraged:
 
-- [Linux Detection Engineering - The Basics of Linux Persistence](link)
-- [Linux Detection Engineering - Beyond the Basics of Linux Persistence](link)
+- [Linux Detection Engineering - The Basics of Linux Persistence](link) (will be published soon...)
+- [Linux Detection Engineering - Beyond the Basics of Linux Persistence](link) (will be published soon...)
 
 Feel free to check out my socials for updates on (Linux) security research.
 
@@ -228,7 +228,7 @@ Feel free to check out my socials for updates on (Linux) security research.
 
 ![](https://i.imgur.com/waxVImv.png)
 
-## Share
+# Share
 By sharing [ALPHA](https://github.com/Aegrah/ALPHA), you can assist others in testing and improving their security posture and support the development of new detection capabilities in Linux security.
 
 [![GitHub Repo stars](https://img.shields.io/badge/share%20on-reddit-red?logo=reddit)](https://reddit.com/submit?url=[https://github.com/Aegrah/ALPHA](https://github.com/Aegrah/ALPHA)&title=Aegrah's%20Linux%20Persistence%20Honed%20Assistant%20\(ALPHA\))
@@ -239,5 +239,5 @@ By sharing [ALPHA](https://github.com/Aegrah/ALPHA), you can assist others in te
 
 ![](https://i.imgur.com/waxVImv.png)
 
-## Disclaimer
+# Disclaimer
 ALPHA is intended for authorized security testing and research purposes only. Misuse of this tool for malicious activities is not condoned and is entirely at the user's own risk. By using ALPHA, you agree that you are responsible for your own actions.
