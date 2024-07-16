@@ -5,14 +5,12 @@
 
 ![](https://i.imgur.com/waxVImv.png)
 
-ALPHA is a Linux persistence tool designed for security research, detection engineering, penetration testing, and CTFs. Unlike some tools, ALPHA is not built for stealth; its features are easily detectable unless the target's security posture is lacking.
-
-ALPHA is compatible with popular Debian and Red hat-based distributions, including Ubuntu, Debian and CentOS. Compatibility with Arch Linux may vary depending on the persistence mechanism used. Most mechanisms are customizable, allowing users to adjust settings to suit their specific OS environment.
+ALPHA is a Linux persistence tool for security research, detection engineering, penetration testing, and CTFs. It prioritizes functionality over stealth and is easily detectable on targets with a strong security posture. ALPHA is supported on popular distributions like Debian, Ubuntu, and RHEL, and is highly customizable to fit various OS environments.
 
 ![](https://i.imgur.com/waxVImv.png)
 
 # Features
-ALPHA provides a versatile suite of tools for simulating and researching Linux persistence mechanisms. The table below displays the main features.
+ALPHA provides a versatile suite of features for simulating and researching Linux persistence mechanisms, which are displayed in the table below:
 
 | Feature                          | Description                                                                             | Root | User |
 |----------------------------------|-----------------------------------------------------------------------------------------|------|------|
@@ -47,8 +45,8 @@ ALPHA provides a versatile suite of tools for simulating and researching Linux p
 # Support
 ALPHA offers comprehensive support/compatibility for each of the features across various Linux distributions and environments.
 
-| Distribution | Support | Tested                                         |
-|--------------|---------|------------------------------------------------|
+| Distribution | Support     | Tested                                         |
+|--------------|-------------|------------------------------------------------|
 | **Debian**       | ✓       | Tested on Debian 11 & 12                       |
 | **Ubuntu**       | ✓       | Tested on Ubuntu 22.04                         |
 | **RHEL**         | ✓       | Tested on RHEL 9 (MOTD unavailable)            |
@@ -57,9 +55,9 @@ ALPHA offers comprehensive support/compatibility for each of the features across
 | **Arch Linux**   | ✓       | ✗                                              |
 | **OpenSUSE**     | ✓       | ✗                                              |
 
-Some custom Linux distributions might swap around paths, and therefore mechanisms may fail on untested versions. Older versions of these distributions may or may not use specific services. However, the vast majority of the persistence mechanisms should be supported. If any `default` command fails, the `--custom` flag is available in most features, which will allow you to customize the path/command to be executed, and tailor the persistence mechanism to your environment. If this does not work, feel free to take a look at the script, figure out why it does not work on your distribution and learn something new!
+Some custom Linux distributions may have different paths, causing mechanisms to fail on untested versions. While most persistence mechanisms are supported, older versions may lack specific services. If a default command fails, the `--custom` flag in most features allows you to customize paths/commands to suit your environment. If that doesn't work, you can examine the script to understand and adapt it to your distribution.
 
-Any PR or issue adding a new feature or idea is welcome!
+**Contributions through PRs or issues for new features or ideas are welcome!**
 
 ![](https://i.imgur.com/waxVImv.png)
 
