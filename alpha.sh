@@ -4,21 +4,13 @@ NC='\033[0m'
 
 print_banner() {
 	echo ""
-	echo " ▄▄▄       ██▓     ██▓███   ██░ ██  ▄▄▄       "
-	echo "▒████▄    ▓██▒    ▓██░  ██▒▓██░ ██▒▒████▄     "
-	echo "▒██  ▀█▄  ▒██░    ▓██░ ██▓▒▒██▀▀██░▒██  ▀█▄   "
-	echo "░██▄▄▄▄██ ▒██░    ▒██▄█▓▒ ▒░▓█ ░██ ░██▄▄▄▄██  "
-	echo " ▓█   ▓██▒░██████▒▒██▒ ░  ░░▓█▒░██▓ ▓█   ▓██▒ "
-	echo " ▒▒   ▓▒█░░ ▒░▓  ░▒▓▒░ ░  ░ ▒ ░░▒░▒ ▒▒   ▓▒█░ "
-	echo "  ▒   ▒▒ ░░ ░ ▒  ░░▒ ░      ▒ ░▒░ ░  ▒   ▒▒ ░ "
-	echo "  ░   ▒     ░ ░   ░░        ░  ░░ ░  ░   ▒    "
-	echo "      ░  ░    ░  ░          ░  ░  ░      ░  ░ "
-	echo "                                 "
-	echo "Aegrah's Linux Persistence Honed Assistant (ALPHA)"
-	echo "Github: https://github.com/Aegrah/ALPHA"
-	echo "Twitter: https://twitter.com/RFGroenewoud"
+	echo "           __            "
+	echo " /\  |    |__) |__|  /\  "
+	echo "/~~\ |___ |    |  | /~~\ "
+	echo "                         "
 	echo ""
 }
+
 
 check_root() {
 	if [[ $EUID -ne 0 ]]; then
@@ -29,7 +21,6 @@ check_root() {
 }
 
 usage_user() {
-	echo ""
 	echo -e "${RED}[!] Warning: More features are available when running as root.${NC}"
 	echo ""
 	echo "Low Privileged User Options:"
