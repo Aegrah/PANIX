@@ -5,7 +5,7 @@
 
 ![](https://i.imgur.com/waxVImv.png)
 
-ALPHA is a Linux persistence tool for security research, detection engineering, penetration testing, and CTFs. It prioritizes functionality over stealth and is easily detectable on targets with a strong security posture. ALPHA is supported on popular distributions like Debian, Ubuntu, and RHEL, and is highly customizable to fit various OS environments.
+ALPHA is a Linux persistence tool for security research, detection engineering, penetration testing, and CTFs. It prioritizes functionality over stealth and is easily detectable. ALPHA is supported on popular distributions like Debian, Ubuntu, and RHEL, and is highly customizable to fit various OS environments.
 
 ![](https://i.imgur.com/waxVImv.png)
 
@@ -23,13 +23,13 @@ ALPHA provides a versatile suite of features for simulating and researching Linu
 | **Create User**                  | Create a new user                                                                       | ✓    | ✗    |
 | **Git Persistence**              | Git hook/pager persistence                                                              | ✓    | ✓    |
 | **Generator Persistence**        | Systemd generator persistence                                                           | ✓    | ✗    |
-| **init.d Backdoor**              | SysV Init (init.d) persistence                                                          | ✓    | ✗    |
+| **Init.d Backdoor**              | SysV Init (init.d) persistence                                                          | ✓    | ✗    |
 | **Docker Container Backdoor**    | Docker container with host escape                                                       | ✓    | ✓    |
 | **MOTD Backdoor**                | Message Of The Day (MOTD) persistence                                                   | ✓    | ✗    |
 | **Package Manager Persistence**  | Package Manager persistence (APT/YUM/DNF)                                               | ✓    | ✗    |
 | **Password Management**          | Add user to /etc/passwd directly                                                        | ✓    | ✗    |
 | **Password Change**              | Change user password                                                                    | ✓    | ✗    |
-| **rc.local Backdoor**            | Run Control (rc.local) persistence                                                      | ✓    | ✗    |
+| **RC.local Backdoor**            | Run Control (rc.local) persistence                                                      | ✓    | ✗    |
 | **Shell Profile Persistence**    | Shell profile persistence                                                               | ✓    | ✓    |
 | **SSH Key Persistence**          | SSH key persistence                                                                     | ✓    | ✓    |
 | **Sudoers Backdoor**             | Sudoers persistence                                                                     | ✓    | ✗    |
@@ -45,24 +45,24 @@ ALPHA provides a versatile suite of features for simulating and researching Linu
 # Support
 ALPHA offers comprehensive support across various Linux distributions.
 
-| Distribution | Support     | Tested                                         |
-|--------------|-------------|------------------------------------------------|
-| **Debian**       | ✓       | Tested on Debian 11 & 12                       |
-| **Ubuntu**       | ✓       | Tested on Ubuntu 22.04                         |
-| **RHEL**         | ✓       | Tested on RHEL 9 (MOTD unavailable)            |
-| **CentOS**       | ✓       | Tested on CentOS Stream 9, 7 (MOTD unavailable)|
-| **Fedora**       | ✓       | ✗                                              |
-| **Arch Linux**   | ✓       | ✗                                              |
-| **OpenSUSE**     | ✓       | ✗                                              |
+| Distribution     | Support | Tested                                                |
+|------------------|---------|-------------------------------------------------------|
+| **Debian**       | ✓       | Fully tested on Debian 11 & 12                       |
+| **Ubuntu**       | ✓       | Fully tested on Ubuntu 22.04                         |
+| **RHEL**         | ✓       | Fully tested on RHEL 9 (MOTD unavailable)            |
+| **CentOS**       | ✓       | Fully tested on CentOS Stream 9, 7 (MOTD unavailable)|
+| **Fedora**       | ✓       | Not fully tested                                     |
+| **Arch Linux**   | ✓       | Not fully tested                                     |
+| **OpenSUSE**     | ✓       | Not fully tested                                     |
 
-Custom or old Linux distributions may use slightly different configurations or lack specific services, potentially causing mechanisms to fail on untested versions. If a default command fails, the `--custom` flag in most features allows you to customize paths/commands to suit your environment. If that doesn't work, you can examine the script to understand and adapt it to your distribution.
+Dated or custom Linux distributions may use different configurations or lack specific features, potentially causing mechanisms to fail on untested versions. If a default command fails, the `--custom` flag in most features allows you to customize paths/commands to suit your environment. If that doesn't work, you can examine the script to understand and adapt it to your needs.
 
 **Contributions via pull requests or issues for new features, updates, or ideas are always welcome!**
 
 ![](https://i.imgur.com/waxVImv.png)
 
 # Getting Started
-Getting ALPHA up-and-running is as simple as downloading the script and executing it through any shell of choice.
+Getting ALPHA up-and-running is as simple as downloading the script from the [release page]() and executing it through any shell of choice.
 ```
 curl ... | bash
 ```
