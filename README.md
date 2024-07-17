@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://github.com/Aegrah/ALPHA/assets/78494512/2b21f530-9763-4c10-af8c-9ca97443f351" alt="ALPHA logo" width="1010" height="500"> 
-  <h1 align="center"><a href="https://github.com/Aegrah/ALPHA/">ALPHA</a></h1>
+  <h1 align="center"><a href="https://github.com/Aegrah/ALPHA/">Aegrah's Linux Persistence Honed Assistant (ALPHA)</a></h1>
 </p>
 
 ![](https://i.imgur.com/waxVImv.png)
