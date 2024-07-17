@@ -62,9 +62,19 @@ Dated or custom Linux distributions may use different configurations or lack spe
 ![](https://i.imgur.com/waxVImv.png)
 
 # Getting Started
-Getting ALPHA up-and-running is as simple as downloading the script from the [release page](https://github.com/Aegrah/ALPHA/releases/tag/alpha-v1.0.0) and executing it through any shell of choice.
+Getting ALPHA up-and-running is as simple as downloading the script from the [release page](https://github.com/Aegrah/ALPHA/releases/tag/alpha-v1.0.0) and executing it:
 ```
 curl -sL https://github.com/Aegrah/ALPHA/releases/download/alpha-v1.0.0/alpha.sh | bash
+```
+Or download it and execute it manually:
+```
+# Download through curl or wget
+curl -sL https://github.com/Aegrah/ALPHA/releases/download/alpha-v1.0.0/alpha.sh -o alpha.sh
+wget https://github.com/Aegrah/ALPHA/releases/download/alpha-v1.0.0/alpha.sh -O alpha.sh
+
+# Grant execution permissions and execute the script.
+chmod +x alpha.sh
+./alpha.sh
 ```
 
 Executing the script will either show the `root` or `user` help menu, depending on the privileges the current user has.
