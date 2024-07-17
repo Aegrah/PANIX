@@ -11,7 +11,6 @@ print_banner() {
 	echo ""
 }
 
-
 check_root() {
 	if [[ $EUID -ne 0 ]]; then
 		return 1
