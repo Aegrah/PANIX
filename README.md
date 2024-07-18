@@ -24,10 +24,11 @@ ALPHA provides a versatile suite of features for simulating and researching Linu
 | **Git Persistence**              | Git hook/pager persistence                                                              | ✓    | ✓    |
 | **Generator Persistence**        | Systemd generator persistence                                                           | ✓    | ✗    |
 | **Init.d Backdoor**              | SysV Init (init.d) persistence                                                          | ✓    | ✗    |
+| **Malicious Package Backdoor**   | DPKG/RPM package persistence                                                            | ✓    | ✗    |
 | **Docker Container Backdoor**    | Docker container with host escape                                                       | ✓    | ✓    |
 | **MOTD Backdoor**                | Message Of The Day (MOTD) persistence                                                   | ✓    | ✗    |
 | **Package Manager Persistence**  | Package Manager persistence (APT/YUM/DNF)                                               | ✓    | ✗    |
-| **Password Management**          | Add user to /etc/passwd directly                                                        | ✓    | ✗    |
+| **/etc/passwd Modification**     | Add user to /etc/passwd directly                                                        | ✓    | ✗    |
 | **Password Change**              | Change user password                                                                    | ✓    | ✗    |
 | **RC.local Backdoor**            | Run Control (rc.local) persistence                                                      | ✓    | ✗    |
 | **Shell Profile Persistence**    | Shell profile persistence                                                               | ✓    | ✓    |
