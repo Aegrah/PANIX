@@ -98,7 +98,7 @@ Root User Options:
   --generator           Generator persistence
   --git                 Git hook/pager persistence
   --initd               SysV Init (init.d) persistence
-  --malicious-package   Build and Install a package for persistence (DNF/RPM)
+  --malicious-package   Build and Install a package for persistence (DPKG/RPM)
   --motd                Message Of The Day (MOTD) persistence (not available on RHEL derivatives)
   --package-manager     Package Manager persistence (APT/YUM/DNF)
   --passwd-user         Add user to /etc/passwd directly
