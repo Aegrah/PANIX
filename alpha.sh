@@ -52,7 +52,7 @@ usage_root() {
 	echo "  --generator           Generator persistence"
 	echo "  --git                 Git hook/pager persistence"
 	echo "  --initd               SysV Init (init.d) persistence"
-	echo "  --malicious-package   Build and Install a package for persistence (DNF/RPM)"
+	echo "  --malicious-package   Build and Install a package for persistence (DPKG/RPM)"
 	echo "  --motd                Message Of The Day (MOTD) persistence (not available on RHEL derivatives)"
 	echo "  --package-manager     Package Manager persistence (APT/YUM/DNF)"
 	echo "  --passwd-user         Add user to /etc/passwd directly"
