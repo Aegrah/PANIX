@@ -247,11 +247,11 @@ Feel free to check out my socials for updates on (Linux) security research.
 # Share
 By sharing [PANIX](https://github.com/Aegrah/PANIX), you can assist others in testing and improving their security posture and support the development of new detection capabilities in Linux security.
 
-[![GitHub Repo stars](https://img.shields.io/badge/share%20on-reddit-red?logo=reddit)](https://reddit.com/submit?url=[https://github.com/Aegrah/PANIX](https://github.com/Aegrah/PANIX)&title=Aegrah's%20Linux%20Persistence%20Honed%20Assistant%20\(PANIX\))
+[![GitHub Repo stars](https://img.shields.io/badge/share%20on-reddit-red?logo=reddit)](https://reddit.com/submit?url=[https://github.com/Aegrah/PANIX](https://github.com/Aegrah/PANIX)&title=Persistence%20Against%20UNIX%20\(PANIX\))
 [![GitHub Repo stars](https://img.shields.io/badge/share%20on-hacker%20news-orange?logo=ycombinator)](https://news.ycombinator.com/submitlink?u=https://github.com/Aegrah/PANIX)
-[![GitHub Repo stars](https://img.shields.io/badge/share%20on-twitter-03A9F4?logo=twitter)](https://twitter.com/share?url=https://github.com/Aegrah/PANIX&text=Aegrah's%20Linux%20Persistence%20Honed%20Assistant%20\(PANIX\))
+[![GitHub Repo stars](https://img.shields.io/badge/share%20on-twitter-03A9F4?logo=twitter)](https://twitter.com/share?url=https://github.com/Aegrah/PANIX&text=Persistence%20Against%20UNIX%20\(PANIX\))
 [![GitHub Repo stars](https://img.shields.io/badge/share%20on-facebook-1976D2?logo=facebook)](https://www.facebook.com/sharer/sharer.php?u=https://github.com/Aegrah/PANIX)
-[![GitHub Repo stars](https://img.shields.io/badge/share%20on-linkedin-3949AB?logo=linkedin)](https://www.linkedin.com/shareArticle?url=https://github.com/Aegrah/PANIX&title=Aegrah's%20Linux%20Persistence%20Honed%20Assistant%20(PANIX))
+[![GitHub Repo stars](https://img.shields.io/badge/share%20on-linkedin-3949AB?logo=linkedin)](https://www.linkedin.com/shareArticle?url=https://github.com/Aegrah/PANIX&title==Persistence%20Against%20UNIX%20\(PANIX\))
 
 ![](https://i.imgur.com/waxVImv.png)
 
