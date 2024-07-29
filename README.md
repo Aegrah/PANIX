@@ -15,7 +15,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | Feature                          | Description                                                                             | Root | User |
 |----------------------------------|-----------------------------------------------------------------------------------------|------|------|
 | **At Job Persistence**           | At job persistence                                                                      | ✓    | ✓    |
-| **Authorized Keys Persistence**   | Add public key to authorized keys                                                      | ✓    | ✓    |
+| **Authorized Keys Persistence**  | Add public key to authorized keys                                                       | ✓    | ✓    |
 | **Backdoor User**                | Create backdoor user with uid=0                                                         | ✓    | ✗    |
 | **Bind Shell**                   | Execute backgrounded bind shell                                                         | ✓    | ✓    |
 | **Capabilities Backdoor**        | Add capabilities for persistence                                                        | ✓    | ✗    |
