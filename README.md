@@ -232,7 +232,7 @@ root@ubuntu2204:/home/ruben# ./panix.sh --revert
 Publications in which PANIX is leveraged:
 
 - [Linux Detection Engineering - A Primer on Persistence Mechanisms](https://www.elastic.co/security-labs/primer-on-persistence-mechanisms)  
-- [Linux Detection Engineering - Beyond the Basics of Linux Persistence](link) (will be published soon...)
+- [Linux Detection Engineering - A Sequel on Persistence Mechanisms](https://www.elastic.co/security-labs/sequel-on-persistence-mechanisms)
 
 Feel free to check out my socials for updates on (Linux) security research.
 
