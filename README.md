@@ -76,7 +76,7 @@ PANIX/
 ├── README.md       # Documentation with usage instructions and examples.
 ```
 
-## Key Features
+## Benefits
 - **Modular Design**: Each persistence mechanism resides in its own script within the `modules/` directory.
 - **Dynamic Sourcing**: `main.sh` dynamically sources modules for seamless integration and extension.
 - **Build Script**: The `build.sh` script automates the creation of the final distributable script (`panix.sh`).
