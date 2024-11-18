@@ -150,14 +150,14 @@ Every persistence mechanism has a separate help menu:
 ```
 root@ubuntu2204:/home/ruben# ./panix.sh --udev --help
 Usage: ./panix.sh --udev [OPTIONS]
---examples                   Display command examples
---default                    Use default udev settings
-  --ip <ip>                    Specify IP address
-  --port <port>                Specify port number
-  --at | --cron | --systemd    Specify the mechanism to use
---custom                     Use custom udev settings
-  --command <command>          Specify custom command
-  --path <path>                Specify custom path
+--examples                              Display command examples
+-default                               Use default udev settings
+  --ip <ip>                               Specify IP address
+  --port <port>                           Specify port number
+  --sedexp | --at | --cron | --systemd    Specify the mechanism to use
+--custom                                Use custom udev settings
+  --command <command>                     Specify custom command
+  --path <path>                           Specify custom path
 ```
 
 Every persistence mechanism also has an `--examples` flag that shows default and custom examples, aiding in crafting the command that works for you.
