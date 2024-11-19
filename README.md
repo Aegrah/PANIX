@@ -26,11 +26,13 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Init.d Backdoor**              | SysV Init (init.d) persistence                                                          | ✓    | ✗    |
 | **Malicious Package Backdoor**   | DPKG/RPM package persistence                                                            | ✓    | ✗    |
 | **Docker Container Backdoor**    | Docker container with host escape                                                       | ✓    | ✓    |
+| **LKM Backdoor**                 | Loadable Kernel Module (LKM) backdoor                                                   | ✓    | ✗    |
 | **MOTD Backdoor**                | Message Of The Day (MOTD) persistence                                                   | ✓    | ✗    |
 | **Package Manager Persistence**  | Package Manager persistence (APT/YUM/DNF)                                               | ✓    | ✗    |
 | **/etc/passwd Modification**     | Add user to /etc/passwd directly                                                        | ✓    | ✗    |
 | **Password Change**              | Change user password                                                                    | ✓    | ✗    |
 | **RC.local Backdoor**            | Run Control (rc.local) persistence                                                      | ✓    | ✗    |
+| **Diamorphine Rootkit**          | Diamorphine LKM rootkit backdoor                                                        | ✓    | ✗    |
 | **Shell Profile Persistence**    | Shell profile persistence                                                               | ✓    | ✓    |
 | **SSH Key Persistence**          | SSH key persistence                                                                     | ✓    | ✓    |
 | **Sudoers Backdoor**             | Sudoers persistence                                                                     | ✓    | ✗    |
@@ -122,12 +124,14 @@ Root User Options:
   --generator           Generator persistence
   --git                 Git hook/pager persistence
   --initd               SysV Init (init.d) persistence
+  --lkm                 Loadable Kernel Module (LKM) persistence
   --malicious-package   Build and Install a package for persistence (DPKG/RPM)
   --motd                Message Of The Day (MOTD) persistence (not available on RHEL derivatives)
   --package-manager     Package Manager persistence (APT/YUM/DNF)
   --passwd-user         Add user to /etc/passwd directly
   --password-change     Change user password
   --rc-local            Run Control (rc.local) persistence
+  --rootkit             Diamorphine (LKM) rootkit persistence 
   --shell-profile       Shell profile persistence
   --ssh-key             SSH key persistence
   --sudoers             Sudoers persistence

