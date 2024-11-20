@@ -58,7 +58,7 @@ usage_root() {
 	echo "  --malicious-package   Build and Install a package for persistence (DPKG/RPM)"
 	echo "  --motd                Message Of The Day (MOTD) persistence (not available on RHEL derivatives)"
 	echo "  --package-manager     Package Manager persistence (APT/YUM/DNF)"
-	echo "  --pam 			      Pluggable Authentication Module (PAM) persistence (Rogue PAM & PAM_EXEC)"
+	echo "  --pam                 Pluggable Authentication Module (PAM) persistence (Rogue PAM & PAM_EXEC)"
 	echo "  --passwd-user         Add user to /etc/passwd directly"
 	echo "  --password-change     Change user password"
 	echo "  --rc-local            Run Control (rc.local) persistence"
