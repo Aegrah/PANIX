@@ -29,6 +29,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **LKM Backdoor**                 | Loadable Kernel Module (LKM) backdoor                                                   | ✓    | ✗    |
 | **MOTD Backdoor**                | Message Of The Day (MOTD) persistence                                                   | ✓    | ✗    |
 | **Package Manager Persistence**  | Package Manager persistence (APT/YUM/DNF)                                               | ✓    | ✗    |
+| **PAM Persistence**              | Pluggable Authentication Module (PAM) Persistence (Backdoored PAM & pam_exec)           | ✓    | ✗    |
 | **/etc/passwd Modification**     | Add user to /etc/passwd directly                                                        | ✓    | ✗    |
 | **Password Change**              | Change user password                                                                    | ✓    | ✗    |
 | **RC.local Backdoor**            | Run Control (rc.local) persistence                                                      | ✓    | ✗    |
@@ -128,6 +129,7 @@ Root User Options:
   --malicious-package   Build and Install a package for persistence (DPKG/RPM)
   --motd                Message Of The Day (MOTD) persistence (not available on RHEL derivatives)
   --package-manager     Package Manager persistence (APT/YUM/DNF)
+  --pam                 Pluggable Authentication Module (PAM) persistence (backdoored PAM & pam_exec)
   --passwd-user         Add user to /etc/passwd directly
   --password-change     Change user password
   --rc-local            Run Control (rc.local) persistence
