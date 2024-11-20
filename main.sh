@@ -117,6 +117,11 @@ main() {
 				setup_package_manager_persistence "$@"
 				exit
 				;;
+			--pam )
+				shift
+				setup_pam_persistence "$@"
+				exit
+				;;
 			--passwd-user )
 				shift
 				setup_passwd_user "$@"
