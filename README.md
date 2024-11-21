@@ -41,6 +41,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **System Binary Backdoor**       | System binary wrapping for persistence                                                  | ✓    | ✗    |
 | **Systemd Service Persistence**  | Systemd service persistence                                                             | ✓    | ✓    |
 | **Udev Persistence**             | Udev (driver) persistence                                                               | ✓    | ✗    |
+| **Web Shell Persistence**        | Web shell persistence (PHP/Python)                                                      | ✓    | ✓    |
 | **XDG Autostart Persistence**    | XDG autostart persistence                                                               | ✓    | ✓    |
 
 
