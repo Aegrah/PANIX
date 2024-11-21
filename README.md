@@ -146,6 +146,7 @@ Root User Options:
   --udev                Udev (driver) persistence
   --xdg                 XDG autostart persistence
   --revert              Revert most changes made by PANIX's default options
+  --mitre-matrix        Display the MITRE ATT&CK Matrix for PANIX
   --quiet (-q)          Quiet mode (no banner)
 ```
 

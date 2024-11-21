@@ -37,6 +37,10 @@ main() {
 				fi
 				exit
 				;;
+			--mitre-matrix )
+				display_mitre_matrix
+				exit
+				;;
 			--revert )
 				shift
 				revert_changes
