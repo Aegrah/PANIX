@@ -37,6 +37,7 @@ usage_user() {
 	echo "  --web-shell           Web shell persistence (PHP/Python)"
 	echo "  --xdg                 XDG autostart persistence"
 	echo "  --revert              Revert most changes made by PANIX' default options"
+	echo "  --mitre-matrix        Display the MITRE ATT&CK Matrix for PANIX"
 	echo "  --quiet (-q)          Quiet mode (no banner)"
 }
 
@@ -76,6 +77,7 @@ usage_root() {
 	echo "  --web-shell           Web shell persistence (PHP/Python)"
 	echo "  --xdg                 XDG autostart persistence"
 	echo "  --revert              Revert most changes made by PANIX' default options"
+	echo "  --mitre-matrix        Display the MITRE ATT&CK Matrix for PANIX"
 	echo "  --quiet (-q)          Quiet mode (no banner)"
 	echo ""
 }

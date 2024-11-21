@@ -19,9 +19,13 @@ done
 # Add revert_changes module
 echo "" >> "$OUTPUT_FILE"
 cat modules/revert_changes.sh >> "$OUTPUT_FILE"
+
+# Add mitre_matrix display module
 echo "" >> "$OUTPUT_FILE"
+cat modules/display_mitre_matrix.sh >> "$OUTPUT_FILE"
 
 # Exclude the dynamic sourcing block from main.sh
+echo "" >> "$OUTPUT_FILE"
 echo "# Main script logic" >> "$OUTPUT_FILE"
 cat main.sh >> "$OUTPUT_FILE"
 
