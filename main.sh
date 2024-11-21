@@ -182,6 +182,11 @@ main() {
 				setup_udev "$@"
 				exit
 				;;
+			--web-shell )
+				shift
+				setup_web_shell "$@"
+				exit
+				;;
 			--xdg )
 				shift
 				setup_xdg "$@"
