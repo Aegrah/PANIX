@@ -55,6 +55,7 @@ usage_root() {
 	echo "  --generator           Generator persistence"
 	echo "  --git                 Git hook/pager persistence"
 	echo "  --initd               SysV Init (init.d) persistence"
+	echo "  --ld-preload          LD_PRELOAD backdoor persistence"
 	echo "  --lkm                 Loadable Kernel Module (LKM) persistence"
 	echo "  --malicious-package   Build and Install a package for persistence (DPKG/RPM)"
 	echo "  --motd                Message Of The Day (MOTD) persistence (not available on RHEL derivatives)"

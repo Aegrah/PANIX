@@ -26,6 +26,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Init.d Backdoor**              | SysV Init (init.d) persistence                                                          | ✓    | ✗    |
 | **Malicious Package Backdoor**   | DPKG/RPM package persistence                                                            | ✓    | ✗    |
 | **Docker Container Backdoor**    | Docker container with host escape                                                       | ✓    | ✓    |
+| **LD_PRELOAD Backdoor**          | LD_PRELOAD backdoor                                                                     | ✓    | ✗    |
 | **LKM Backdoor**                 | Loadable Kernel Module (LKM) backdoor                                                   | ✓    | ✗    |
 | **MOTD Backdoor**                | Message Of The Day (MOTD) persistence                                                   | ✓    | ✗    |
 | **Package Manager Persistence**  | Package Manager persistence (APT/YUM/DNF)                                               | ✓    | ✗    |
@@ -126,6 +127,7 @@ Root User Options:
   --generator           Generator persistence
   --git                 Git hook/pager persistence
   --initd               SysV Init (init.d) persistence
+  --ld-preload          LD_PRELOAD backdoor persistence"
   --lkm                 Loadable Kernel Module (LKM) persistence
   --malicious-package   Build and Install a package for persistence (DPKG/RPM)
   --motd                Message Of The Day (MOTD) persistence (not available on RHEL derivatives)
