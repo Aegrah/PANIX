@@ -7545,12 +7545,12 @@ display_mitre_matrix() {
 		"--cap" "Abuse Elevation Control Mechanism" "T1548" "N/A" "N/A" "https://attack.mitre.org/techniques/T1548" \
 		"--create-user" "Create Account" "T1136" "Local Account" "T1136.001" "https://attack.mitre.org/techniques/T1136/001" \
 		"--cron" "Scheduled Task" "T1053" "Cron" "T1053.003" "https://attack.mitre.org/techniques/T1053/003" \
-		"--docker-container" "Escape to Host" "T1610" "N/A" "N/A" "https://attack.mitre.org/techniques/T1610" \
 		"--generator" "Create or Modify System Process" "T1543" "Systemd Service" "T1543.002" "https://attack.mitre.org/techniques/T1543/002" \
 		"--git" "Event Triggered Execution" "T1546" "N/A" "N/A" "https://attack.mitre.org/techniques/T1546" \
 		"--initd" "Boot or Logon Initialization Scripts" "T1037" "N/A" "N/A" "https://attack.mitre.org/techniques/T1037" \
 		"--ld-preload" "Hijack Execution Flow" "T1574" "Dynamic Linker Hijacking" "T1574.006" "https://attack.mitre.org/techniques/T1574/006" \
 		"--lkm" "Boot or Logon Autostart Execution" "T1547" "Kernel Modules and Extensions" "T1547.006" "https://attack.mitre.org/techniques/T1547/006" \
+		"--malicious-container" "Escape to Host" "T1610" "N/A" "N/A" "https://attack.mitre.org/techniques/T1610" \
 		"--malicious-package" "Event Triggered Execution" "T1546" "Installer Packages" "T1546.016" "https://attack.mitre.org/techniques/T1546/016" \
 		"--motd" "Boot or Logon Initialization Scripts" "T1037" "N/A" "N/A" "https://attack.mitre.org/techniques/T1037" \
 		"--package-manager" "Event Triggered Execution" "T1546" "Installer Packages" "T1546.016" "https://attack.mitre.org/techniques/T1546/016" \
