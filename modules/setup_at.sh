@@ -16,6 +16,7 @@ setup_at() {
 		echo "--custom                     Use custom at settings"
 		echo "  --command <command>          Specify custom persistence command"
 		echo "  --time <time>                Specify time for at job (e.g., now + 1 minute)"
+        echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

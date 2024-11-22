@@ -5,6 +5,7 @@ setup_backdoor_user() {
 		echo "Usage: ./panix.sh --backdoor-user [OPTIONS]"
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
+        echo "--help|-h                  Show this help message"
 	}
 
 	if ! check_root; then

@@ -14,6 +14,7 @@ setup_suid_backdoor() {
 		echo "--default                    Use default SUID settings"
 		echo "--custom                     Use custom SUID settings"
 		echo "  --binary <binary>            Specify the binary to give SUID permissions"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

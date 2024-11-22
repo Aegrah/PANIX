@@ -21,6 +21,7 @@ setup_bind_shell() {
 		echo "    --port <port>                             Specify port to bind shell to"
 		echo "--custom                                  Use custom bind shell binary"
 		echo "  --binary <binary>                         Specify the path to the custom binary"
+        echo "--help|-h                                 Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

@@ -7,13 +7,13 @@ setup_web_shell() {
 
 	usage_web_shell() {
 		echo "Usage: ./panix.sh --web-shell [OPTIONS]"
-		echo "  --mechanism <cmd|reverse>             Specify mechanism (cmd for command execution, reverse for reverse shell)"
-		echo "  --language <php|python>               Specify language for the web server"
-		echo "  --port <port>                         Specify port for the web server"
+		echo "--language <php|python>               Specify language for the web server"
+		echo "--port <port>                         Specify port for the web server"
+		echo "--mechanism <cmd|reverse>             Specify mechanism (cmd for command execution, reverse for reverse shell)"
 		echo "  --rev-port <port>                     Specify port for the reverse shell"
-		echo "  --ip <ip>                             Required for reverse mechanism, specify the attacker's IP"
-		echo "  --examples                            Display command examples"
-		echo "  --help|-h                             Show this help message"
+		echo "  --ip <ip>                             Specify IP for the reverse shell"
+		echo "--examples                            Display command examples"
+		echo "--help|-h                             Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -180,4 +180,10 @@ EOF
 			echo "[-] Error: Unsupported language specified. Use php or python."
 			exit 1
 	esac
+
+    echo "[!] In case you cannot connect, ensure your firewall settings are allowing inbound traffic on port $port."
+    echo "Run the following commands in case of issues on RHEL/CentOS systems:"
+    echo ""
+    echo "sudo firewall-cmd --add-port=8080/tcp --permanent"
+    echo "sudo firewall-cmd --reload"
 }

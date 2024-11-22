@@ -14,12 +14,14 @@ setup_authorized_keys() {
 			echo "--custom                     Use custom authorized keys settings"
 			echo "  --key <key>                  Specify the public key"
 			echo "  --path <path>                Specify custom authorized keys file path"
+            echo "--help|-h                    Show this help message"
 		else
 			echo "Usage: ./panix.sh --authorized-keys [OPTIONS]"
 			echo "Low Privileged User Options:"
 			echo "--examples                   Display command examples"
 			echo "--default                    Use default authorized keys settings"
 			echo "  --key <key>                  Specify the public key"
+            echo "--help|-h                    Show this help message"
 		fi
 	}
 
@@ -92,6 +94,8 @@ setup_authorized_keys() {
 	fi
 
 	mkdir -p $(dirname $path)
+	echo "[+] Backing up authorized_keys file to $path.bak"
+	cp $path $path.bak
 	echo $key >> $path
 	chmod 600 $path
 

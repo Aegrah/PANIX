@@ -17,6 +17,7 @@ setup_malicious_package() {
 		echo "--port <port>         Specify port number"
 		echo "--rpm                 Use RPM package manager"
 		echo "--dpkg                Use DPKG package manager"
+		echo "--help|-h             Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

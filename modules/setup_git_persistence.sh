@@ -21,6 +21,7 @@ setup_git_persistence() {
 		echo "  --path <path>                Specify custom path"
 		echo "  --hook                       Establish Persistence through a Git Hook"
 		echo "  --pager                      Establish Persistence through Git Pager"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

