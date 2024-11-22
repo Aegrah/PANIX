@@ -129,7 +129,7 @@ Root User Options:
   --initd                SysV Init (init.d) persistence
   --ld-preload           LD_PRELOAD backdoor persistence"
   --lkm                  Loadable Kernel Module (LKM) persistence
-	--malicious-container  Docker container with host escape"
+  --malicious-container  Docker container with host escape"
   --malicious-package    Build and Install a package for persistence (DPKG/RPM)
   --motd                 Message Of The Day (MOTD) persistence (not available on RHEL derivatives)
   --package-manager      Package Manager persistence (APT/YUM/DNF)
