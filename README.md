@@ -5,7 +5,7 @@
 
 ![](https://i.imgur.com/waxVImv.png)
 
-PANIX is a highly customizable Linux persistence tool for security research, detection engineering, penetration testing, CTFs and more. It prioritizes functionality over stealth and is easily detectable. PANIX is supported on popular distributions like Debian, Ubuntu, and RHEL, and is highly customizable to fit various OS environments. PANIX will be kept up-to-date with the most common *nix persistence mechanisms observed in the wild.
+PANIX is a modularized highly customizable Linux persistence tool for security research, detection engineering, penetration testing, CTFs and more. It prioritizes functionality over stealth and is easily detectable. PANIX is supported on popular distributions like Debian, Ubuntu, and RHEL, and is highly customizable to fit various OS environments. PANIX will be kept up-to-date with the most common *nix persistence mechanisms observed in the wild. PANIX contains revert functionality for each persistence technique.
 
 ![](https://i.imgur.com/waxVImv.png)
 
@@ -17,24 +17,25 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **At Job Persistence**           | At job persistence                                                                      | ✓    | ✓    |
 | **Authorized Keys Persistence**  | Add public key to authorized keys                                                       | ✓    | ✓    |
 | **Backdoor User**                | Create backdoor user with uid=0                                                         | ✓    | ✗    |
+| **Backdoored /etc/passwd**       | Add user to /etc/passwd directly                                                        | ✓    | ✗    |
+| **Backdoored rc.local**          | Run Control (rc.local) persistence                                                      | ✓    | ✗    |
 | **Bind Shell**                   | Execute backgrounded bind shell                                                         | ✓    | ✓    |
 | **Capabilities Backdoor**        | Add capabilities for persistence                                                        | ✓    | ✗    |
 | **Cron Job Persistence**         | Cron job persistence                                                                    | ✓    | ✓    |
 | **Create User**                  | Create a new user                                                                       | ✓    | ✗    |
+| **Diamorphine Rootkit**          | Diamorphine LKM rootkit backdoor                                                        | ✓    | ✗    |
 | **Git Persistence**              | Git hook/pager persistence                                                              | ✓    | ✓    |
 | **Generator Persistence**        | Systemd generator persistence                                                           | ✓    | ✗    |
 | **Init.d Backdoor**              | SysV Init (init.d) persistence                                                          | ✓    | ✗    |
+| **Malicious Container Backdoor** | Docker container with host escape                                                       | ✓    | ✓    |
 | **Malicious Package Backdoor**   | DPKG/RPM package persistence                                                            | ✓    | ✗    |
-| **Docker Container Backdoor**    | Docker container with host escape                                                       | ✓    | ✓    |
 | **LD_PRELOAD Backdoor**          | LD_PRELOAD backdoor                                                                     | ✓    | ✗    |
 | **LKM Backdoor**                 | Loadable Kernel Module (LKM) backdoor                                                   | ✓    | ✗    |
 | **MOTD Backdoor**                | Message Of The Day (MOTD) persistence                                                   | ✓    | ✗    |
 | **Package Manager Persistence**  | Package Manager persistence (APT/YUM/DNF)                                               | ✓    | ✗    |
-| **PAM Persistence**              | Pluggable Authentication Module (PAM) Persistence (Backdoored PAM & pam_exec)           | ✓    | ✗    |
-| **/etc/passwd Modification**     | Add user to /etc/passwd directly                                                        | ✓    | ✗    |
+| **PAM Persistence**              | Pluggable Authentication Module (PAM) Persistence                                       | ✓    | ✗    |
 | **Password Change**              | Change user password                                                                    | ✓    | ✗    |
-| **RC.local Backdoor**            | Run Control (rc.local) persistence                                                      | ✓    | ✗    |
-| **Diamorphine Rootkit**          | Diamorphine LKM rootkit backdoor                                                        | ✓    | ✗    |
+| **Reverse Shell**                | Reverse shell persistence (supports multiple LOLBins)                                   | ✓    | ✓    |
 | **Shell Profile Persistence**    | Shell profile persistence                                                               | ✓    | ✓    |
 | **SSH Key Persistence**          | SSH key persistence                                                                     | ✓    | ✓    |
 | **Sudoers Backdoor**             | Sudoers persistence                                                                     | ✓    | ✗    |
@@ -51,15 +52,15 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 # Support
 PANIX offers comprehensive support across various Linux distributions.
 
-| Distribution     | Support | Tested                                                |
-|------------------|---------|-------------------------------------------------------|
-| **Debian**       | ✓       | Fully tested on Debian 11 & 12                       |
-| **Ubuntu**       | ✓       | Fully tested on Ubuntu 22.04                         |
-| **RHEL**         | ✓       | Fully tested on RHEL 9 (MOTD unavailable)            |
-| **CentOS**       | ✓       | Fully tested on CentOS Stream 9, 7 (MOTD unavailable)|
-| **Fedora**       | ✓       | Not fully tested                                     |
-| **Arch Linux**   | ✓       | Not fully tested                                     |
-| **OpenSUSE**     | ✓       | Not fully tested                                     |
+| Distribution     | Support | Tested                                                 |
+|------------------|---------|--------------------------------------------------------|
+| **Debian**       | ✓       | Fully tested on Debian 11 & 12                        |
+| **Ubuntu**       | ✓       | Fully tested on Ubuntu 22.04 (Diamorphine unavailable)|
+| **RHEL**         | ✓       | Fully tested on RHEL 9 (MOTD unavailable)             |
+| **CentOS**       | ✓       | Fully tested on CentOS Stream 9, 7 (MOTD unavailable) |
+| **Fedora**       | ✓       | Not fully tested                                      |
+| **Arch Linux**   | ✓       | Not fully tested                                      |
+| **OpenSUSE**     | ✓       | Not fully tested                                      |
 
 Dated or custom Linux distributions may use different configurations or lack specific features, potentially causing mechanisms to fail on untested versions. If a default command fails, the `--custom` flag in most features allows you to customize paths/commands to suit your environment. If that doesn't work, you can examine the script to understand and adapt it to your needs.
 
@@ -83,7 +84,7 @@ PANIX/
 ```
 
 ## Benefits
-- **Modular Design**: Each persistence mechanism resides in its own script within the `modules/` directory.
+- **Modular Design**: Each persistence and revert mechanism resides in its own script within the `modules/` directory.
 - **Dynamic Sourcing**: `main.sh` dynamically sources modules for seamless integration and extension.
 - **Build Script**: The `build.sh` script automates the creation of the final distributable script (`panix.sh`).
 
@@ -137,6 +138,7 @@ Root User Options:
   --passwd-user          Add user to /etc/passwd directly
   --password-change      Change user password
   --rc-local             Run Control (rc.local) persistence
+  --reverse-shell        Reverse shell persistence (supports multiple LOLBins)"
   --rootkit              Diamorphine (LKM) rootkit persistence 
   --shell-profile        Shell profile persistence
   --ssh-key              SSH key persistence
