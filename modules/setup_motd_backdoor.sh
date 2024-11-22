@@ -20,6 +20,7 @@ setup_motd_backdoor() {
 		echo "--custom                     Use custom MOTD settings"
 		echo "  --command <command>          Specify custom command"
 		echo "  --path <path>                Specify custom MOTD file path in /etc/update-motd.d/"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

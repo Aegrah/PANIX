@@ -14,6 +14,7 @@ setup_package_manager_persistence() {
 		echo "--ip <ip>                    Specify IP address"
 		echo "--port <port>                Specify port number"
 		echo "--apt | --yum | --dnf        Use APT, YUM or DNF package manager"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

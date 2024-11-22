@@ -1,11 +1,11 @@
 # Only source modules dynamically if the script is executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    MODULES_DIR="$(dirname "${BASH_SOURCE[0]}")/modules"
-    for module in "$MODULES_DIR"/*.sh; do
-        if [[ -f $module ]]; then
-            source "$module"
-        fi
-    done
+	MODULES_DIR="$(dirname "${BASH_SOURCE[0]}")/modules"
+	for module in "$MODULES_DIR"/*.sh; do
+		if [[ -f $module ]]; then
+			source "$module"
+		fi
+	done
 fi
 
 main() {
@@ -39,11 +39,6 @@ main() {
 				;;
 			--mitre-matrix )
 				display_mitre_matrix
-				exit
-				;;
-			--revert )
-				shift
-				revert_changes
 				exit
 				;;
 			--at )
@@ -199,6 +194,47 @@ main() {
 			--xdg )
 				shift
 				setup_xdg "$@"
+				exit
+				;;
+			--revert )
+				shift
+				if [[ -z $1 ]]; then
+					echo "Error: Missing module name. Use '--revert all' to revert all modules or specify a module name."
+					echo ""
+					echo "Example 1: ./panix.sh --revert malicious-package"
+					echo "Example 2: ./panix.sh --revert all"
+					echo "Example 3: ./panix.sh --revert-all"
+					echo ""
+					echo "Modules: all, at, authorized-keys, backdoor-user, bind-shell, cap, create-user, cron, malicious-container, generator, git, initd, ld-preload, lkm, malicious-package, motd, package-manager, pam, passwd-user, password-change, rc-local, rootkit, shell-profile, ssh-key, sudoers, suid, system-binary, systemd, udev, xdg"
+					echo ""
+					exit 1
+				fi
+
+				# Check if "all" is specified
+				if [[ "$1" == "all" ]]; then
+					echo "[+] Running full reversion with --revert-all..."
+					revert_all
+					exit
+				fi
+
+				# Replace hyphens with underscores for function names
+				MODULE_NAME="revert_${1//-/_}"
+
+				if type "$MODULE_NAME" &>/dev/null; then
+					echo ""
+					echo "######################### [+] Reverting $1 module... #########################"
+					echo ""
+					$MODULE_NAME  # Execute the function
+				else
+					echo ""
+					echo "Error: Revert function for module '$1' not found."
+					echo ""
+					exit 1
+				fi
+				exit
+				;;
+			--revert-all )
+				revert_all
 				exit
 				;;
 			* )

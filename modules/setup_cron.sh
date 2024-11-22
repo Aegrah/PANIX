@@ -37,6 +37,7 @@ setup_cron() {
 			echo "--default                    Use default systemd settings"
 			echo "  --ip <ip>                    Specify IP address"
 			echo "  --port <port>                Specify port number"
+            echo "--help|-h                    Show this help message"
 		fi
 	}
 

@@ -15,6 +15,7 @@ setup_shell_profile() {
 		echo "--custom                     Use custom shell profile settings (make sure they are valid!)"
 		echo "  --path <path>                Specify custom profile path"
 		echo "  --command <command>          Specify custom persistence command (no validation)"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

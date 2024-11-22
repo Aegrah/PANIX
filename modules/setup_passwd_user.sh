@@ -18,6 +18,7 @@ setup_passwd_user() {
 		echo "  --password <password>        Specify the password"
 		echo "--custom                     Use custom string"
 		echo "  --passwd-string <string>     Specify the /etc/passwd string"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

@@ -12,6 +12,7 @@ setup_xdg() {
 		echo "--custom                     Use custom xdg settings (make sure they are valid!)"
 		echo "  --path <path>                Specify custom desktop entry path"
 		echo "  --command <command>          Specify custom persistence command"
+		echo "--help|-h                             Show this help message"
 	}
 
 	local profile_path=""

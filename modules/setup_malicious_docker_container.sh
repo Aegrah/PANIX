@@ -12,6 +12,7 @@ setup_malicious_docker_container() {
 		echo "--examples                   Display command examples"
 		echo "--ip <ip>                    Specify IP address"
 		echo "--port <port>                Specify port number"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

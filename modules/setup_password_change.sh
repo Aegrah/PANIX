@@ -12,6 +12,7 @@ setup_password_change() {
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
 		echo "--password <password>      Specify the new password"
+		echo "--help|-h                  Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

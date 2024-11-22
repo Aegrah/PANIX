@@ -19,6 +19,7 @@ setup_rc_local_backdoor() {
 		echo "  --port <port>                Specify port number"
 		echo "--custom                     Use custom rc.local settings"
 		echo "  --command <command>          Specify custom command"
+		echo "--help|-h                    Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

@@ -10,6 +10,7 @@ setup_sudoers_backdoor() {
 		echo "Usage: ./panix.sh --sudoers-backdoor [OPTIONS]"
 		echo "--examples                 Display command examples"
 		echo "--username <username>      Specify the username"
+		echo "--help|-h                  Show this help message"
 	}
 
 	while [[ "$1" != "" ]]; do

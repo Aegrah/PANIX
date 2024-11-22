@@ -13,11 +13,13 @@ setup_ssh_key() {
 			echo "--default                    Use default SSH key settings"
 			echo "--custom                     Use custom SSH key settings"
 			echo "  --user <user>               Specify user for custom SSH key"
+		    echo "--help|-h                    Show this help message"
 		else
 			echo "Usage: ./panix.sh --ssh-key [OPTIONS]"
 			echo "Low Privileged User Options:"
 			echo "--examples                   Display command examples"
 			echo "--default                    Use default SSH key settings"
+		    echo "--help|-h                    Show this help message"
 		fi
 	}
 
