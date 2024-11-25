@@ -18,8 +18,8 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Authorized Keys**              | Adds a public key to the authorized_keys file for SSH access.                           | ✔️    | ✔️     |
 | **Backdoor User**                | Creates a backdoor user with `UID=0`, granting root privileges.                         | ✔️    | ❌     |
 | **Backdoored /etc/passwd**       | Directly adds a malicious user entry to `/etc/passwd`.                                  | ✔️    | ❌     |
-| **Backdoored /etc/init.d**       | Establishes persistence via SysVinit scripts (`/etc/init.d`).                           | ✔️    | ❌     |
-| **Backdoored /etc/rc.local**     | Establishes persistence via run control scripts (`/etc/rc.local`).                      | ✔️    | ❌     |
+| **Backdoored /etc/init.d**       | Establishes persistence via SysVinit (`/etc/init.d`).                                   | ✔️    | ❌     |
+| **Backdoored /etc/rc.local**     | Establishes persistence via run control (`/etc/rc.local`).                              | ✔️    | ❌     |
 | **Bind Shell**                   | Executes a pre-compiled/LOLBin bind shell for remote access.                            | ✔️    | ✔️     |
 | **Capabilities Backdoor**        | Adds specific capabilities to binaries to maintain persistence.                         | ✔️    | ❌     |
 | **Cron Job Persistence**         | Sets up cron jobs to ensure persistence across reboots.                                 | ✔️    | ✔️     |
@@ -28,7 +28,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Git Persistence**              | Utilizes Git hooks or pagers to persist within Git repositories.                        | ✔️    | ✔️     |
 | **Generator Persistence**        | Leverages systemd generators to create persistent services.                             | ✔️    | ❌     |
 | **Malicious Container**          | Deploys a Docker container designed to host escape.                                     | ✔️    | ✔️     |
-| **Malicious Package**            | Installs malicious DPKG/RPM packages to achieve persistence.                            | ✔️    | ❌     |
+| **Malicious Package**            | Installs a `DPKG/RPM` package to achieve persistence.                                   | ✔️    | ❌     |
 | **LD_PRELOAD Backdoor**          | Uses `LD_PRELOAD` to inject malicious libraries for persistence.                        | ✔️    | ❌     |
 | **LKM Backdoor**                 | Loads a Loadable Kernel Module to maintain persistence.                                 | ✔️    | ❌     |
 | **MOTD Backdoor**                | Alters Message of the Day (MOTD) to establish persistence.                              | ✔️    | ❌     |
