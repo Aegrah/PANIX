@@ -47,9 +47,9 @@ revert_rootkit() {
 	# Function to unload a kernel module
 	unload_kernel_module() {
 		local module_name="$1"
-		if lsmod | grep -q "^${module_name}\b"; then
+		if /sbin/lsmod | grep -q "^${module_name}\b"; then
 			echo "[+] Unloading kernel module: $module_name"
-			rmmod -f "$module_name"
+			/sbin/rmmod -f "$module_name"
 			if [[ $? -eq 0 ]]; then
 				echo "[+] Kernel module '$module_name' unloaded successfully."
 			else
@@ -69,16 +69,22 @@ revert_rootkit() {
 		# Step 2: Identify and unload kernel modules
 		echo "[+] Identifying loaded rootkit kernel modules in $rk_path..."
 
-		# Find all .ko files in rk_path
-		ko_files=("$rk_path"/*.ko)
+		# Find rootkit name
+		rk_name=/dev/shm/.rk/restore_*.ko
+		rk_name=$(echo $rk_name | sed 's/restore_//g')
+		rk_name=$(basename $rk_name .ko)
 
-		if [[ ! -e "${ko_files[0]}" ]]; then
-			echo "[-] No .ko files found in $rk_path."
+		# If rootkit was found, unload it, else, return
+		if [[ -z "$rk_name" ]]; then
+			echo "[-] Rootkit not found."
 		else
-			for ko_file in "${ko_files[@]}"; do
-				module_name=$(basename "$ko_file" .ko)
-				unload_kernel_module "$module_name"
-			done
+			echo "[+] Unloading rootkit $rk_name..."
+			unload_kernel_module "$rk_name"
+			if [[ $? -eq 0 ]]; then
+				echo "[+] Rootkit $rk_name unloaded successfully."
+			else
+				echo "[-] Failed to unload rootkit $rk_name."
+			fi
 		fi
 	else
 		echo "[-] Rootkit directory '$rk_path' not found. Skipping module unloading."
@@ -106,7 +112,7 @@ revert_rootkit() {
 
 	# Step 6: Reload kernel modules to ensure no remnants remain
 	echo "[+] Reloading kernel modules..."
-	depmod -a
+	/sbin/depmod -a
 	if [[ $? -eq 0 ]]; then
 		echo "[+] Kernel modules reloaded successfully."
 	else

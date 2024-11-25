@@ -17,7 +17,7 @@ revert_web_shell() {
         return 0
     fi
 
-    # Define system users to skip (modify this array if certain users should not be processed)
+    # Define system users to skip
     system_users=("root" "daemon" "bin" "sys" "sync" "games" "man" "lp" "mail" "news" "uucp" "proxy" "www-data" "backup" "list" "irc" "gnats" "nobody" "systemd-network" "systemd-resolve" "syslog" "messagebus" "uuidd" "dnsmasq" "usbmux" "rtkit" "cups-pk-helper" "dnsmasq-dhcp" "sshd" "polkitd")
 
     # Function to check if a user is a system user
