@@ -18,19 +18,19 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Authorized Keys**              | Adds a public key to the authorized_keys file for SSH access.                           | ✔️    | ✔️     |
 | **Backdoor User**                | Creates a backdoor user with `UID=0`, granting root privileges.                         | ✔️    | ❌     |
 | **Backdoored /etc/passwd**       | Directly adds a malicious user entry to `/etc/passwd`.                                  | ✔️    | ❌     |
-| **Backdoored /etc/init.d**       | Establishes persistence via `SysV Init` scripts in `/etc/init.d`.                       | ✔️    | ❌     |
-| **Backdoored /etc/rc.local**     | Establishes persistence via run control scripts in `/etc/rc.local`.                     | ✔️    | ❌     |
+| **Backdoored /etc/init.d**       | Establishes persistence via SysVinit scripts (`/etc/init.d`).                           | ✔️    | ❌     |
+| **Backdoored /etc/rc.local**     | Establishes persistence via run control scripts (`/etc/rc.local`).                      | ✔️    | ❌     |
 | **Bind Shell**                   | Executes a pre-compiled/LOLBin bind shell for remote access.                            | ✔️    | ✔️     |
 | **Capabilities Backdoor**        | Adds specific capabilities to binaries to maintain persistence.                         | ✔️    | ❌     |
 | **Cron Job Persistence**         | Sets up cron jobs to ensure persistence across reboots.                                 | ✔️    | ✔️     |
 | **Create User**                  | Creates a new user account on the system.                                               | ✔️    | ❌     |
-| **Diamorphine Rootkit**          | Installs the Diamorphine Loadable Kernel Module (LKM) Rootkit.                          | ✔️    | ❌     |
+| **Diamorphine Rootkit**          | Installs the Diamorphine Loadable Kernel Module Rootkit.                                | ✔️    | ❌     |
 | **Git Persistence**              | Utilizes Git hooks or pagers to persist within Git repositories.                        | ✔️    | ✔️     |
 | **Generator Persistence**        | Leverages systemd generators to create persistent services.                             | ✔️    | ❌     |
 | **Malicious Container**          | Deploys a Docker container designed to host escape.                                     | ✔️    | ✔️     |
 | **Malicious Package**            | Installs malicious DPKG/RPM packages to achieve persistence.                            | ✔️    | ❌     |
 | **LD_PRELOAD Backdoor**          | Uses `LD_PRELOAD` to inject malicious libraries for persistence.                        | ✔️    | ❌     |
-| **LKM Backdoor**                 | Loads a Loadable Kernel Module (LKM) to maintain persistence.                           | ✔️    | ❌     |
+| **LKM Backdoor**                 | Loads a Loadable Kernel Module to maintain persistence.                                 | ✔️    | ❌     |
 | **MOTD Backdoor**                | Alters Message of the Day (MOTD) to establish persistence.                              | ✔️    | ❌     |
 | **Package Manager**              | Manipulates `APT/YUM/DNF` to establish persistence on usage.                            | ✔️    | ❌     |
 | **PAM Persistence**              | Installs a PAM backdoor using a rogue module or pam_exec.                               | ✔️    | ❌     |
@@ -41,9 +41,9 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Sudoers Backdoor**             | Alters the `/etc/sudoers` file to grant elevated privileges.                            | ✔️    | ❌     |
 | **SUID Backdoor**                | Backdoors binaries by setting the SUID bit.                                             | ✔️    | ❌     |
 | **System Binary Backdoor**       | Wraps system binaries to include backdoor functionality.                                | ✔️    | ❌     |
-| **Systemd Service**              | Creates systemd services that ensure persistence across reboots.                        | ✔️    | ✔️     |
-| **Udev Persistence**             | Utilizes Udev drivers to persist at the hardware interaction level.                     | ✔️    | ❌     |
-| **Web Shell Persistence**        | Deploys rogue web servers for remote access via web interfaces.                         | ✔️    | ✔️     |
+| **Systemd Service**              | Creates systemd services that ensure persistence on reboot.                             | ✔️    | ✔️     |
+| **Udev Persistence**             | Utilizes drivers to persist at the hardware interaction level.                          | ✔️    | ❌     |
+| **Web Shell Persistence**        | Deploys web servers for remote access via web interfaces.                               | ✔️    | ✔️     |
 | **XDG Autostart Persistence**    | Employs XDG autostart directories to persist upon user login.                           | ✔️    | ✔️     |
 
 ![](https://i.imgur.com/waxVImv.png)
