@@ -5,101 +5,105 @@
 
 ![](https://i.imgur.com/waxVImv.png)
 
-PANIX is a modularized highly customizable Linux persistence tool for security research, detection engineering, penetration testing, CTFs and more. It prioritizes functionality over stealth and is easily detectable. PANIX is supported on popular distributions like Debian, Ubuntu, and RHEL, and is highly customizable to fit various OS environments. PANIX will be kept up-to-date with the most common *nix persistence mechanisms observed in the wild. PANIX contains revert functionality for each persistence technique.
+PANIX is a powerful, modular, and highly customizable Linux persistence framework designed for security researchers, detection engineers, penetration testers, CTF enthusiasts, and more. Built with versatility in mind, PANIX emphasizes functionality, making it an essential tool for understanding and implementing a wide range of persistence techniques.
 
 ![](https://i.imgur.com/waxVImv.png)
 
 # Features
 PANIX provides a versatile suite of features for simulating and researching Linux persistence mechanisms.
 
-| Feature                          | Description                                                                             | Root | User |
-|----------------------------------|-----------------------------------------------------------------------------------------|------|------|
-| **At Job Persistence**           | At job persistence                                                                      | ✓    | ✓    |
-| **Authorized Keys Persistence**  | Add public key to authorized keys                                                       | ✓    | ✓    |
-| **Backdoor User**                | Create backdoor user with uid=0                                                         | ✓    | ✗    |
-| **Backdoored /etc/passwd**       | Add user to /etc/passwd directly                                                        | ✓    | ✗    |
-| **Backdoored rc.local**          | Run Control (rc.local) persistence                                                      | ✓    | ✗    |
-| **Bind Shell**                   | Execute backgrounded bind shell                                                         | ✓    | ✓    |
-| **Capabilities Backdoor**        | Add capabilities for persistence                                                        | ✓    | ✗    |
-| **Cron Job Persistence**         | Cron job persistence                                                                    | ✓    | ✓    |
-| **Create User**                  | Create a new user                                                                       | ✓    | ✗    |
-| **Diamorphine Rootkit**          | Diamorphine LKM rootkit backdoor                                                        | ✓    | ✗    |
-| **Git Persistence**              | Git hook/pager persistence                                                              | ✓    | ✓    |
-| **Generator Persistence**        | Systemd generator persistence                                                           | ✓    | ✗    |
-| **Init.d Backdoor**              | SysV Init (init.d) persistence                                                          | ✓    | ✗    |
-| **Malicious Container Backdoor** | Docker container with host escape                                                       | ✓    | ✓    |
-| **Malicious Package Backdoor**   | DPKG/RPM package persistence                                                            | ✓    | ✗    |
-| **LD_PRELOAD Backdoor**          | LD_PRELOAD backdoor                                                                     | ✓    | ✗    |
-| **LKM Backdoor**                 | Loadable Kernel Module (LKM) backdoor                                                   | ✓    | ✗    |
-| **MOTD Backdoor**                | Message Of The Day (MOTD) persistence                                                   | ✓    | ✗    |
-| **Package Manager Persistence**  | Package Manager persistence (APT/YUM/DNF)                                               | ✓    | ✗    |
-| **PAM Persistence**              | Pluggable Authentication Module (PAM) Persistence                                       | ✓    | ✗    |
-| **Password Change**              | Change user password                                                                    | ✓    | ✗    |
-| **Reverse Shell**                | Reverse shell persistence (supports multiple LOLBins)                                   | ✓    | ✓    |
-| **Shell Profile Persistence**    | Shell profile persistence                                                               | ✓    | ✓    |
-| **SSH Key Persistence**          | SSH key persistence                                                                     | ✓    | ✓    |
-| **Sudoers Backdoor**             | Sudoers persistence                                                                     | ✓    | ✗    |
-| **SUID Backdoor**                | SUID persistence                                                                        | ✓    | ✗    |
-| **System Binary Backdoor**       | System binary wrapping for persistence                                                  | ✓    | ✗    |
-| **Systemd Service Persistence**  | Systemd service persistence                                                             | ✓    | ✓    |
-| **Udev Persistence**             | Udev (driver) persistence                                                               | ✓    | ✗    |
-| **Web Shell Persistence**        | Web shell persistence (PHP/Python)                                                      | ✓    | ✓    |
-| **XDG Autostart Persistence**    | XDG autostart persistence                                                               | ✓    | ✓    |
-
+| **Feature**                      | **Description**                                                                         |**Root**|**User**|
+|----------------------------------|-----------------------------------------------------------------------------------------|--------|--------|
+| **At Job Persistence**           | Implements persistence by adding entries to system jobs.                                | ✔️    | ✔️     |
+| **Authorized Keys Persistence**  | Adds a public key to the authorized_keys file for SSH access.                           | ✔️    | ✔️     |
+| **Backdoor User**                | Creates a backdoor user with `UID=0`, granting root privileges.                         | ✔️    | ❌     |
+| **Backdoored /etc/passwd**       | Directly adds a malicious user entry to `/etc/passwd`.                                  | ✔️    | ❌     |
+| **Backdoored /etc/init.d**       | Establishes persistence via `SysV Init` scripts in `/etc/init.d`.                       | ✔️    | ❌     |
+| **Backdoored /etc/rc.local**     | Establishes persistence via the run control script in `/etc/rc.local`.                  | ✔️    | ❌     |
+| **Bind Shell**                   | Executes a pre-compiled/LOLBin bind shell for remote access.                            | ✔️    | ✔️     |
+| **Capabilities Backdoor**        | Adds specific capabilities to binaries to maintain persistence.                         | ✔️    | ❌     |
+| **Cron Job Persistence**         | Sets up cron jobs to ensure persistence across reboots.                                 | ✔️    | ✔️     |
+| **Create User**                  | Creates a new user account on the system.                                               | ✔️    | ❌     |
+| **Diamorphine Rootkit**          | Installs the Diamorphine Loadable Kernel Module (LKM) Rootkit.                          | ✔️    | ❌     |
+| **Git Persistence**              | Utilizes Git hooks or pagers to persist within Git repositories.                        | ✔️    | ✔️     |
+| **Generator Persistence**        | Leverages systemd generators to create persistent services.                             | ✔️    | ❌     |
+| **Malicious Container Backdoor** | Deploys a Docker container designed for host escape and persistence.                    | ✔️    | ✔️     |
+| **Malicious Package Backdoor**   | Installs malicious DPKG/RPM packages to achieve persistence.                            | ✔️    | ❌     |
+| **LD_PRELOAD Backdoor**          | Uses `LD_PRELOAD` to inject malicious libraries for persistence.                        | ✔️    | ❌     |
+| **LKM Backdoor**                 | Loads a malicious Kernel Module (LKM) to maintain low-level persistence.                | ✔️    | ❌     |
+| **MOTD Backdoor**                | Alters the Message of the Day (MOTD) to execute persistence scripts.                    | ✔️    | ❌     |
+| **Package Manager Persistence**  | Manipulates `APT/YUM/DNF` to establish persistence on package manager usage.            | ✔️    | ❌     |
+| **PAM Persistence**              | Installs a PAM backdoor using a rogue module or pam_exec configuration.                 | ✔️    | ❌     |
+| **Password Change**              | Changes user passwords to secure backdoor accounts.                                     | ✔️    | ❌     |
+| **Reverse Shell**                | Establishes a reverse shell, supporting multiple LOLBins for remote access.             | ✔️    | ✔️     |
+| **Shell Profile Persistence**    | Modifies shell profiles to execute persistence scripts upon user login.                 | ✔️    | ✔️     |
+| **SSH Key Persistence**          | Manipulates SSH keys to maintain persistent access via SSH.                             | ✔️    | ✔️     |
+| **Sudoers Backdoor**             | Alters the `/etc/sudoers` file to grant elevated privileges persistently.               | ✔️    | ❌     |
+| **SUID Backdoor**                | Sets the SUID bit on binaries to persist through backdoors with elevated privileges.    | ✔️    | ❌     |
+| **System Binary Backdoor**       | Wraps system binaries to include persistent backdoor functionality.                     | ✔️    | ❌     |
+| **Systemd Service Persistence**  | Creates systemd services that ensure persistence across reboots.                        | ✔️    | ✔️     |
+| **Udev Persistence**             | Utilizes Udev drivers to maintain persistence at the hardware interaction level.        | ✔️    | ❌     |
+| **Web Shell Persistence**        | Deploys rogue web servers for persistent remote access via web interfaces.              | ✔️    | ✔️     |
+| **XDG Autostart Persistence**    | Employs XDG autostart directories to execute persistence scripts upon user login.       | ✔️    | ✔️     |
 
 ![](https://i.imgur.com/waxVImv.png)
 
 # Support
 PANIX offers comprehensive support across various Linux distributions.
 
-| Distribution     | Support | Tested                                                 |
-|------------------|---------|--------------------------------------------------------|
-| **Debian**       | ✓       | Fully tested on Debian 11 & 12                        |
-| **Ubuntu**       | ✓       | Fully tested on Ubuntu 22.04 (Diamorphine unavailable)|
-| **RHEL**         | ✓       | Fully tested on RHEL 9 (MOTD unavailable)             |
-| **CentOS**       | ✓       | Fully tested on CentOS Stream 9, 7 (MOTD unavailable) |
-| **Fedora**       | ✓       | Not fully tested                                      |
-| **Arch Linux**   | ✓       | Not fully tested                                      |
-| **OpenSUSE**     | ✓       | Not fully tested                                      |
+| **Distribution**     | **Support** | **Tested Version**                |
+|------------------|---------|-------------------------------------------|
+| **Debian**       | ✔️       | Debian 11 & 12                          |
+| **Ubuntu**       | ✔️       | Ubuntu 22.04 (Diamorphine unavailable)  |
+| **RHEL**         | ✔️       | RHEL 9 (MOTD unavailable)               |
+| **CentOS**       | ✔️       | CentOS Stream 9 & 7 (MOTD unavailable)  |
+| **Fedora**       | ✔️       | Not fully tested                        |
+| **Arch Linux**   | ✔️       | Not fully tested                        |
+| **OpenSUSE**     | ✔️       | Not fully tested                        |
 
-Dated or custom Linux distributions may use different configurations or lack specific features, potentially causing mechanisms to fail on untested versions. If a default command fails, the `--custom` flag in most features allows you to customize paths/commands to suit your environment. If that doesn't work, you can examine the script to understand and adapt it to your needs.
+Custom or outdated Linux distributions may have different configurations or lack specific features, causing mechanisms to fail on untested versions. If a default command fails, use the `--custom` flag available in most features to adjust paths and commands for your environment. If that doesn't resolve the issue, review and modify the script to suit your needs.
 
 **Contributions via pull requests or issues for new features, updates, or ideas are always welcome!**
 
 ![](https://i.imgur.com/waxVImv.png)
 
 # Repository Structure
-The repository is organized to promote modularity, maintainability, and ease of use. Below is an overview of its structure:
+The PANIX repository is designed for modularity, maintainability, and ease of extension. Each persistence mechanism includes both setup and revert scripts, simplifying management and removal.
 
 ```plaintext
 PANIX/
-├── main.sh         # The main script containing core logic and argument parsing.
-├── modules/        # Directory containing modular scripts for individual persistence mechanisms.
-│   ├── common.sh   # Shared functions used across multiple modules.
-│   ├── setup_*.sh  # Individual scripts for specific persistence techniques.
-|   ├── revert/     # Directory containing modular revert scripts for individual persistence mechanisms
-├── build.sh        # Script to combine all modules and main logic into a single distributable file.
-├── panix.sh        # The combined script generated by build.sh for distribution.
-├── README.md       # Documentation with usage instructions and examples.
+├── main.sh           # Core logic and argument parsing.
+├── modules/          # Persistence mechanism scripts.
+│   ├── common.sh     # Shared functions.
+│   ├── setup_*.sh    # Setup scripts.
+│   └── revert/       # Revert scripts.
+├── build.sh          # Builds the distributable script.
+├── panix.sh          # Final distributable script.
+└── README.md         # Documentation.
 ```
 
-## Benefits
-- **Modular Design**: Each persistence and revert mechanism resides in its own script within the `modules/` directory.
-- **Dynamic Sourcing**: `main.sh` dynamically sources modules for seamless integration and extension.
-- **Build Script**: The `build.sh` script automates the creation of the final distributable script (`panix.sh`).
+## Key Benefits
+- **Paired Setup & Revert**: Every `setup_*.sh` has a corresponding `revert_*.sh`, ensuring easy removal of persistence mechanisms.
+- **Modular Design**: Easily modify existing modules or add new ones without affecting the core system.
+- **Simple Expansion**: To add new functionality:
+  1. Create a new `setup_*.sh` in `modules/`.
+  2. Add a corresponding `revert_*.sh` in `modules/revert/`.
+  3. Update `main.sh` to include the new scripts.
+  4. Update `common.sh` to include the module in the help menu.
+  4. Run `build.sh` to generate the updated `panix.sh`.
 
-This structure ensures a clean separation of concerns, making it easier to develop, test, and deploy new functionality.
+This streamlined structure promotes efficient development, testing, and deployment of persistence features.
 
 # Getting Started
-Getting PANIX up-and-running is as simple as downloading the script from the [release page](https://github.com/Aegrah/PANIX/releases/tag/panix-v1.0.0) and executing it:
+Getting PANIX up-and-running is as simple as downloading the script from the [release page](https://github.com/Aegrah/PANIX/releases/tag/panix-v2.0.0) and executing it:
 ```
-curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v1.0.0/panix.sh | bash
+curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.0/panix.sh | bash
 ```
 Or download it and execute it manually:
 ```
 # Download through curl or wget
-curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v1.0.0/panix.sh -o panix.sh
-wget https://github.com/Aegrah/PANIX/releases/download/panix-v1.0.0/panix.sh -O panix.sh
+curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.0/panix.sh -o panix.sh
+wget https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.0/panix.sh -O panix.sh
 
 # Grant execution permissions and execute the script.
 chmod +x panix.sh
@@ -147,6 +151,7 @@ Root User Options:
   --system-binary        System binary persistence
   --systemd              Systemd service persistence
   --udev                 Udev (driver) persistence
+  --web-shell            Web shell persistence (PHP/Python)
   --xdg                  XDG autostart persistence
   --revert               Revert changes made by PANIX' default options
   --mitre-matrix         Display the MITRE ATT&CK Matrix for PANIX
@@ -171,6 +176,7 @@ Usage: ./panix.sh --udev [OPTIONS]
 --custom                                Use custom udev settings
   --command <command>                     Specify custom command
   --path <path>                           Specify custom path
+--help|-h                               Show this help message
 ```
 
 Every persistence mechanism also has an `--examples` flag that shows default and custom examples, aiding in crafting the command that works for you.
@@ -246,19 +252,60 @@ connect to [192.168.211.131] from (UNKNOWN) [192.168.211.130] 43400
 root@ubuntu2204:~#
 ```
 
-PANIX can clean most of its mess through the `--revert` command.
+PANIX can clean its mess through the `--revert` command. Both for seperate modules:
 ```
-root@ubuntu2204:/home/ruben# ./panix.sh --revert
-[*] Running as root...
-[*] Cleaning Systemd persistence methods...
-[+] Successfully cleaned persistence method Systemd
-[*] Cleaning Cron persistence methods...
-[+] Successfully cleaned persistence method Cron
-...
-[*] Cleaning Docker persistence methods...
-[+] Successfully cleaned persistence method Docker
-[*] Cleaning Malicious package persistence methods...
-[+] Successfully cleaned persistence method Malicious package
+root@ubuntu2204:/home/ruben# ./panix.sh --revert rootkit
+
+######################### [+] Reverting rootkit module... ######################### 
+
+[+] Sending 'kill -63 0' to unload the rootkit module... 
+[+] Signal sent successfully.
+[+] Identifying loaded rootkit kernel modules in /dev/shm/.rk...
+[+] Unloading rootkit rkit... 
+[+] Kernel module 'rkit' unloaded successfully.
+[+] Rootkit rkit unloaded successfully.
+[+] Removing kernel module files from /dev/shm/.rk...
+[+] Removed file: /dev/shm/.rk/restore_rkit.ko
+[+] Removed directory: /dev/shm/.rk
+[+] Removing downloaded files in /tmp...
+[-] Directory not found: /tmp/diamorphine
+[-] File not found: /tmp/diamorphine.zip
+[+] Removed file: /tmp/diamorphine.tar
+[-] Directory not found: /tmp/Diamorphine.git
+[+] Reloading kernel modules...
+[+] Kernel modules reloaded successfully.
+```
+
+And for all modules:
+```
+root@ubuntu2204:/home/ruben# ./panix.sh --revert all
+
+[+] Running full reversion with --revert-all...
+[+] Reverting all modules...
+
+######################### [+] Reverting revert_at... #########################
+
+Error: 'at' binary is not present. Cannot revert 'at' jobs.
+[-] Failed to revert revert_at. Exit Code: 1
+
+######################### [+] Reverting revert_authorized_keys... #########################
+
+[-] Backup file /root/.ssh/authorized_keys.bak not found. No changes made.
+[+] revert_authorized_keys reverted successfully.
+
+######################### [+] Reverting revert_backdoor_user... #########################
+
+[+] No backdoor users found.
+[+] revert_backdoor_user reverted successfully.
+
+######################### [+] Reverting revert_bind_shell... #########################
+
+[+] Searching for bind shell processes and killing them if present...
+[+] revert_bind_shell reverted successfully.
+
+[...]
+
+[+] Reversion of all modules complete.
 ```
 
 ![](https://i.imgur.com/waxVImv.png)
