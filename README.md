@@ -30,12 +30,12 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Malicious Container**          | Deploys a Docker container designed to host escape.                                     | ✔️    | ✔️     |
 | **Malicious Package**            | Installs malicious DPKG/RPM packages to achieve persistence.                            | ✔️    | ❌     |
 | **LD_PRELOAD Backdoor**          | Uses `LD_PRELOAD` to inject malicious libraries for persistence.                        | ✔️    | ❌     |
-| **LKM Backdoor**                 | Loads a malicious Kernel Module (LKM) to maintain low-level persistence.                | ✔️    | ❌     |
+| **LKM Backdoor**                 | Loads a Loadable Kernel Module (LKM) to maintain persistence.                           | ✔️    | ❌     |
 | **MOTD Backdoor**                | Alters Message of the Day (MOTD) to establish persistence.                              | ✔️    | ❌     |
 | **Package Manager**              | Manipulates `APT/YUM/DNF` to establish persistence on usage.                            | ✔️    | ❌     |
 | **PAM Persistence**              | Installs a PAM backdoor using a rogue module or pam_exec.                               | ✔️    | ❌     |
 | **Password Change**              | Changes user passwords to secure backdoor accounts.                                     | ✔️    | ❌     |
-| **Reverse Shell**                | Establishes a reverse shell, supporting multiple LOLBins for remote access.             | ✔️    | ✔️     |
+| **Reverse Shell**                | Establishes a reverse shell (supporting multiple LOLBins).                              | ✔️    | ✔️     |
 | **Shell Profile Persistence**    | Modifies shell profiles to execute scripts upon user login.                             | ✔️    | ✔️     |
 | **SSH Key Persistence**          | Manipulates SSH keys to maintain persistent access via SSH.                             | ✔️    | ✔️     |
 | **Sudoers Backdoor**             | Alters the `/etc/sudoers` file to grant elevated privileges.                            | ✔️    | ❌     |
