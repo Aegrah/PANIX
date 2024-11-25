@@ -36,7 +36,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **PAM Persistence**              | Installs a PAM backdoor using a rogue module or pam_exec.                               | ✔️    | ❌     |
 | **Password Change**              | Changes user passwords to secure backdoor accounts.                                     | ✔️    | ❌     |
 | **Reverse Shell**                | Establishes a reverse shell, supporting multiple LOLBins for remote access.             | ✔️    | ✔️     |
-| **Shell Profile Persistence**    | Modifies shell profiles to execute persistence scripts upon user login.                 | ✔️    | ✔️     |
+| **Shell Profile Persistence**    | Modifies shell profiles to execute scripts upon user login.                             | ✔️    | ✔️     |
 | **SSH Key Persistence**          | Manipulates SSH keys to maintain persistent access via SSH.                             | ✔️    | ✔️     |
 | **Sudoers Backdoor**             | Alters the `/etc/sudoers` file to grant elevated privileges.                            | ✔️    | ❌     |
 | **SUID Backdoor**                | Backdoors binaries by setting the SUID bit.                                             | ✔️    | ❌     |
