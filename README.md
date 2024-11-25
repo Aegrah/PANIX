@@ -16,11 +16,11 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 |----------------------------------|-----------------------------------------------------------------------------------------|--------|--------|
 | **At Job Persistence**           | Implements persistence by adding entries to system jobs.                                | ✔️    | ✔️     |
 | **Authorized Keys**              | Adds a public key to the authorized_keys file for SSH access.                           | ✔️    | ✔️     |
-| **Backdoor User**                | Creates a backdoor user with `UID=0`, granting root privileges.                         | ✔️    | ❌     |
+| **Backdoor User**                | Creates a backdoor user with `UID=0` (root privileges).                                 | ✔️    | ❌     |
 | **Backdoored /etc/passwd**       | Directly adds a malicious user entry to `/etc/passwd`.                                  | ✔️    | ❌     |
 | **Backdoored /etc/init.d**       | Establishes persistence via SysVinit (`/etc/init.d`).                                   | ✔️    | ❌     |
 | **Backdoored /etc/rc.local**     | Establishes persistence via run control (`/etc/rc.local`).                              | ✔️    | ❌     |
-| **Bind Shell**                   | Executes a pre-compiled/LOLBin bind shell for remote access.                            | ✔️    | ✔️     |
+| **Bind Shell**                   | Runs a pre-compiled/LOLBin bind shell for remote access.                                | ✔️    | ✔️     |
 | **Capabilities Backdoor**        | Adds specific capabilities to binaries to maintain persistence.                         | ✔️    | ❌     |
 | **Cron Job Persistence**         | Sets up cron jobs to ensure persistence across reboots.                                 | ✔️    | ✔️     |
 | **Create User**                  | Creates a new user account on the system.                                               | ✔️    | ❌     |
