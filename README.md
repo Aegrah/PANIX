@@ -165,7 +165,7 @@ Root User Options:
 # Examples
 The script should be largely self-explanatory, however, this section will show a few examples of how to work with PANIX.
 
-## Help & Example Menu
+## Help Menu
 Every persistence mechanism has a separate help menu:
 
 ```
