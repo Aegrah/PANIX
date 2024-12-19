@@ -53,6 +53,12 @@ revert_lkm() {
 		echo "[-] Temporary directory '${lkm_compile_dir}' not found."
 	fi
 
+	# Remove panix from /etc/modules, /etc/modules-load.d/panix.conf and /usr/lib/modules-load.d/panix.conf
+	echo "[+] Removing panix from /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/..."
+	sed -i '/panix/d' /etc/modules
+	rm -f /etc/modules-load.d/panix.conf
+	rm -f /usr/lib/modules-load.d/panix.conf
+
 	# Update module dependencies
 	echo "[+] Updating module dependencies..."
 	depmod -a

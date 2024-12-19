@@ -14,52 +14,52 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 
 | **Feature**                      | **Description**                                                                         |**Root**|**User**|
 |----------------------------------|-----------------------------------------------------------------------------------------|--------|--------|
-| **At Job Persistence**           | Implements persistence by adding entries to system jobs.                                | ✔️    | ✔️     |
-| **Authorized Keys**              | Adds a public key to the authorized_keys file for SSH access.                           | ✔️    | ✔️     |
-| **Backdoor User**                | Creates a backdoor user with `UID=0` (root privileges).                                 | ✔️    | ❌     |
-| **Backdoored /etc/passwd**       | Directly adds a malicious user entry to `/etc/passwd`.                                  | ✔️    | ❌     |
-| **Backdoored /etc/init.d**       | Establishes persistence via SysVinit (`/etc/init.d`).                                   | ✔️    | ❌     |
-| **Backdoored /etc/rc.local**     | Establishes persistence via run control (`/etc/rc.local`).                              | ✔️    | ❌     |
-| **Bind Shell**                   | Runs a pre-compiled/LOLBin bind shell for remote access.                                | ✔️    | ✔️     |
-| **Capabilities Backdoor**        | Adds specific capabilities to binaries to maintain persistence.                         | ✔️    | ❌     |
-| **Cron Job Persistence**         | Sets up cron jobs to ensure persistence across reboots.                                 | ✔️    | ✔️     |
-| **Create User**                  | Creates a new user account on the system.                                               | ✔️    | ❌     |
-| **Diamorphine Rootkit**          | Installs the Diamorphine Loadable Kernel Module Rootkit.                                | ✔️    | ❌     |
-| **Git Persistence**              | Utilizes Git hooks or pagers to persist within Git repositories.                        | ✔️    | ✔️     |
-| **Generator Persistence**        | Leverages systemd generators to create persistent services.                             | ✔️    | ❌     |
-| **Malicious Container**          | Deploys a Docker container designed to host escape.                                     | ✔️    | ✔️     |
-| **Malicious Package**            | Installs a `DPKG/RPM` package to achieve persistence.                                   | ✔️    | ❌     |
-| **LD_PRELOAD Backdoor**          | Uses `LD_PRELOAD` to inject malicious libraries for persistence.                        | ✔️    | ❌     |
-| **LKM Backdoor**                 | Loads a Loadable Kernel Module to maintain persistence.                                 | ✔️    | ❌     |
-| **MOTD Backdoor**                | Alters Message of the Day (MOTD) to establish persistence.                              | ✔️    | ❌     |
-| **Package Manager**              | Manipulates `APT/YUM/DNF` to establish persistence on usage.                            | ✔️    | ❌     |
-| **PAM Persistence**              | Installs a PAM backdoor using a rogue module or pam_exec.                               | ✔️    | ❌     |
-| **Password Change**              | Changes user passwords to secure backdoor accounts.                                     | ✔️    | ❌     |
-| **Reverse Shell**                | Establishes a reverse shell (supporting multiple LOLBins).                              | ✔️    | ✔️     |
-| **Shell Profile Persistence**    | Modifies shell profiles to execute scripts upon user login.                             | ✔️    | ✔️     |
-| **SSH Key Persistence**          | Manipulates SSH keys to maintain persistent access via SSH.                             | ✔️    | ✔️     |
-| **Sudoers Backdoor**             | Alters the `/etc/sudoers` file to grant elevated privileges.                            | ✔️    | ❌     |
-| **SUID Backdoor**                | Backdoors binaries by setting the SUID bit.                                             | ✔️    | ❌     |
-| **System Binary Backdoor**       | Wraps system binaries to include backdoor functionality.                                | ✔️    | ❌     |
-| **Systemd Service**              | Creates systemd services that ensure persistence on reboot.                             | ✔️    | ✔️     |
-| **Udev Persistence**             | Utilizes drivers to persist at the hardware interaction level.                          | ✔️    | ❌     |
-| **Web Shell Persistence**        | Deploys web servers for remote access via web interfaces.                               | ✔️    | ✔️     |
-| **XDG Autostart Persistence**    | Employs XDG autostart directories to persist upon user login.                           | ✔️    | ✔️     |
+| **At Job Persistence**           | Implements persistence by adding entries to system jobs.                                | ✅    | ✅     |
+| **Authorized Keys**              | Adds a public key to the authorized_keys file for SSH access.                           | ✅    | ✅     |
+| **Backdoor User**                | Creates a backdoor user with `UID=0` (root privileges).                                 | ✅    | ❌     |
+| **Backdoored /etc/passwd**       | Directly adds a malicious user entry to `/etc/passwd`.                                  | ✅    | ❌     |
+| **Backdoored /etc/init.d**       | Establishes persistence via SysVinit (`/etc/init.d`).                                   | ✅    | ❌     |
+| **Backdoored /etc/rc.local**     | Establishes persistence via run control (`/etc/rc.local`).                              | ✅    | ❌     |
+| **Bind Shell**                   | Runs a pre-compiled/LOLBin bind shell for remote access.                                | ✅    | ✅     |
+| **Capabilities Backdoor**        | Adds specific capabilities to binaries to maintain persistence.                         | ✅    | ❌     |
+| **Cron Job Persistence**         | Sets up cron jobs to ensure persistence across reboots.                                 | ✅    | ✅     |
+| **Create User**                  | Creates a new user account on the system.                                               | ✅    | ❌     |
+| **Diamorphine Rootkit**          | Installs the Diamorphine Loadable Kernel Module Rootkit.                                | ✅    | ❌     |
+| **Git Persistence**              | Utilizes Git hooks or pagers to persist within Git repositories.                        | ✅    | ✅     |
+| **Generator Persistence**        | Leverages systemd generators to create persistent services.                             | ✅    | ❌     |
+| **Malicious Container**          | Deploys a Docker container designed to host escape.                                     | ✅    | ✅     |
+| **Malicious Package**            | Installs a `DPKG/RPM` package to achieve persistence.                                   | ✅    | ❌     |
+| **LD_PRELOAD Backdoor**          | Uses `LD_PRELOAD` to inject malicious libraries for persistence.                        | ✅    | ❌     |
+| **LKM Backdoor**                 | Loads a Loadable Kernel Module to maintain persistence.                                 | ✅    | ❌     |
+| **MOTD Backdoor**                | Alters Message of the Day (MOTD) to establish persistence.                              | ✅    | ❌     |
+| **Package Manager**              | Manipulates `APT/YUM/DNF` to establish persistence on usage.                            | ✅    | ❌     |
+| **PAM Persistence**              | Installs a PAM backdoor using a rogue module or pam_exec.                               | ✅    | ❌     |
+| **Password Change**              | Changes user passwords to secure backdoor accounts.                                     | ✅    | ❌     |
+| **Reverse Shell**                | Establishes a reverse shell (supporting multiple LOLBins).                              | ✅    | ✅     |
+| **Shell Profile Persistence**    | Modifies shell profiles to execute scripts upon user login.                             | ✅    | ✅     |
+| **SSH Key Persistence**          | Manipulates SSH keys to maintain persistent access via SSH.                             | ✅    | ✅     |
+| **Sudoers Backdoor**             | Alters the `/etc/sudoers` file to grant elevated privileges.                            | ✅    | ❌     |
+| **SUID Backdoor**                | Backdoors binaries by setting the SUID bit.                                             | ✅    | ❌     |
+| **System Binary Backdoor**       | Wraps system binaries to include backdoor functionality.                                | ✅    | ❌     |
+| **Systemd Service**              | Creates systemd services that ensure persistence on reboot.                             | ✅    | ✅     |
+| **Udev Persistence**             | Utilizes drivers to persist at the hardware interaction level.                          | ✅    | ❌     |
+| **Web Shell Persistence**        | Deploys web servers for remote access via web interfaces.                               | ✅    | ✅     |
+| **XDG Autostart Persistence**    | Employs XDG autostart directories to persist upon user login.                           | ✅    | ✅     |
 
 ![](https://i.imgur.com/waxVImv.png)
 
 # Support
 PANIX offers comprehensive support across various Linux distributions.
 
-| **Distribution**     | **Support** | **Tested Version**                |
-|------------------|---------|-------------------------------------------|
-| **Debian**       | ✔️       | Debian 11 & 12                          |
-| **Ubuntu**       | ✔️       | Ubuntu 22.04 (Diamorphine unavailable)  |
-| **RHEL**         | ✔️       | RHEL 9 (MOTD unavailable)               |
-| **CentOS**       | ✔️       | CentOS Stream 9 & 7 (MOTD unavailable)  |
-| **Fedora**       | ✔️       | Not fully tested                        |
-| **Arch Linux**   | ✔️       | Not fully tested                        |
-| **OpenSUSE**     | ✔️       | Not fully tested                        |
+| **Distribution** | **Support** | **Tested Version**                   |
+|------------------|-----------|----------------------------------------|
+| **Debian**       | ✅       | Debian 11 & 12                          |
+| **Ubuntu**       | ✅       | Ubuntu 22.04 (Diamorphine unavailable)  |
+| **RHEL**         | ✅       | RHEL 9 (MOTD unavailable)               |
+| **CentOS**       | ✅       | CentOS Stream 9 & 7 (MOTD unavailable)  |
+| **Fedora**       | ✅       | Not fully tested                        |
+| **Arch Linux**   | ✅       | Not fully tested                        |
+| **OpenSUSE**     | ✅       | Not fully tested                        |
 
 Custom or outdated Linux distributions may have different configurations or lack specific features, causing mechanisms to fail on untested versions. If a default command fails, use the `--custom` flag available in most features to adjust paths and commands for your environment. If that doesn't resolve the issue, review and modify the script to suit your needs.
 
@@ -97,15 +97,15 @@ This streamlined structure promotes efficient development, testing, and deployme
 ![](https://i.imgur.com/waxVImv.png)
 
 # Getting Started
-Getting PANIX up-and-running is as simple as downloading the script from the [release page](https://github.com/Aegrah/PANIX/releases/tag/panix-v2.0.0) and executing it:
+Getting PANIX up-and-running is as simple as downloading the script from the [release page](https://github.com/Aegrah/PANIX/releases/tag/panix-v2.0.1) and executing it:
 ```
-curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.0/panix.sh | bash
+curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.1/panix.sh | bash
 ```
 Or download it and execute it manually:
 ```
 # Download through curl or wget
-curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.0/panix.sh -o panix.sh
-wget https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.0/panix.sh -O panix.sh
+curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.1/panix.sh -o panix.sh
+wget https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.1/panix.sh -O panix.sh
 
 # Grant execution permissions and execute the script.
 chmod +x panix.sh

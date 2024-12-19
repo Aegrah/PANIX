@@ -9,52 +9,29 @@ revert_pam() {
 		return 1
 	fi
 
-	# Function to restore the original pam_unix.so module
-	restore_pam_module() {
-		echo "[+] Restoring original PAM module..."
-
-		# Detect the Linux distribution and package manager
-		if [ -f /etc/os-release ]; then
-			. /etc/os-release
-			linux_distro=${ID_LIKE:-$ID}
-		else
-			linux_distro=$(uname -s | tr '[:upper:]' '[:lower:]')
-		fi
-
-		case "$linux_distro" in
-			*ubuntu*|*debian*|*mint*|*kali*)
-				echo "[+] Detected Debian-based distribution."
-				echo "[+] Reinstalling 'libpam-modules' package..."
-				apt-get update >/dev/null 2>&1
-				apt-get install --reinstall -y libpam-modules >/dev/null 2>&1
+	remove_rogue_pam() {
+		echo "[+] Searching for rogue PAM module"
+		# Check for the presence of the malicious PAM module
+		pam_module_paths=(
+			"/lib/security/pam_unix.so"
+			"/usr/lib/security/pam_unix.so"
+			"/usr/lib64/security/pam_unix.so"
+			"/lib/x86_64-linux-gnu/security/pam_unix.so"
+			"/usr/lib/x86_64-linux-gnu/security/pam_unix.so"
+			"/lib64/security/pam_unix.so"
+		)
+		
+		# Revert pam_unix.so with the pam_unix.so.bak backup 
+		for pam_module in "${pam_module_paths[@]}"; do
+			if [[ -f "$pam_module.bak" ]]; then
+				mv -f "$pam_module.bak" "$pam_module"
 				if [[ $? -eq 0 ]]; then
-					echo "[+] 'libpam-modules' reinstalled successfully."
+					echo "[+] Restored original PAM module '$pam_module'."
 				else
-					echo "[-] Failed to reinstall 'libpam-modules'."
+					echo "[-] Failed to restore original PAM module '$pam_module'."
 				fi
-				;;
-			*rhel*|*centos*|*fedora*)
-				echo "[+] Detected RPM-based distribution."
-				echo "[+] Reinstalling 'pam' package..."
-				if command -v yum &>/dev/null; then
-					yum reinstall -y pam >/dev/null 2>&1
-				elif command -v dnf &>/dev/null; then
-					dnf reinstall -y pam >/dev/null 2>&1
-				else
-					echo "[-] Neither 'yum' nor 'dnf' package manager found."
-					return 1
-				fi
-				if [[ $? -eq 0 ]]; then
-					echo "[+] 'pam' reinstalled successfully."
-				else
-					echo "[-] Failed to reinstall 'pam'."
-				fi
-				;;
-			*)
-				echo "[-] Unsupported distribution: $linux_distro"
-				return 1
-				;;
-		esac
+			fi
+		done
 	}
 
 	# Function to remove malicious PAM_EXEC configurations and scripts
@@ -135,32 +112,8 @@ revert_pam() {
 		fi
 	}
 
-	# Check for the presence of the malicious PAM module
-	is_pam_module_replaced=false
-	pam_module_paths=(
-		"/lib/security/pam_unix.so"
-		"/usr/lib64/security/pam_unix.so"
-		"/lib/x86_64-linux-gnu/security/pam_unix.so"
-		"/lib64/security/pam_unix.so"
-	)
-	for pam_module in "${pam_module_paths[@]}"; do
-		if [[ -f "$pam_module" ]]; then
-			# Check if the pam_unix.so has been modified
-			if strings "$pam_module" | grep -q "PANIX"; then
-				is_pam_module_replaced=true
-				break
-			fi
-		fi
-	done
-
-	if [[ "$is_pam_module_replaced" = true ]]; then
-		echo "[+] Malicious PAM module detected."
-		restore_pam_module
-	else
-		echo "[-] No malicious PAM module detected."
-	fi
-
 	# Remove PAM_EXEC backdoor and logging
+	remove_rogue_pam
 	remove_pam_exec_backdoor
 	remove_pam_exec_logging
 

