@@ -7,6 +7,7 @@ display_mitre_matrix() {
 		"--at" "Scheduled Task" "T1053" "At" "T1053.002" "https://attack.mitre.org/techniques/T1053/002" \
 		"--authorized-keys" "Account Manipulation" "T1098" "SSH Authorized Keys" "T1098.004" "https://attack.mitre.org/techniques/T1098/004" \
 		"--backdoor-user" "Create Account" "T1136" "Local Account" "T1136.001" "https://attack.mitre.org/techniques/T1136/001" \
+		"--backdoor-system-user" "Account Manipulation" "T1098" "SSH Authorized Keys" "T1098.004" "https://attack.mitre.org/techniques/T1098/004" \
 		"--bind-shell" "Command and Scripting Interpreter" "T1059" "Unix Shell" "T1059.004" "https://attack.mitre.org/techniques/T1059/004" \
 		"--cap" "Abuse Elevation Control Mechanism" "T1548" "N/A" "N/A" "https://attack.mitre.org/techniques/T1548" \
 		"--create-user" "Create Account" "T1136" "Local Account" "T1136.001" "https://attack.mitre.org/techniques/T1136/001" \
