@@ -17,6 +17,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **At Job Persistence**           | Implements persistence by adding entries to system jobs.                                | ✅    | ✅     |
 | **Authorized Keys**              | Adds a public key to the authorized_keys file for SSH access.                           | ✅    | ✅     |
 | **Backdoor User**                | Creates a backdoor user with `UID=0` (root privileges).                                 | ✅    | ❌     |
+| **Backdoor System User**         | Creates a backdoor system user (SSH access to news/nobody).                             | ✅    | ❌     |
 | **Backdoored /etc/passwd**       | Directly adds a malicious user entry to `/etc/passwd`.                                  | ✅    | ❌     |
 | **Backdoored /etc/init.d**       | Establishes persistence via SysVinit (`/etc/init.d`).                                   | ✅    | ❌     |
 | **Backdoored /etc/rc.local**     | Establishes persistence via run control (`/etc/rc.local`).                              | ✅    | ❌     |
@@ -84,15 +85,13 @@ PANIX/
 
 ## Key Benefits
 - **Paired Setup & Revert**: Every `setup_*.sh` has a corresponding `revert_*.sh`, ensuring easy removal of persistence mechanisms.
-- **Modular Design**: Easily modify existing modules or add new ones without affecting the core system.
+- **Modular Design**: Easily modify existing modules or add new ones without affecting the core script.
 - **Simple Expansion**: To add new functionality:
   1. Create a new `setup_*.sh` in `modules/`.
   2. Add a corresponding `revert_*.sh` in `modules/revert/`.
   3. Update `main.sh` to include the new scripts.
   4. Update `common.sh` to include the module in the help menu.
   4. Run `build.sh` to generate the updated `panix.sh`.
-
-This streamlined structure promotes efficient development, testing, and deployment of persistence features.
 
 ![](https://i.imgur.com/waxVImv.png)
 
@@ -127,6 +126,7 @@ Root User Options:
   --at                   At job persistence
   --authorized-keys      Add public key to authorized keys
   --backdoor-user        Create backdoor user
+  --backdoor-system-user Create backdoor system user
   --bind-shell           Execute backgrounded bind shell
   --cap                  Add capabilities persistence
   --create-user          Create a new user
@@ -330,6 +330,7 @@ Persistence Method        Technique Name                           Technique ID 
 --at                      Scheduled Task                           T1053           At                                       T1053.002            https://attack.mitre.org/techniques/T1053/002
 --authorized-keys         Account Manipulation                     T1098           SSH Authorized Keys                      T1098.004            https://attack.mitre.org/techniques/T1098/004
 --backdoor-user           Create Account                           T1136           Local Account                            T1136.001            https://attack.mitre.org/techniques/T1136/001
+--backdoor-system-user    Account Manipulation                     T1098           SSH Authorized Keys                      T1098.004            https://attack.mitre.org/techniques/T1098/004
 --bind-shell              Command and Scripting Interpreter        T1059           Unix Shell                               T1059.004            https://attack.mitre.org/techniques/T1059/004
 --cap                     Abuse Elevation Control Mechanism        T1548           N/A                                      N/A                  https://attack.mitre.org/techniques/T1548
 --create-user             Create Account                           T1136           Local Account                            T1136.001            https://attack.mitre.org/techniques/T1136/001

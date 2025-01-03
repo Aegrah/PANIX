@@ -48,6 +48,7 @@ usage_root() {
 	echo "  --at                   At job persistence"
 	echo "  --authorized-keys      Add public key to authorized keys"
 	echo "  --backdoor-user        Create backdoor user"
+	echo "  --backdoor-system-user Create backdoor system user"
 	echo "  --bind-shell           Execute backgrounded bind shell (supports multiple LOLBins)"
 	echo "  --cap                  Add capabilities persistence"
 	echo "  --create-user          Create a new user"

