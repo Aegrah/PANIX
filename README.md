@@ -98,13 +98,13 @@ PANIX/
 # Getting Started
 Getting PANIX up-and-running is as simple as downloading the script from the [release page](https://github.com/Aegrah/PANIX/releases/tag/panix-v2.0.1) and executing it:
 ```
-curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.1/panix.sh | bash
+curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.2/panix.sh | bash
 ```
 Or download it and execute it manually:
 ```
 # Download through curl or wget
-curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.1/panix.sh -o panix.sh
-wget https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.1/panix.sh -O panix.sh
+curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.2/panix.sh -o panix.sh
+wget https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.2/panix.sh -O panix.sh
 
 # Grant execution permissions and execute the script.
 chmod +x panix.sh
