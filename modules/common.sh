@@ -53,18 +53,23 @@ usage_root() {
 	echo "  --cap                  Add capabilities persistence"
 	echo "  --create-user          Create a new user"
 	echo "  --cron                 Cron job persistence"
+	echo "  --dbus                 D-Bus service persistence"
 	echo "  --generator            Generator persistence"
 	echo "  --git                  Git hook/pager persistence"
+	echo "  --grub                 GRUB bootloader persistence"
 	echo "  --initd                SysV Init (init.d) persistence"
+	echo "  --initramfs            Initramfs persistence"
 	echo "  --ld-preload           LD_PRELOAD backdoor persistence"
 	echo "  --lkm                  Loadable Kernel Module (LKM) persistence"
 	echo "  --malicious-container  Docker container with host escape"
 	echo "  --malicious-package    Build and Install a package for persistence (DPKG/RPM)"
 	echo "  --motd                 Message Of The Day (MOTD) persistence (not available on RHEL derivatives)"
+	echo "  --network-manager      NetworkManager dispatcher script persistence"
 	echo "  --package-manager      Package Manager persistence (APT/YUM/DNF)"
 	echo "  --pam                  Pluggable Authentication Module (PAM) persistence (backdoored PAM & pam_exec)"
 	echo "  --passwd-user          Add user to /etc/passwd directly"
 	echo "  --password-change      Change user password"
+	echo "  --polkit               Allow pkexec as any user through Polkit"
 	echo "  --rc-local             Run Control (rc.local) persistence"
 	echo "  --reverse-shell        Reverse shell persistence (supports multiple LOLBins)"
 	echo "  --rootkit              Diamorphine (LKM) rootkit persistence"
@@ -95,18 +100,23 @@ revert_all() {
 		revert_cap
 		revert_create_user
 		revert_cron
+		revert_dbus
 		revert_generator
 		revert_git
+		revert_grub
 		revert_initd
+		revert_initramfs
 		revert_ld_preload
 		revert_lkm
 		revert_malicious_container
 		revert_malicious_package
 		revert_motd_backdoor
+		revert_network_manager
 		revert_package_manager
 		revert_pam
 		revert_passwd_user
 		revert_password_change
+		revert_polkit
 		revert_rc_local
 		revert_reverse_shell
 		revert_rootkit
