@@ -25,22 +25,22 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Capabilities Backdoor**        | Adds specific capabilities to binaries to maintain persistence.                         | ✅    | ❌     |
 | **Cron Job Persistence**         | Sets up cron jobs to ensure persistence across reboots.                                 | ✅    | ✅     |
 | **Create User**                  | Creates a new user account on the system.                                               | ✅    | ❌     |
-| **D-Bus Backdoor**               | Creates a backdoor D-Bus service to inject a backdoor.                                  | ✅    | ❌     |
+| **D-Bus Backdoor**               | Creates a D-Bus service backdoor for root reverse shell access.                         | ✅    | ❌     |
 | **Diamorphine Rootkit**          | Installs the Diamorphine Loadable Kernel Module Rootkit.                                | ✅    | ❌     |
-| **initramfs Persistence**        | Injects a UID=0 backdoor user into initramfs on reboot.                                 | ✅    | ❌     |
+| **Initramfs Persistence**        | Injects a UID=0 backdoor user into initramfs on reboot.                                 | ✅    | ❌     |
 | **Git Persistence**              | Utilizes Git hooks or pagers to persist within Git repositories.                        | ✅    | ✅     |
 | **Generator Persistence**        | Leverages systemd generators to create persistent services.                             | ✅    | ❌     |
 | **GRUB Persistence**             | Manipulates GRUB configuration to execute a backdoor at boot.                           | ✅    | ❌     |
 | **Malicious Container**          | Deploys a Docker container designed to host escape.                                     | ✅    | ✅     |
 | **Malicious Package**            | Installs a `DPKG/RPM` package to achieve persistence.                                   | ✅    | ❌     |
-| **NetworkManager Dispatcher**    | Installs a dispatcher script  to persist upon network actions.                          | ✅    | ❌     |
+| **NetworkManager Dispatcher**    | Installs a dispatcher script to persist upon network actions.                           | ✅    | ❌     |
 | **LD_PRELOAD Backdoor**          | Uses `LD_PRELOAD` to inject malicious libraries for persistence.                        | ✅    | ❌     |
 | **LKM Backdoor**                 | Loads a Loadable Kernel Module to maintain persistence.                                 | ✅    | ❌     |
 | **MOTD Backdoor**                | Alters Message of the Day (MOTD) to establish persistence.                              | ✅    | ❌     |
 | **Package Manager**              | Manipulates `APT/YUM/DNF` to establish persistence on usage.                            | ✅    | ❌     |
 | **PAM Persistence**              | Installs a PAM backdoor using a rogue module or pam_exec.                               | ✅    | ❌     |
 | **Password Change**              | Changes user passwords to secure backdoor accounts.                                     | ✅    | ❌     |
-| **Polkit Backdoor**              | Creates a overly permissive Polkit configuration backdoor.                              | ✅    | ❌     |
+| **Polkit Backdoor**              | Creates an overly permissive Polkit configuration backdoor.                             | ✅    | ❌     |
 | **Reverse Shell**                | Establishes a reverse shell (supporting multiple LOLBins).                              | ✅    | ✅     |
 | **Shell Profile Persistence**    | Modifies shell profiles to execute scripts upon user login.                             | ✅    | ✅     |
 | **SSH Key Persistence**          | Manipulates SSH keys to maintain persistent access via SSH.                             | ✅    | ✅     |
@@ -57,24 +57,24 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 # Support
 PANIX offers comprehensive support across various Linux distributions.
 
-| **Distribution** | **Support** | **Tested Version**                                  |
-|------------------|-----------|-------------------------------------------------------|
-| **Debian**       | ✅       | Debian 11 & 12                                        |
-| **Ubuntu**       | ✅       | Ubuntu 22.04 (Diamorphine unavailable)                |
-| **RHEL**         | ✅       | RHEL 9 (MOTD & Pre-OS Boot unavailable)               |
-| **CentOS**       | ✅       | CentOS Stream 9 & 7 (MOTD & Pre-OS Boot unavailable)  |
-| **Fedora**       | ✅       | Not fully tested                                      |
-| **Arch Linux**   | ✅       | Not fully tested                                      |
-| **OpenSUSE**     | ✅       | Not fully tested                                      |
+| **Distribution** | **Support** | **Tested Version**                                             |
+|------------------|-----------|------------------------------------------------------------------|
+| **Debian**       | ✅       | Debian 11 & 12                                                   |
+| **Ubuntu**       | ✅       | Ubuntu 22.04 (Diamorphine unavailable)                           |
+| **RHEL**         | ✅       | RHEL 9 (MOTD & Pre-OS Boot techniques unavailable)               |
+| **CentOS**       | ✅       | CentOS Stream 9 & 7 (MOTD & Pre-OS Boot techniques unavailable)  |
+| **Fedora**       | ✅       | Not fully tested                                                 |
+| **Arch Linux**   | ✅       | Not fully tested                                                 |
+| **OpenSUSE**     | ✅       | Not fully tested                                                 |
 
-Custom or outdated Linux distributions may have different configurations or lack specific features, causing mechanisms to fail on untested versions. If a default command fails, use the `--custom` flag available in most features to adjust paths and commands for your environment. If that doesn't resolve the issue, review and modify the script to suit your needs.
+Custom or outdated Linux distributions may have different configurations or lack specific features, causing mechanisms to fail on untested versions. If a default command fails, use the `--custom` flag available in most features to adjust paths and commands for your environment. Review and modify the script to suit your needs if that doesn't resolve the issue.
 
 **Contributions via pull requests or issues for new features, updates, or ideas are always welcome!**
 
 ![](https://i.imgur.com/waxVImv.png)
 
 # Repository Structure
-The PANIX repository is designed for modularity, maintainability, and ease of extension. Each persistence mechanism includes both setup and revert scripts, simplifying management and removal.
+The PANIX repository is designed for modularity, maintainability, and ease of extension. Each persistence mechanism includes setup and revert scripts, simplifying management, and removal.
 
 ```plaintext
 PANIX/
@@ -101,7 +101,7 @@ PANIX/
 ![](https://i.imgur.com/waxVImv.png)
 
 # Getting Started
-Getting PANIX up-and-running is as simple as downloading the script from the [release page](https://github.com/Aegrah/PANIX/releases/tag/panix-v2.0.1) and executing it:
+Getting PANIX up and running is as simple as downloading the script from the [release page](https://github.com/Aegrah/PANIX/releases/tag/panix-v2.0.1) and executing it:
 ```
 curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.2/panix.sh | bash
 ```
@@ -345,7 +345,7 @@ Persistence Method        Technique Name                           Technique ID 
 --cap                     Abuse Elevation Control Mechanism        T1548           N/A                                      N/A                  https://attack.mitre.org/techniques/T1548
 --create-user             Create Account                           T1136           Local Account                            T1136.001            https://attack.mitre.org/techniques/T1136/001
 --cron                    Scheduled Task                           T1053           Cron                                     T1053.003            https://attack.mitre.org/techniques/T1053/003
---dbus                    Pre-OS Boot                              T1542           N/A                                      N/A                  https://attack.mitre.org/techniques/T1542
+--dbus                    Create or Modify System Process          T1543           N/A                                      N/A                  https://attack.mitre.org/techniques/T1543
 --generator               Create or Modify System Process          T1543           Systemd Service                          T1543.002            https://attack.mitre.org/techniques/T1543/002
 --git                     Event Triggered Execution                T1546           N/A                                      N/A                  https://attack.mitre.org/techniques/T1546
 --grub                    Pre-OS Boot                              T1542           N/A                                      N/A                  https://attack.mitre.org/techniques/T1542
