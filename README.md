@@ -101,15 +101,15 @@ PANIX/
 ![](https://i.imgur.com/waxVImv.png)
 
 # Getting Started
-Getting PANIX up and running is as simple as downloading the script from the [release page](https://github.com/Aegrah/PANIX/releases/tag/panix-v2.0.1) and executing it:
+Getting PANIX up and running is as simple as downloading the script from the [release page](https://github.com/Aegrah/PANIX/releases/tag/panix-v2.1.0) and executing it:
 ```
-curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.2/panix.sh | bash
+curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.1.0/panix.sh | bash
 ```
 Or download it and execute it manually:
 ```
 # Download through curl or wget
-curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.2/panix.sh -o panix.sh
-wget https://github.com/Aegrah/PANIX/releases/download/panix-v2.0.2/panix.sh -O panix.sh
+curl -sL https://github.com/Aegrah/PANIX/releases/download/panix-v2.1.0/panix.sh -o panix.sh
+wget https://github.com/Aegrah/PANIX/releases/download/panix-v2.1.0/panix.sh -O panix.sh
 
 # Grant execution permissions and execute the script.
 chmod +x panix.sh
@@ -361,7 +361,7 @@ Persistence Method        Technique Name                           Technique ID 
 --pam                     Modify Authentication Process            T1556           Pluggable Authentication Modules         T1556.003            https://attack.mitre.org/techniques/T1556/003
 --passwd-user             Account Manipulation                     T1098           N/A                                      N/A                  https://attack.mitre.org/techniques/T1098
 --password-change         Account Manipulation                     T1098           N/A                                      N/A                  https://attack.mitre.org/techniques/T1098
---polkit                  Create or Modify System Process          T1543           N/A                                      N/A                  https://attack.mitre.org/techniques/T1543
+--polkit                  Modify Authentication Process            T1556           N/A                                      N/A                  https://attack.mitre.org/techniques/T1556
 --rc-local                Boot or Logon Initialization Scripts     T1037           RC Scripts                               T1037.004            https://attack.mitre.org/techniques/T1037/004
 --reverse-shell           Command and Scripting Interpreter        T1059           Unix Shell                               T1059.004            https://attack.mitre.org/techniques/T1059/004
 --rootkit                 Rootkit                                  T1014           N/A                                      N/A                  https://attack.mitre.org/techniques/T1014
