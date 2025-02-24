@@ -25,17 +25,22 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Capabilities Backdoor**        | Adds specific capabilities to binaries to maintain persistence.                         | ✅    | ❌     |
 | **Cron Job Persistence**         | Sets up cron jobs to ensure persistence across reboots.                                 | ✅    | ✅     |
 | **Create User**                  | Creates a new user account on the system.                                               | ✅    | ❌     |
+| **D-Bus Backdoor**               | Creates a backdoor D-Bus service to inject a backdoor.                                  | ✅    | ❌     |
 | **Diamorphine Rootkit**          | Installs the Diamorphine Loadable Kernel Module Rootkit.                                | ✅    | ❌     |
+| **initramfs Persistence**        | Injects a UID=0 backdoor user into initramfs on reboot.                                 | ✅    | ❌     |
 | **Git Persistence**              | Utilizes Git hooks or pagers to persist within Git repositories.                        | ✅    | ✅     |
 | **Generator Persistence**        | Leverages systemd generators to create persistent services.                             | ✅    | ❌     |
+| **GRUB Persistence**             | Manipulates GRUB configuration to execute a backdoor at boot.                           | ✅    | ❌     |
 | **Malicious Container**          | Deploys a Docker container designed to host escape.                                     | ✅    | ✅     |
 | **Malicious Package**            | Installs a `DPKG/RPM` package to achieve persistence.                                   | ✅    | ❌     |
+| **NetworkManager Dispatcher**    | Installs a dispatcher script  to persist upon network actions.                          | ✅    | ❌     |
 | **LD_PRELOAD Backdoor**          | Uses `LD_PRELOAD` to inject malicious libraries for persistence.                        | ✅    | ❌     |
 | **LKM Backdoor**                 | Loads a Loadable Kernel Module to maintain persistence.                                 | ✅    | ❌     |
 | **MOTD Backdoor**                | Alters Message of the Day (MOTD) to establish persistence.                              | ✅    | ❌     |
 | **Package Manager**              | Manipulates `APT/YUM/DNF` to establish persistence on usage.                            | ✅    | ❌     |
 | **PAM Persistence**              | Installs a PAM backdoor using a rogue module or pam_exec.                               | ✅    | ❌     |
 | **Password Change**              | Changes user passwords to secure backdoor accounts.                                     | ✅    | ❌     |
+| **Polkit Backdoor**              | Creates a overly permissive Polkit configuration backdoor.                              | ✅    | ❌     |
 | **Reverse Shell**                | Establishes a reverse shell (supporting multiple LOLBins).                              | ✅    | ✅     |
 | **Shell Profile Persistence**    | Modifies shell profiles to execute scripts upon user login.                             | ✅    | ✅     |
 | **SSH Key Persistence**          | Manipulates SSH keys to maintain persistent access via SSH.                             | ✅    | ✅     |
@@ -52,15 +57,15 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 # Support
 PANIX offers comprehensive support across various Linux distributions.
 
-| **Distribution** | **Support** | **Tested Version**                   |
-|------------------|-----------|----------------------------------------|
-| **Debian**       | ✅       | Debian 11 & 12                          |
-| **Ubuntu**       | ✅       | Ubuntu 22.04 (Diamorphine unavailable)  |
-| **RHEL**         | ✅       | RHEL 9 (MOTD unavailable)               |
-| **CentOS**       | ✅       | CentOS Stream 9 & 7 (MOTD unavailable)  |
-| **Fedora**       | ✅       | Not fully tested                        |
-| **Arch Linux**   | ✅       | Not fully tested                        |
-| **OpenSUSE**     | ✅       | Not fully tested                        |
+| **Distribution** | **Support** | **Tested Version**                                  |
+|------------------|-----------|-------------------------------------------------------|
+| **Debian**       | ✅       | Debian 11 & 12                                        |
+| **Ubuntu**       | ✅       | Ubuntu 22.04 (Diamorphine unavailable)                |
+| **RHEL**         | ✅       | RHEL 9 (MOTD & Pre-OS Boot unavailable)               |
+| **CentOS**       | ✅       | CentOS Stream 9 & 7 (MOTD & Pre-OS Boot unavailable)  |
+| **Fedora**       | ✅       | Not fully tested                                      |
+| **Arch Linux**   | ✅       | Not fully tested                                      |
+| **OpenSUSE**     | ✅       | Not fully tested                                      |
 
 Custom or outdated Linux distributions may have different configurations or lack specific features, causing mechanisms to fail on untested versions. If a default command fails, use the `--custom` flag available in most features to adjust paths and commands for your environment. If that doesn't resolve the issue, review and modify the script to suit your needs.
 
@@ -131,18 +136,23 @@ Root User Options:
   --cap                  Add capabilities persistence
   --create-user          Create a new user
   --cron                 Cron job persistence
+  --dbus                 D-Bus service persistence
   --generator            Generator persistence
   --git                  Git hook/pager persistence
+  --grub                 GRUB bootloader persistence
   --initd                SysV Init (init.d) persistence
+  --initramfs            Initramfs persistence 
   --ld-preload           LD_PRELOAD backdoor persistence"
   --lkm                  Loadable Kernel Module (LKM) persistence
   --malicious-container  Docker container with host escape"
   --malicious-package    Build and Install a package for persistence (DPKG/RPM)
   --motd                 Message Of The Day (MOTD) persistence (not available on RHEL derivatives)
+  --network-manager      NetworkManager dispatcher script persistence
   --package-manager      Package Manager persistence (APT/YUM/DNF)
   --pam                  Pluggable Authentication Module (PAM) persistence (backdoored PAM & pam_exec)
   --passwd-user          Add user to /etc/passwd directly
   --password-change      Change user password
+  --polkit               Allow pkexec as any user through Polkit
   --rc-local             Run Control (rc.local) persistence
   --reverse-shell        Reverse shell persistence (supports multiple LOLBins)"
   --rootkit              Diamorphine (LKM) rootkit persistence 
@@ -335,18 +345,23 @@ Persistence Method        Technique Name                           Technique ID 
 --cap                     Abuse Elevation Control Mechanism        T1548           N/A                                      N/A                  https://attack.mitre.org/techniques/T1548
 --create-user             Create Account                           T1136           Local Account                            T1136.001            https://attack.mitre.org/techniques/T1136/001
 --cron                    Scheduled Task                           T1053           Cron                                     T1053.003            https://attack.mitre.org/techniques/T1053/003
+--dbus                    Pre-OS Boot                              T1542           N/A                                      N/A                  https://attack.mitre.org/techniques/T1542
 --generator               Create or Modify System Process          T1543           Systemd Service                          T1543.002            https://attack.mitre.org/techniques/T1543/002
 --git                     Event Triggered Execution                T1546           N/A                                      N/A                  https://attack.mitre.org/techniques/T1546
+--grub                    Pre-OS Boot                              T1542           N/A                                      N/A                  https://attack.mitre.org/techniques/T1542
 --initd                   Boot or Logon Initialization Scripts     T1037           N/A                                      N/A                  https://attack.mitre.org/techniques/T1037
+--initramfs               Pre-OS Boot                              T1542           N/A                                      N/A                  https://attack.mitre.org/techniques/T1542
 --ld-preload              Hijack Execution Flow                    T1574           Dynamic Linker Hijacking                 T1574.006            https://attack.mitre.org/techniques/T1574/006
 --lkm                     Boot or Logon Autostart Execution        T1547           Kernel Modules and Extensions            T1547.006            https://attack.mitre.org/techniques/T1547/006
 --malicious-container     Escape to Host                           T1610           N/A                                      N/A                  https://attack.mitre.org/techniques/T1610
 --malicious-package       Event Triggered Execution                T1546           Installer Packages                       T1546.016            https://attack.mitre.org/techniques/T1546/016
 --motd                    Boot or Logon Initialization Scripts     T1037           N/A                                      N/A                  https://attack.mitre.org/techniques/T1037
+--network-manager         Event Triggered Execution                T1546           N/A                                      N/A                  https://attack.mitre.org/techniques/T1546
 --package-manager         Event Triggered Execution                T1546           Installer Packages                       T1546.016            https://attack.mitre.org/techniques/T1546/016
 --pam                     Modify Authentication Process            T1556           Pluggable Authentication Modules         T1556.003            https://attack.mitre.org/techniques/T1556/003
 --passwd-user             Account Manipulation                     T1098           N/A                                      N/A                  https://attack.mitre.org/techniques/T1098
 --password-change         Account Manipulation                     T1098           N/A                                      N/A                  https://attack.mitre.org/techniques/T1098
+--polkit                  Create or Modify System Process          T1543           N/A                                      N/A                  https://attack.mitre.org/techniques/T1543
 --rc-local                Boot or Logon Initialization Scripts     T1037           RC Scripts                               T1037.004            https://attack.mitre.org/techniques/T1037/004
 --reverse-shell           Command and Scripting Interpreter        T1059           Unix Shell                               T1059.004            https://attack.mitre.org/techniques/T1059/004
 --rootkit                 Rootkit                                  T1014           N/A                                      N/A                  https://attack.mitre.org/techniques/T1014
@@ -373,6 +388,8 @@ Publications in which PANIX is leveraged:
 
 - [Linux Detection Engineering - A Primer on Persistence Mechanisms](https://www.elastic.co/security-labs/primer-on-persistence-mechanisms)  
 - [Linux Detection Engineering - A Sequel on Persistence Mechanisms](https://www.elastic.co/security-labs/sequel-on-persistence-mechanisms)
+- [Linux Detection Engineering -  A Continuation on Persistence Mechanisms](https://www.elastic.co/security-labs/continuation-on-persistence-mechanisms)
+- [Linux Detection Engineering -  Approaching the Summit on Persistence Mechanisms](https://www.elastic.co/security-labs/approaching-the-summit-on-persistence)
 
 Feel free to check out my socials for updates on (Linux) security research.
 
