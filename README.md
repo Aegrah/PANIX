@@ -17,7 +17,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **At Job Persistence**           | Implements persistence by adding entries to system jobs.                                | ✅    | ✅     |
 | **Authorized Keys**              | Adds a public key to the authorized_keys file for SSH access.                           | ✅    | ✅     |
 | **Backdoor User**                | Creates a backdoor user with `UID=0` (root privileges).                                 | ✅    | ❌     |
-| **Backdoor System User**         | Creates a backdoor system user (SSH access to news/nobody).                             | ✅    | ❌     |
+| **Backdoor System User**         | Backdoor a system user (SSH access to news/nobody).                                     | ✅    | ❌     |
 | **Backdoored /etc/passwd**       | Directly adds a malicious user entry to `/etc/passwd`.                                  | ✅    | ❌     |
 | **Backdoored /etc/init.d**       | Establishes persistence via SysVinit (`/etc/init.d`).                                   | ✅    | ❌     |
 | **Backdoored /etc/rc.local**     | Establishes persistence via run control (`/etc/rc.local`).                              | ✅    | ❌     |
@@ -30,7 +30,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Initramfs Persistence**        | Injects a UID=0 backdoor user into initramfs on reboot.                                 | ✅    | ❌     |
 | **Git Persistence**              | Utilizes Git hooks or pagers to persist within Git repositories.                        | ✅    | ✅     |
 | **Generator Persistence**        | Leverages systemd generators to create persistent services.                             | ✅    | ❌     |
-| **GRUB Backdoor**                | Manipulates GRUB configuration to execute a backdoor at boot.                           | ✅    | ❌     |
+| **GRUB Backdoor**                | Manipulates GRUB to execute a backdoor at boot.                                         | ✅    | ❌     |
 | **Malicious Container**          | Deploys a Docker container designed to host escape.                                     | ✅    | ✅     |
 | **Malicious Package**            | Installs a `DPKG/RPM` package to achieve persistence.                                   | ✅    | ❌     |
 | **NetworkManager**               | Installs a dispatcher script to persist upon network actions.                           | ✅    | ❌     |
