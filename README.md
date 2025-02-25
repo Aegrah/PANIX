@@ -25,7 +25,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Capabilities Backdoor**        | Adds specific capabilities to binaries to maintain persistence.                         | ✅    | ❌     |
 | **Cron Job Persistence**         | Sets up cron jobs to ensure persistence across reboots.                                 | ✅    | ✅     |
 | **Create User**                  | Creates a new user account on the system.                                               | ✅    | ❌     |
-| **D-Bus Backdoor**               | Creates a D-Bus service backdoor for root reverse shell access.                         | ✅    | ❌     |
+| **D-Bus Backdoor**               | Creates a D-Bus service for root reverse shell access.                                  | ✅    | ❌     |
 | **Diamorphine Rootkit**          | Installs the Diamorphine Loadable Kernel Module Rootkit.                                | ✅    | ❌     |
 | **Initramfs Persistence**        | Injects a UID=0 backdoor user into initramfs on reboot.                                 | ✅    | ❌     |
 | **Git Persistence**              | Utilizes Git hooks or pagers to persist within Git repositories.                        | ✅    | ✅     |
@@ -50,7 +50,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **Systemd Service**              | Creates systemd services that ensure persistence on reboot.                             | ✅    | ✅     |
 | **Udev Persistence**             | Utilizes drivers to persist at the hardware interaction level.                          | ✅    | ❌     |
 | **Web Shell Persistence**        | Deploys web servers for remote access via web interfaces.                               | ✅    | ✅     |
-| **XDG Autostart Persistence**    | Employs XDG autostart directories to persist upon user login.                           | ✅    | ✅     |
+| **XDG Autostart**                | Employs XDG autostart directories to persist upon user login.                           | ✅    | ✅     |
 
 ![](https://i.imgur.com/waxVImv.png)
 
