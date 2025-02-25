@@ -33,7 +33,7 @@ PANIX provides a versatile suite of features for simulating and researching Linu
 | **GRUB Backdoor**                | Manipulates GRUB configuration to execute a backdoor at boot.                           | ✅    | ❌     |
 | **Malicious Container**          | Deploys a Docker container designed to host escape.                                     | ✅    | ✅     |
 | **Malicious Package**            | Installs a `DPKG/RPM` package to achieve persistence.                                   | ✅    | ❌     |
-| **NetworkManager Backdoor**      | Installs a dispatcher script to persist upon network actions.                           | ✅    | ❌     |
+| **NetworkManager**               | Installs a dispatcher script to persist upon network actions.                           | ✅    | ❌     |
 | **LD_PRELOAD Backdoor**          | Uses `LD_PRELOAD` to inject malicious libraries for persistence.                        | ✅    | ❌     |
 | **LKM Backdoor**                 | Loads a Loadable Kernel Module to maintain persistence.                                 | ✅    | ❌     |
 | **MOTD Backdoor**                | Alters Message of the Day (MOTD) to establish persistence.                              | ✅    | ❌     |
